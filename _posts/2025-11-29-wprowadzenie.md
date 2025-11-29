@@ -4,8 +4,7 @@ title: "Wprowadzenie"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
-
-# Model pojazdu do badań nad autonomią — wprowadzenie
+# Model pojazdu do badań nad autonomią <!--more-->
 ## O czym będzie ten cykl
 Buduję model pojazdu, który ma jeździć po:
 
