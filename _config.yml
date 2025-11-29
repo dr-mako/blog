@@ -1,15 +1,15 @@
 # Site settings
-title:          M1 | Michał Kozłowski
-description:    "My personnal blog"
+title:          Projekt samochodu
+description:    "Wyznaczanie trajektori ruchu na podstawie odometrii"
 
 # Google Analytics
 google_analytics: none
 
 # Author
 author:
-  name:         Michał Kozłowski    
-  site:         https://m1chol.github.io/m1/
-  email:        m1chol@proton.me@gmail.com
+  name:         Maciej Kozłowski    
+  site:         https://
+  email:        
 
 # Build settings
 markdown:       kramdown
