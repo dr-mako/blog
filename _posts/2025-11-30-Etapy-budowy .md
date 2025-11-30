@@ -8,18 +8,19 @@ excerpt_separator: <!--more-->
 ## Pokażę, etapy budowy platformy modelu — listę elementów, gdzie je kupić oraz jakie wydruki 3D przygotować, żeby złożyć prototyp 
 
 Tablica ukazuje najważniejsze elementy
-| Element              | Ilość | Uwagi                                                      |
-| ---------------------| ----- | ---------------------------------------------------------- |
-| DDSM400 Motors       | 4 szt.| Do napędu bezpośredniego 4 WD (silniki w kołach)           |
-| ESP32 Hub Motors     | 1 szt.| Kontroler sterowania dla 4x DDSM400                        |
-| ST3215 Servo         | 2 szt.| Po jednym serwomechanizmie dla osi przedniej i tylnej      |
-| ESP32 Bus Servo      | 1 szt.| Kontroler sterowania dla 2x ST3215 Servo                   |
-| Kamera               | 2 szt.| Jedna przód + druga tył                                    |
-| Jetson Orin Nano     | 1 szt.| Host + obliczenia AI (wideo, czujniki)                     |
-| Lidary (opcjonalnie) | 4 szt.| Do wykrywania odległości (rozbudowa później)               |
-| Bateria LiPo 6S      | 1 szt | Zasilanie główne 24V, 11 Ah, 110C                          |
-| Przetwornica Buck 12V| 2 szt | Victron Orion 36–18V/12V 20A 240W                          |
-| Ładowarka dla LiPo   | 1 szt | Wymagany balancer                                          | 
+
+| Element               | Ilość  | Uwagi                                                 |
+| --------------------- | ------ | ----------------------------------------------------- |
+| DDSM400 Motors        | 4 szt. | Do napędu bezpośredniego 4 WD (silniki w kołach)      |
+| ESP32 Hub Motors      | 1 szt. | Kontroler sterowania dla 4x DDSM400                   |
+| ST3215 Servo          | 2 szt. | Po jednym serwomechanizmie dla osi przedniej i tylnej |
+| ESP32 Bus Servo       | 1 szt. | Kontroler sterowania dla 2x ST3215 Servo              |
+| Kamera                | 2 szt. | Jedna przód + druga tył                               |
+| Jetson Orin Nano      | 1 szt. | Host + obliczenia AI (wideo, czujniki)                |
+| Lidary (opcjonalnie)  | 4 szt. | Do wykrywania odległości (rozbudowa później)          |
+| Bateria LiPo 6S       | 1 szt  | Zasilanie główne 24V, 11 Ah, 110C                     |
+| Przetwornica Buck 12V | 2 szt  | Victron Orion 36–18V/12V 20A 240W                     |
+| Ładowarka dla LiPo    | 1 szt  | Wymagany balancer                                     |
 
 
 ### 1) Zawieszenie i koła
