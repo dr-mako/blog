@@ -31,7 +31,7 @@ Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywneg
 <div style="display:flex; gap:12px; flex-wrap:wrap;">
   <img src="{{ 'assets/images/etapy_bud/zaw1.jpg' | relative_url }}" alt="zaw1" style="width:40%; max-width:100%; height:auto;" />
   <img src="{{ 'assets/images/etapy_bud/zaw2.jpg' | relative_url }}" alt="zaw2" style="width:40%; max-width:100%; height:auto;" />
-  <img src="{{ 'assets/images/etapy_bud/zaw3.jpg' | relative_url }}" alt="zaw3" style="width:30%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw3.jpg' | relative_url }}" alt="zaw3" style="width:60%; max-width:100%; height:auto;" />
 </div>
 
 #### 2) Belka nośna, czyli „most”
