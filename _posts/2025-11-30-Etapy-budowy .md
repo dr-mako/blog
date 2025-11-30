@@ -29,8 +29,8 @@ Na zdjęciach widać cztery gotowe wózki kół. Każdy ma tę samą budowę: na
 Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywnego sprzęgła kołnierzowego, które jest blokowane wkrętami. Połączenie musi być bezluzowe tzn. osie muszą być odpowiednio ścięte w miejscu mocowania kołnierza. Ilustracje:
 
 <div style="display:flex; gap:12px; flex-wrap:wrap;">
-  <img src="{{ 'assets/images/etapy_bud/zaw1.jpg' | relative_url }}" alt="zaw1" style="width:30%; max-width:100%; height:auto;" />
-  <img src="{{ 'assets/images/etapy_bud/zaw2.jpg' | relative_url }}" alt="zaw2" style="width:30%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw1.jpg' | relative_url }}" alt="zaw1" style="width:40%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw2.jpg' | relative_url }}" alt="zaw2" style="width:40%; max-width:100%; height:auto;" />
   <img src="{{ 'assets/images/etapy_bud/zaw3.jpg' | relative_url }}" alt="zaw3" style="width:30%; max-width:100%; height:auto;" />
 </div>
 
@@ -51,13 +51,13 @@ Rama składa się z trzech dużych wydruków 3D na dół i trzech na górę. Ele
 Górna płyta to nasz „stół” pod elektronikę. Wydruk ma przeloty na śruby, gniazda pod dystanse oraz wycięcia na przewody. Wysokość dystansów jest dobrana tak, aby między piętrami zostało miejsce na ruch zawieszenia i na przewody od kół, a jednocześnie żeby środek ciężkości był jak najniżej. Po złożeniu dwóch mostów z kołami do dolnej płyty i postawieniu na dystansach górnej płyty otrzymuje sztywną, dwupiętrową konstrukcję.
 Ilustracje:
 
-<img src="{{ 'assets/images/etapy_bud/Podw1.JPG' | relative_url }}" alt="Podw1" style="width:40%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/etapy_bud/Podw1.JPG' | relative_url }}" alt="Podw1" style="width:60%; max-width:100%; height:auto;" />
 
 #### 4) Elektronika na pokładzie
 Na górze umieszczam komputer Jetson Orin Nano (master) w standardowym radiatorze z wentylatorem. Obok są dwa moduły oparte o ESP32: jeden działa jako Hub Motors i obsługuje silniki DDSM400 oraz odczyt ich enkoderów, drugi to Bus Servo, który steruje serwami ST3215 i czyta ich pozycję z enkoderów. Każdy moduł ma własny, drukowany uchwyt, tak aby złącza były skierowane do środka i żeby przewody miały krótki, prosty przebieg. W narożach płyty znajdują się białe „klocki” – to obudowy serw ST3215 odpowiedzialnych za skręt osi. Czerwony główny włącznik jest na wierzchu, w zasięgu ręki. Z tyłu mam wygodne gniazdo umożliwiające podłączenie czytnika pomiaru napięcia.
 Ilustracje:
 
-<img src="{{ 'assets/images/etapy_bud/Elektr1.JPG' | relative_url }}" alt="Elektr1" style="width:40%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/etapy_bud/Elektr1.JPG' | relative_url }}" alt="Elektr1" style="width:60%; max-width:100%; height:auto;" />
 
 #### 5) Układ zasilania
 Projektując układ zasilania zaczynam od wymagań napięciowych. Jetson potrzebuje 9–20 V. Silniki DDSM400 (Hub Motors) pracują w zakresie 9–28 V. Serwa z magistrali Bus Servo wymagają 9–12.6 V. Do tego dochodzi zapotrzebowanie na moc: Jetson co najmniej 25 W, cztery silniki po około 25 W każdy, dwa serwa również po około 25 W. W krótkich szczytach cały układ może poprosić nawet o około 175 W. Jetson jest przy tym bardzo wrażliwy na zapady napięcia – przy spadkach potrafi się resetować albo „zgubić” kontrolery. Dlatego zasilanie musi być odporne i stabilne.
