@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Wprowadzenie"
+title: "Model pojazdu do badań nad autonomią"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
-# Model pojazdu do badań nad autonomią <!--more-->
+# Wprowadzenie  <!--more-->
 ## O czym będzie ten cykl
 Buduję model pojazdu, który ma jeździć po:
 
