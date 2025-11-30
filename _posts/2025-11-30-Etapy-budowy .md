@@ -28,9 +28,11 @@ Do napędu używam czterech silników DDSM400, czyli napędów bezpośrednich z 
 Na zdjęciach widać cztery gotowe wózki kół. Każdy ma tę samą budowę: na dole koło z silnikiem DDSM400, nad nim czerwone sprężyny firmowego zawieszenia, a na górze moja "customowa" czarna główka z gniazdem pod stalową oś. Przewód z silnika wyprowadzamy górą przez specjalnie przygotowany otwór, żeby potem łatwo prowadzić go do elektroniki. Dzięki takiej powtarzalności wszystkie narożniki montuje się tak samo, co przyspiesza składanie.
 Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywnego sprzęgła kołnierzowego, które jest blokowane wkrętami. Połączenie musi być bezluzowe tzn. osie muszą być odpowiednio ścięte w miejscu mocowania kołnierza. Ilustracje:
 
-![]({{ "assets/images/etapy_bud/zaw1.jpg" | relative_url }})
-![]({{ "assets/images/etapy_bud/zaw2.jpg" | relative_url }})
-![]({{ "assets/images/etapy_bud/zaw3.jpg" | relative_url }})
+<div style="display:flex; gap:12px; flex-wrap:wrap;">
+  <img src="{{ 'assets/images/etapy_bud/zaw1.jpg' | relative_url }}" alt="zaw1" style="width:40%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw2.jpg' | relative_url }}" alt="zaw2" style="width:40%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw3.jpg' | relative_url }}" alt="zaw3" style="width:50%; max-width:100%; height:auto;" />
+</div>
 
 #### 2) Belka nośna, czyli „most”
 Kolejny element to belka, którą można nazwać mostem przednim lub tylnym. To ona trzyma po parze wózków kół i przenosi siły na ramę. Na jednym ze zdjęć rozłożone są części (elementy wykonane w technice druku 3D): czarny element belki, biała płyta – to pierwszy segment dolnej płyty nośnej – oraz pierwsza, czarna sekcja górnej płyty. Obok leżą pasek i zębatki. Ten zestaw pozwala przenieść ruch serwa skrętu na obie zwrotnice jednocześnie. Napęd skrętu działa prosto: serwo porusza zębatką, ta porusza paskiem, a pasek obraca obie kolumny z osiami kół w przeciwnych kierunkach, tak aby koła skręcały się zgodnie.
