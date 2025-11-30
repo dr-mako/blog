@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "Model pojazdu do badań nad autonomią"
+title: "Etapy budowy platformy modelu"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
-# Etapy budowy platformy modelu <!--more-->
-## Pokażę, etapy budowy platformy modelu — listę elementów, gdzie je kupić oraz jakie wydruki 3D przygotować, żeby złożyć prototyp 
+
+### Pokażę, etapy budowy platformy modelu — listę elementów, gdzie je kupić oraz jakie wydruki 3D przygotować, żeby złożyć prototyp <!--more-->
 
 Tablica ukazuje najważniejsze elementy
 
@@ -29,8 +29,8 @@ Na zdjęciach widać cztery gotowe wózki kół. Każdy ma tę samą budowę: na
 Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywnego sprzęgła kołnierzowego, które jest blokowane wkrętami. Połączenie musi być bezluzowe tzn. osie muszą być odpowiednio ścięte w miejscu mocowania kołnierza. Ilustracje:
 
 <div style="display:flex; gap:12px; flex-wrap:wrap;">
-  <img src="{{ 'assets/images/etapy_bud/zaw1.jpg' | relative_url }}" alt="zaw1" style="width:40%; max-width:100%; height:auto;" />
-  <img src="{{ 'assets/images/etapy_bud/zaw2.jpg' | relative_url }}" alt="zaw2" style="width:40%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw1.jpg' | relative_url }}" alt="zaw1" style="width:0%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/zaw2.jpg' | relative_url }}" alt="zaw2" style="width:50%; max-width:100%; height:auto;" />
   <img src="{{ 'assets/images/etapy_bud/zaw3.jpg' | relative_url }}" alt="zaw3" style="width:50%; max-width:100%; height:auto;" />
 </div>
 
@@ -38,14 +38,24 @@ Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywneg
 Kolejny element to belka, którą można nazwać mostem przednim lub tylnym. To ona trzyma po parze wózków kół i przenosi siły na ramę. Na jednym ze zdjęć rozłożone są części (elementy wykonane w technice druku 3D): czarny element belki, biała płyta – to pierwszy segment dolnej płyty nośnej – oraz pierwsza, czarna sekcja górnej płyty. Obok leżą pasek i zębatki. Ten zestaw pozwala przenieść ruch serwa skrętu na obie zwrotnice jednocześnie. Napęd skrętu działa prosto: serwo porusza zębatką, ta porusza paskiem, a pasek obraca obie kolumny z osiami kół w przeciwnych kierunkach, tak aby koła skręcały się zgodnie.
 
 Na zdjęciu zmontowanej belki widać, że już na tym etapie łączymy ją z fragmentami płyty dolnej i górnej. To wygodne, bo łatwiej zachować równoległość i proste prowadzenie paska. Gniazda pod łożyska i dystanse są „zdrukowane” od razu, więc elementy pasują na wcisk i wystarczy je skręcić śrubami, aby całość była sztywna. Co jest ważne - tak jak poprzednio należy wykonać nacięcia na osi w celu bezluzowego zablokowania zębatek. 
+Ilustracje: 
+
+<div style="display:flex; gap:12px; flex-wrap:wrap;">
+  <img src="{{ 'assets/images/etapy_bud/Belka1.jpg' | relative_url }}" alt="zaw1" style="width:0%; max-width:100%; height:auto;" />
+  <img src="{{ 'assets/images/etapy_bud/Belka2.jpg' | relative_url }}" alt="zaw2" style="width:50%; max-width:100%; height:auto;" />
+</div>
 
 #### 3) Podwozie i nadwozie – trzyczęściowa rama
 Rama składa się z trzech dużych wydruków 3D na dół i trzech na górę. Elementy mają wpusty, które działają jak zatrzaski prowadzące i wymuszają właściwe ułożenie. Po wstępnym „kliknięciu” skręcamy wszystko śrubami. Taka konstrukcja jest lekka, a jednocześnie sztywna. Dolna płyta tworzy podłogę na baterię i konwertery zasilania Vitron Orion. Na zdjęciu z wnętrza widać, że bateria siedzi w niebieskiej osłonie, a obok niej, na białej podstawie, stoją dwa konwertery. Wtyczki XT90 są łatwo dostępne z boku, więc podłączanie i odłączanie zasilania jest szybkie.
 
 Górna płyta to nasz „stół” pod elektronikę. Wydruk ma przeloty na śruby, gniazda pod dystanse oraz wycięcia na przewody. Wysokość dystansów jest dobrana tak, aby między piętrami zostało miejsce na ruch zawieszenia i na przewody od kół, a jednocześnie żeby środek ciężkości był jak najniżej. Po złożeniu dwóch mostów z kołami do dolnej płyty i postawieniu na dystansach górnej płyty otrzymuje sztywną, dwupiętrową konstrukcję.
+Ilustracje:
+<img src="{{ 'assets/images/etapy_bud/Podw1.jpg' | relative_url }}" alt="zaw1" style="width:0%; max-width:100%; height:auto;" />
 
 #### 4) Elektronika na pokładzie
 Na górze umieszczam komputer Jetson Orin Nano (master) w standardowym radiatorze z wentylatorem. Obok są dwa moduły oparte o ESP32: jeden działa jako Hub Motors i obsługuje silniki DDSM400 oraz odczyt ich enkoderów, drugi to Bus Servo, który steruje serwami ST3215 i czyta ich pozycję z enkoderów. Każdy moduł ma własny, drukowany uchwyt, tak aby złącza były skierowane do środka i żeby przewody miały krótki, prosty przebieg. W narożach płyty znajdują się białe „klocki” – to obudowy serw ST3215 odpowiedzialnych za skręt osi. Czerwony główny włącznik jest na wierzchu, w zasięgu ręki. Z tyłu mam wygodne gniazdo umożliwiające podłączenie czytnika pomiaru napięcia.
+Ilustracje:
+<img src="{{ 'assets/images/etapy_bud/Elektr.jpg' | relative_url }}" alt="zaw1" style="width:0%; max-width:100%; height:auto;" />
 
 #### 5) Układ zasilania
 Projektując układ zasilania zaczynam od wymagań napięciowych. Jetson potrzebuje 9–20 V. Silniki DDSM400 (Hub Motors) pracują w zakresie 9–28 V. Serwa z magistrali Bus Servo wymagają 9–12.6 V. Do tego dochodzi zapotrzebowanie na moc: Jetson co najmniej 25 W, cztery silniki po około 25 W każdy, dwa serwa również po około 25 W. W krótkich szczytach cały układ może poprosić nawet o około 175 W. Jetson jest przy tym bardzo wrażliwy na zapady napięcia – przy spadkach potrafi się resetować albo „zgubić” kontrolery. Dlatego zasilanie musi być odporne i stabilne.
@@ -53,6 +63,8 @@ Projektując układ zasilania zaczynam od wymagań napięciowych. Jetson potrzeb
 Wybrałem układ jednobateryjny. To najprostsze rozwiązanie: jeden akumulator LiPo 6S, około 24 V, 11 Ah, z wysokim dopuszczalnym prądem rozładowania 110C. Jedna bateria to mniej przewodów, mniej złącz i prostsze ładowanie. W tym wariancie Hub Motors zasilam bezpośrednio z baterii 24 V, natomiast Jetsona i magistralę serw zasilam przez stabilne przemysłowe przetwornice buck 12 V o dużej mocy. Zastosowałem Victron Orion 18–36 V / 12 V, 20 A (240 W) – po jednej sztuce dla Jetsona i dla Bus Servo. Dzięki temu komputer i serwa dostają czyste, trzymane na sztywno 12 V, niezależnie od tego, co dzieje się na linii napędu.
 
 Szczegóły połączeń oraz zastosowane zabezpieczenia prądowe (główny bezpiecznik przy baterii, bezpieczniki na wyjściach i podział masy na wspólnej szynie) pokazuje dołączony schemat.
+Ilustracje:
+<img src="{{ 'assets/images/etapy_bud/Schemat zasilania.png' | relative_url }}" alt="zaw1" style="width:0%; max-width:100%; height:auto;" />
 
 #### 6) Komunikacja
 Sterowanie zaczynamy od kontrolera Bluetooth. Sygnał z pada trafia do małego odbiornika USB, który wpinamy w Jetsona. Jetson widzi go jak zwykłą klawiaturę/joystick i czyta przyciski oraz drążki. Z Jetsona wychodzą dwa kable USB – każdy do innego ESP32. Pierwszy idzie do ESP32 DDSM Driver HAT, który obsługuje cztery silniki DDSM400 (napęd). Drugi idzie do ESP32 Servo Driver, który steruje dwoma serwami ST3215 (skręt). Każdy ESP jest osobnym urządzeniem szeregowym i dostaje swój port, np. /dev/ttyUSB0 i /dev/ttyUSB1. Dzięki temu nie ma konfliktów – program na Jetsonie otwiera dwa niezależne połączenia.
