@@ -17,6 +17,8 @@ To jedna wspólna platforma do ćwiczenia sterowania, pomiaru, estymacji stanu, 
 ## Co już jest
 Na dziś mam gotowe podwozie samochodu z czterema kołami napędzanymi niezależnie — to tzw. napęd bezpośredni, z silnikami umieszczonymi w kołach. Skręt realizuję dwoma serwami: jednym dla pary kół przednich i jednym dla pary tylnych. Każda para kół jest sprzężona paskiem rozrządu. Taki układ jest sztywny i pozbawiony luzów, ale ma tę wadę, że koła skręcają się pod identycznym kątem. W efekcie promienie zataczane przez koła nie przecinają się w jednym wspólnym środku obrotu. Zastosowany napęd pozwala programowo wprowadzić wirtualny dyferencjał prędkościowy, ale nie umożliwia dyferencjału kątowego. Używam silników DDSM400 oraz serw ST3215 z wbudowanymi enkoderami magnetycznymi. Dzięki temu mogę stale kontrolować prędkość i kurs pojazdu, a odpowiednie filtry pozwalają na bieżąco śledzić jego trajektorię. Do sterowania i zapisu logów wykorzystuję komputer Jetson Orin Nano (wersja Super), który umożliwia uruchomienie lokalnego, małego modelu językowego. Komputer przyjmuje komendy głosowe i może zaplanować trasę przejazdu, a warstwę wykonawczą realizuje serwer w Pythonie. 
 
+<img src="{{ 'assets/images/Wprowadzenie/Wprowadzenie.JPG' | relative_url }}" alt="Wprowadzenie" style="width:60%; max-width:100%; height:auto;" />
+
 # Co planuję w najbliższych wpisach
 
 #### 1) Sterowanie i geometria
