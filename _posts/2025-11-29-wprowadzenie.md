@@ -4,8 +4,8 @@ title: "Model pojazdu do badań nad autonomią"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
-# Wprowadzenie  <!--more-->
-## O czym będzie ten cykl
+# O czym będzie ten cykl.  <!--more-->
+## Koncepcja projektu
 Buduję model pojazdu, który ma jeździć po:
 
 - torze PRT z laboratoriów Wydziału Transportu,
