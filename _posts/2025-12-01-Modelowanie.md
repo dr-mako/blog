@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Modelowanieu"
+title: "Modelowanie"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
@@ -33,7 +33,7 @@ Stosuje model 2WS "rowerowy". Przyjmuję następujące założenia:
 - Koła tylne są sztywne (oś tylna toczna, bez skrętu).
 - Koła przednie są skrętne; dopuszczamy różne kąty kół wewnętrznego i zewnętrznego, w ten sposób że proste prostopadłe do powierzchni bocznych przecinają się w jednym puncie - środku obrotu pojazdu ICR.
 
-<img src="{{ 'assets/images/modelowanie/model2WS.png' | relative_url }}" alt="model2WS" style="width:60%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/model2WS.png' | relative_url }}" alt="model2WS" style="width:100%; max-width:100%; height:auto;" />
 
 Otrzymuje:
 Związek krzywizny z kątem skrętu:
@@ -81,7 +81,7 @@ Długość przebytej drogi w kroku czasu \(\Delta T\) w ruchu po łuku wynoszą:
 
 \(\lambda = v\,\Delta T = R_{\mathrm{ICR}}\,\Delta \theta\)
 
-<img src="{{ 'assets/images/modelowanie/model4WS.png' | relative_url }}" alt="model4WS" style="width:60%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/model4WS.png' | relative_url }}" alt="model4WS" style="width:50%; max-width:100%; height:auto;" />
 
 Równania ruchu (środek pojazdu, układ globalny):
 
@@ -119,7 +119,7 @@ Konsekwencje:
 #### 5) Obserwacja zmiennych stanu — problem do rozwiązania
 Jak pokazałem wcześniej, ruch pojazdu opisany zmiennymi stanu \([x, y, \Theta]\) traktuję jako konsekwencję sterowania parami \([v, \delta]\). Teraz zaglądam „pod maskę” — chcę zobaczyć, co dzieje się, gdy pojawią się błędy i zakłócenia oraz jak wpływają one na proces sterowania (którego celem jest osiągnięcie pożądanego zachowania obiektu mimo zakłóceń).
 
-<img src="{{ 'assets/images/modelowanie/Schemat_sterowania.png' | relative_url }}" alt="Schemat_sterowania" style="width:60%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/Schemat_sterowania.png' | relative_url }}" alt="Schemat_sterowania" style="width:100%; max-width:100%; height:auto;" />
 
 Rysunek pokazuje również, że szumy i zakłócenia (według miejsca powstawania w łańcuchu sterowania) można rozróżnić następująco:
 
@@ -130,7 +130,7 @@ Rysunek pokazuje również, że szumy i zakłócenia (według miejsca powstawani
 
 W moim układzie mogę bezpośrednio nastawiać i mierzyć prędkości obrotowe kół oraz kąty skrętu serw. Natomiast zmienne stanu opisujące ruch (położenie i kurs) nie są mierzalne wprost. Jeśli na nich mi zależy — a to jest właśnie ten przypadek — muszę je wyznaczać pośrednio na podstawie równań modelu. Problemem są tu zakłócenia i szumy. Tę funkcję przejmie obserwator zmiennych stanu.
 
-<img src="{{ 'assets/images/modelowanie/obserwator.png' | relative_url }}" alt="obserwator" style="width:60%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/obserwator.png' | relative_url }}" alt="obserwator" style="width:100%; max-width:100%; height:auto;" />
 
 Mój model, w którym umieszczam obserwator, ma dwie warstwy zmiennych: widzialną i ukrytą.
 
@@ -141,7 +141,7 @@ Warstwa widzialna:
 Warstwa ukryta:
 - rzeczywisty stan \(x\) (położenie, orientacja/kurs, prędkości, ewentualne poślizgi), podlegający niepewnościom: realizacyjnym, procesowym i pomiarowym.
 
-<img src="{{ 'assets/images/modelowanie/warstwy_modelu.png' | relative_url }}" alt="warstwy_modelu" style="width:60%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/warstwy_modelu.png' | relative_url }}" alt="warstwy_modelu" style="width:100%; max-width:100%; height:auto;" />
 
 Cel modelowania formułuję następująco: wyznaczyć najlepsze oszacowanie \(\hat{x}\) na podstawie \(u\) i \(y\), mimo błędów modelu i szumów. Jest to problem probabilistyczny; zastosuję prawo propagacji niepewności i filtrację.
 
