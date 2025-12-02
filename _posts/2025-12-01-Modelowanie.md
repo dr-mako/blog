@@ -42,7 +42,7 @@ Zastosuję prosty model Ackermanna w ujęciu „rowerowym” (bicycle model) dla
 
 W modelu 2WS skrętna jest wyłącznie oś przednia, a oś tylna jest toczna. W idealizacji Ackermanna dopuszczamy różne kąty skrętu kół wewnętrznego i zewnętrznego na osi przedniej tak, aby przedłużenia ich płaszczyzn przecinały się w jednym punkcie ICR (środek obrotu — Instantaneous Center of Rotation). Dzięki temu ruch jest bezpoślizgowy: wszystkie koła poruszają się po współśrodkowych okręgach ze wspólnym środkiem obrotu ICR.
 
-Model „rowerowy” zastępuje pary kół kołem ekwiwalentnym: z przodu i z tyłu umieszczam po jednym „kole zastępczym” w środku osi, a skręt opisuję pojedynczym kątem $\delta$. Ponieważ w modelu 2WS łuk ruchu wyznacza oś tylna, stan pojazdu definiuję w środku osi tylnej: zmienne stanu $[x, y, \Theta]$ to globalne współrzędne i orientacja pojazdu. Promień do ICR oznaczam $R_{\mathrm{ICR}}$.
+W modelu „rowerowym” zastępuje pary kół kołem ekwiwalentnym. Z przodu i z tyłu umieszczam po jednym „kole zastępczym” w środku osi, a skręt opisuję pojedynczym kątem $\delta$. Ponieważ w modelu 2WS łuk ruchu wyznacza oś tylna, stan pojazdu definiuję w środku osi tylnej i opisuje zmiennymi stanu $[x, y, \Theta]$. Traktuje je jako współrzędne położenia i orientacja pojazdu w globalnym układzie odniesienia. Promień wycinka łuku kołowego do środka  ICR oznaczam $R_{\mathrm{ICR}}$.
 
 Ten model pozwoli pokazać, że sterowanie pojazdem mogę realizować w lokalnym układzie odniesienia za pomocą pary zmiennych $[v, \delta]$ (prędkość i kąt skrętu), a jego efektem jest zmiana położenia i kursu w układzie globalnym, opisana przez zmienne $[x, y, \Theta]$. Na tej bazie w prosty sposób rozszerzę opis do przypadku 4WS.
 
