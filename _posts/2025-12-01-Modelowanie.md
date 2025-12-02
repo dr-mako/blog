@@ -34,17 +34,17 @@ Parametry geometryczne prototypu
 
 - Rozstaw kół: $D = 153\,\mathrm{mm}$
 - Rozstaw osi: $L = 260\,\mathrm{mm}$
-- Zakres skrętu mechaniczny: $0^\circ\!-\!90^\circ$, ograniczenie programowe: $35^\circ$
+- Zakres skrętu mechaniczny: $0^\circ$-- $\!90^\circ$, ograniczenie programowe: $35^\circ$
 - Promień koła: $R_w = 37.25\,\mathrm{mm}$
 
 ### 1) Koncepcja
-Zastosuję prosty model Ackermanna w ujęciu „rowerowym” (bicycle model) dla konfiguracji 2WS (przednia para kół skrętna), a następnie rozszerzę go do mojego przypadku 4WS (przód + tył skrętne, przeciwfazowo).
+W tym poście, do opisu ruchu pojazdu zastosuję prosty model Ackermanna w ujęciu „rowerowym” (bicycle model dla konfiguracji 2WS przednia para kół skrętna), a następnie rozszerzę go do mojego przypadku 4WS (przód + tył skrętne, przeciwfazowo).
 
 W modelu 2WS skrętna jest wyłącznie oś przednia, a oś tylna jest toczna. W idealizacji Ackermanna dopuszczamy różne kąty skrętu kół wewnętrznego i zewnętrznego na osi przedniej tak, aby przedłużenia ich płaszczyzn przecinały się w jednym punkcie ICR (środek obrotu — Instantaneous Center of Rotation). Dzięki temu ruch jest bezpoślizgowy: wszystkie koła poruszają się po współśrodkowych okręgach ze wspólnym środkiem obrotu ICR.
 
-W modelu „rowerowym” zastępuje pary kół kołem ekwiwalentnym. Z przodu i z tyłu umieszczam po jednym „kole zastępczym” w środku osi, a skręt opisuję pojedynczym kątem $\delta$. Ponieważ w modelu 2WS łuk ruchu wyznacza oś tylna, stan pojazdu definiuję w środku osi tylnej i opisuje zmiennymi stanu $[x, y, \Theta]$. Traktuje je jako współrzędne położenia i orientacja pojazdu w globalnym układzie odniesienia. Promień wycinka łuku kołowego do środka  ICR oznaczam $R_{\mathrm{ICR}}$.
+W modelu „rowerowym” zastępuje pary kół kołem ekwiwalentnym. Z przodu i z tyłu umieszczam po jednym „kole zastępczym” w środku osi, a skręt opisuję pojedynczym kątem $\delta$. Ponieważ w modelu 2WS łuk ruchu wyznacza oś tylna, stan pojazdu definiuję w środku osi tylnej i opisuje zmiennymi stanu $[x, y, \Theta]$. Traktuje je jako współrzędne położenia i orientacji pojazdu w globalnym układzie odniesienia. Promień wycinka łuku kołowego do środka  ICR oznaczam $R_{\mathrm{ICR}}$.
 
-Ten model pozwoli pokazać, że sterowanie pojazdem mogę realizować w lokalnym układzie odniesienia za pomocą pary zmiennych $[v, \delta]$ (prędkość i kąt skrętu), a jego efektem jest zmiana położenia i kursu w układzie globalnym, opisana przez zmienne $[x, y, \Theta]$. Na tej bazie w prosty sposób rozszerzę opis do przypadku 4WS.
+Ten model pozwoli mi pokazać, że sterowanie pojazdem mogę realizować w lokalnym układzie odniesienia za pomocą pary zmiennych $[v, \delta]$ (prędkość i kąt skrętu), a jego efektem jest zmiana położenia i kursu w układzie globalnym, opisana przez zmienne $[x, y, \Theta]$ (współrzędne położenia x,y punktu środka osi tylnej w globalnym układzie odniesienia XOY oraz kąt zwrotu osi pojazdu względem osi OX). Na tej bazie w prosty sposób rozszerzę opis ruchu pojazdu do przypadku 4WS.
 
 #### 2) Model 2WS. Minimum wzorów do opisania zależności kinematycznych
 Stosuję model 2WS „rowerowy”. Przyjmuję następujące założenia:
@@ -179,7 +179,7 @@ gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$).
 
 #### 4) Model 4WS — pary kół identycznie skrętne, różnica względem Ackermanna
 W praktycznej realizacji mojego pojazdu przyjmuję równoległe ustawienie kół po lewej i prawej stronie tej samej osi (brak geometrii Ackermanna na osi). To oznacza:
-- kąty kół lewe/prawe na danej osi są identyczne,
+- kąty skrętu kół lewe/prawe na danej osi są identyczne,
 - proste prostopadłe do płaszczyzn kół na tej osi są równoległe i nie przecinają się w jednym punkcie,
 - nie istnieje jeden wspólny ICR dla wszystkich kół.
 
@@ -191,7 +191,7 @@ Konsekwencje:
 #### 5) Obserwacja zmiennych stanu — problem do rozwiązania
 Jak pokazałem wcześniej, ruch pojazdu opisany zmiennymi stanu $[x, y, \Theta]$ traktuję jako konsekwencję sterowania parami $[v, \delta]$. Teraz zaglądam „pod maskę” — chcę zobaczyć, co dzieje się, gdy pojawią się błędy i zakłócenia oraz jak wpływają one na proces sterowania (którego celem jest osiągnięcie pożądanego zachowania obiektu mimo zakłóceń).
 
-<img src="{{ 'assets/images/modelowanie/Schemat_sterowania.png' | relative_url }}" alt="Schemat_sterowania" style="width:120%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/Schemat_sterowania.png' | relative_url }}" alt="Schemat_sterowania" style="width:125%; max-width:100%; height:auto;" />
 
 Rysunek powyżej pokazuje, że szumy i zakłócenia (według miejsca powstawania w łańcuchu sterowania) można rozróżnić następująco:
 - sterowania — dodają się do sygnałów sterujących (gaz/hamulec/skręt),
@@ -213,7 +213,7 @@ Warstwa ukryta:
 
 <img src="{{ 'assets/images/modelowanie/warstwy_modelu.png' | relative_url }}" alt="warstwy_modelu" style="width:75%; max-width:100%; height:auto;" />
 
-Cel modelowania formułuję następująco: wyznaczyć najlepsze oszacowanie $\hat{x}$ na podstawie $u$ i $y$, mimo błędów modelu i szumów. Jest to problem probabilistyczny; zastosuję prawo propagacji niepewności i filtrację.
+Cel modelowania formułuję następująco: wyznaczyć najlepsze oszacowanie $\hat{x}$ na podstawie $u$ i $y$, mimo błędów modelu i szumów. Jest to problem probabilistyczny; do jego rozwiązania zastosuję prawo propagacji niepewności i filtrację.
 
 Ujęcie równań modelu:
 
@@ -238,7 +238,7 @@ $$
 — szum pomiaru $v_k$.
 
 #### 6) Prosta odometria modelu 4WS
-Zanim zacznę modelowanie, ustalam sposób sterowania i efekt ruchu oraz wybór modelu. Pojazdem steruję, nadając prędkości silnikom i ustawiając kąt skrętu kół. Efektem jest ruch postępowy albo obrót po łuku wokół chwilowego środka obrotu ICR. Do opisu wystarczy najprostsza kinematyka — model Ackermanna w wariancie 4WS (przeciwfazowo), bez wchodzenia w dynamikę i poślizgi.
+Zanim zacznę modelowanie, ustalam sposób sterowania i efekt ruchu oraz wybór modelu. Pojazdem steruję, nastawiając prędkości silników i ustawiając kąty skrętu kół. Efektem jest ruch postępowy albo obrót po łuku wokół chwilowego środka obrotu ICR. Do opisu wystarczy najprostsza kinematyka — model Ackermanna w wariancie 4WS (przeciwfazowo), bez wchodzenia w dynamikę i poślizgi.
 
 Stan pojazdu opisuję wektorem $x = [x, y, \Theta]^{\mathsf T}$, gdzie $x$ i $y$ to współrzędne w globalnym układzie odniesienia, a $\Theta$ to orientacja (kąt zwrotu) nadwozia względem osi OX. Sterowanie zbieram w wektorze $u = [v_{\mathrm{icr}}, \delta]^{\mathsf T}$. W praktyce wygodniej jest sterować prędkością liniową pojazdu $v$ (w środku pojazdu) i kątem skrętu $\delta$, ale w odometrii 4WS można myśleć równoważnie o prędkości „centralnej” związanej z ruchem po okręgu wokół ICR.
 
