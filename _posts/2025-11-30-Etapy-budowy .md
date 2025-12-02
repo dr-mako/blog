@@ -5,7 +5,7 @@ author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
 
-### Pokażę, etapy budowy platformy modelu — listę elementów, oraz jakie wydruki 3D przygotować, żeby złożyć prototyp <!--more-->
+### Etapy budowy platformy modelu, lista elementów, wydruki 3D  <!--more-->
 
 Tablica ukazuje najważniejsze elementy
 
