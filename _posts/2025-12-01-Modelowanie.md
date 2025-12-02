@@ -7,7 +7,7 @@ excerpt_separator: <!--more-->
 
 ### Opis modelu <!--more-->
 
-<<!-- MathJax tylko dla tego wpisu -->
+<!-- MathJax tylko dla tego wpisu -->
 <!-- MathJax dla $…$, $$…$$ oraz \( … \), \[ … \] -->
 <script>
   window.MathJax = {
@@ -22,6 +22,7 @@ excerpt_separator: <!--more-->
     }
   };
 </script>
+
 <script
   id="MathJax-script"
   async
