@@ -88,9 +88,23 @@ Oznaczenia:
 
 Równania ruchu (postać ciągła dla punktu środka osi tylnej, układ globalny) przyjmują postać:
 
-\(\dfrac{dx}{dt} = v \cos \Theta\)  
-\(\dfrac{dy}{dt} = v \sin \Theta\)  
-\(\dfrac{d\Theta}{dt} = \dfrac{v}{L}\,\tan \delta\)
+$$
+\begin{aligned}
+\dfrac{dx}{dt} = v \cos \Theta\ 
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\dfrac{dy}{dt} = v \sin \Theta\ 
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\dfrac{d\Theta}{dt} = \dfrac{v}{L}\,\tan \delta\
+\end{aligned}
+$$
 
 gdzie oznaczono:
 
@@ -121,19 +135,49 @@ $$
 
 Równania ruchu (postać ciągła dla środka pojazdu, układ globalny) przyjmują postać:
 
-\(\dfrac{dx}{dt} = v \cos \Theta\)  
-\(\dfrac{dy}{dt} = v \sin \Theta\)  
-\(\dfrac{d\Theta}{dt} = \dfrac{2v}{L}\,\tan \delta\)
+
+$$
+\begin{aligned}
+\dfrac{dx}{dt} = v \cos \Theta\
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\dfrac{dy}{dt} = v \sin \Theta
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\dfrac{d\Theta}{dt} = \dfrac{2v}{L}\,\tan \delta
+\end{aligned}
+$$
+
 
 Przyjmując ruch bez poślizgu (uproszczenie konieczne dla zachowania „czystej” kinematyki), promienie toru kół (względem tego samego ICR) określam następująco:
 
-wewnętrzny: \(R_{\mathrm{in}}(\delta) = R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}\)
+wewnętrzny:
 
-zewnętrzny: \(R_{\mathrm{out}}(\delta) = R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}\)
+$$ 
+\begin{aligned}
+R_{\mathrm{in}}(\delta) = R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2} 
+\end{aligned} 
+$$ 
+
+zewnętrzny:
+$$ 
+\begin{aligned} 
+R_{\mathrm{out}}(\delta) = R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}
+\end{aligned} 
+$$ 
 
 Dla sterowania „prędkością centralną” (\(n_c \propto v\)) otrzymuję dyferencjał prędkościowy (prędkości kół dobrane do promieni toru, aby unikać poślizgu):
-
-\(n_{\mathrm{in}} = n_c \dfrac{R_{\mathrm{in}}}{R_c},\quad n_{\mathrm{out}} = n_c \dfrac{R_{\mathrm{out}}}{R_c}\)
+$$ 
+\begin{aligned} 
+n_{\mathrm{in}} = n_c \dfrac{R_{\mathrm{in}}}{R_c},\quad n_{\mathrm{out}} = n_c \dfrac{R_{\mathrm{out}}}{R_c}\
+\end{aligned} 
+$$ 
 
 gdzie \(R_c\) to promień toru środka pojazdu (tu \(R_c = R_{\mathrm{ICR}}\)).
 
