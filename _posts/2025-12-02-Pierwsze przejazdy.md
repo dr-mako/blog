@@ -60,9 +60,9 @@ Skale wynikają z dokumentacji:
 
 Konwersje do SI:
 
-- prędkość liniowa koła: \(v = 2\pi R_w \cdot \mathrm{spd}/60\)  (po uwzględnieniu skali 0.1 rpm),
+- prędkość liniowa koła: $v = 2\pi R_w \cdot \mathrm{spd}/60$  (po uwzględnieniu skali 0.1 rpm),
 
-- kąt skrętu: \(\delta = \mathrm{deg}\cdot \pi/180\).
+- kąt skrętu: $\delta = \mathrm{deg}\cdot \pi/180$.
 
 Model obliczeniowy wymaga jednej pary zmiennych sterujących {prędkość, kąt skrętu}. W logach mam cztery prędkości silników i dwa kąty skrętu. W tej fazie przyjmuję uśrednianie:
 
