@@ -157,15 +157,14 @@ $$
 
 Przyjmując ruch bez poślizgu (uproszczenie konieczne dla zachowania „czystej” kinematyki), promienie toru kół (względem tego samego ICR) określam następująco:
 
-wewnętrzny:
-
+wewnętrzny:  
 $$ 
 \begin{aligned}
 R_{\mathrm{in}}(\delta) = R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2} 
 \end{aligned} 
 $$ 
 
-zewnętrzny:
+zewnętrzny:  
 $$ 
 \begin{aligned} 
 R_{\mathrm{out}}(\delta) = R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}
@@ -220,8 +219,20 @@ Warstwa ukryta:
 Cel modelowania formułuję następująco: wyznaczyć najlepsze oszacowanie \(\hat{x}\) na podstawie \(u\) i \(y\), mimo błędów modelu i szumów. Jest to problem probabilistyczny; zastosuję prawo propagacji niepewności i filtrację.
 
 Ujęcie równań modelu:
-- dynamika: \(x_{k+1} = f(x_k, u_k, d_k) + w_k\) — szum procesu \(w_k\),
-- pomiar: \(y_k = h(x_k) + v_k\) — szum pomiaru \(v_k\).
+- dynamika:
+$$ 
+\begin{aligned} 
+x_{k+1} = f(x_k, u_k, d_k) + w_k\
+\end{aligned} 
+$$ 
+— szum procesu \(w_k\),
+- pomiar: 
+$$ 
+\begin{aligned}
+y_k = h(x_k) + v_k\
+\end{aligned} 
+$$ 
+— szum pomiaru \(v_k\).
 
 Praktyka: obserwator/filtr (np. filtr Kalmana) łączy model z pomiarem, równoważąc niepewność wnoszoną przez \(w\) i \(v\), tak aby na bieżąco dostarczać estymatę stanu \(\hat{x}_k\) użyteczną do sterowania i diagnostyki.
 
@@ -232,13 +243,23 @@ Stan pojazdu opisuję wektorem \(x = [x, y, \Theta]^{\mathsf T}\), gdzie \(x\) i
 
 Równania aktualizacji stanu otrzymuję przez dyskretyzację równań ruchu. Stosuję prostą dyskretyzację explicite (Euler w przód) z kątem liczonym z poprzedniego kroku, bo w typowym sterowaniu wartości utrzymane są stałe przez cały krok czasu \(\Delta T\). Wtedy:
 
-\[
-\begin{aligned}
+$$ 
+\begin{aligned} 
 x_k &= x_{k-1} + V_k\,\Delta T \,\cos \Theta_{k-1},\\
+\end{aligned}
+$$
+
+$$ 
+\begin{aligned}
 y_k &= y_{k-1} + V_k\,\Delta T \,\sin \Theta_{k-1},\\
+\end{aligned}
+$$
+
+$$ 
+\begin{aligned}
 \Theta_k &= \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k.
 \end{aligned}
-\]
+$$
 
 gdzie: \(\delta_k\) to zastępczy kąt skrętu w modelu 4WS przeciwfazowego, \(\Theta_k\) to orientacja pojazdu w układzie globalnym, \(V_k\) — prędkość liniowa (w środku pojazdu), \(L\) — rozstaw osi, a \(\Delta T\) — krok czasu. Ten schemat stanowi bazę do odometrii: integruję przebyte odcinki i przyrosty orientacji, korzystając z próbkowanych sygnałów sterujących i/lub z estymowanych prędkości. W praktycznej implementacji ograniczam kąt skrętu do dopuszczalnego zakresu, pilnuję wspólnego zegara dla wszystkich sygnałów oraz — gdy to potrzebne — stosuję korekty (np. filtrację) w celu redukcji dryftu wynikającego z szumów i błędów modelu.
 
