@@ -5,21 +5,49 @@ author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
 
+<!-- MathJax tylko dla tego wpisu -->
+<!-- MathJax dla $…$, $$…$$ oraz \( … \), \[ … \] -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+></script>
+
 ### Rachunek niepewności i propagacja błędu w modelu ruchu (Ackermann‑predict) <!--more-->
 
 ### 1) Koncepcja obliczania błędów
 Zakładam, że źródłem odchyleń od rzeczywistych nieznanych wartości zmiennych są szumy (procesu i pomiaru). Obliczenia prowadzę iteracyjnie w czasie dyskretnym. Ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Model wyjściowy to równania kroku aktualizacji czasu, wiec je tu przypomnę:
 
 $$
+\begin{aligned}
 x_k = x_{k-1} + V_k\,\Delta T \cos \Theta_{k-1}
+\end{aligned}
 $$
 
 $$
+\begin{aligned}
 y_k = y_{k-1} + V_k\,\Delta T \sin \Theta_{k-1}
+\end{aligned}
 $$
 
 $$
+\begin{aligned}
 \Theta_k = \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k
+\end{aligned}
 $$
 
 Chcemy znać, jak rośnie niepewność stanu między chwilami k−1 i k. Błąd stanu w k−1 opisuje macierz kowariancji $P_{k-1}$. Naszym celem jest wyznaczyć $P_k$.
@@ -27,56 +55,89 @@ Chcemy znać, jak rośnie niepewność stanu między chwilami k−1 i k. Błąd 
 #### 2) Błędy stanu i sterowania
 Przyjmuję, że rozkłady gęstości prawdopodobieństw błędów są normalne. Niepewność początkową definiuję przez macierz kowariancji stanu:
 
-\(P_0 = \mathrm{diag}\big(\sigma_x^2,\ \sigma_y^2,\ \sigma_\Theta^2\big)\)
+$$
+\begin{aligned}
+P_0 = \mathrm{diag}\big(\sigma_x^2,\ \sigma_y^2,\ \sigma_\Theta^2\big)
+\end{aligned}
+$$
 
 Niepewność sterowania (wejść) opisuje macierz kowariancji:
 
-\(Q_0 = \mathrm{diag}\big(\sigma_V^2,\ \sigma_\delta^2\big)\)
+$$
+\begin{aligned}
+(Q_0 = \mathrm{diag}\big(\sigma_V^2,\ \sigma_\delta^2\big)
+\end{aligned}
+$$
 
-gdzie \(\sigma\) to odchylenie standardowe, a \(\sigma^2\) wariancja.
+gdzie $\sigma$ to odchylenie standardowe, a $\sigma^2$ wariancja.
 
 #### 3) Linearyzacja kroku (Ackermann‑predict)
-Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu punktu pracy \(\bar x,\ \bar u\) (Euler w przód, stałe sterowanie w kroku):
+Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu punktu pracy $\bar x$, $\bar u$   (Euler w przód, stałe sterowanie w kroku):
 
-\(x_k \approx f(\bar x,\bar u) + F_k\,(x_{k-1}-\bar x) + G_k\,(u_k-\bar u)\)
+$$
+\begin{aligned}
+x_k \approx f(\bar x,\bar u) + F_k\,(x_{k-1}-\bar x) + G_k\,(u_k-\bar u)
+\end{aligned}
+$$
 
+$$
+\begin{aligned}
+x_k = [\,x_k,\ y_k,\ \Theta_k\,]^T
+\end{aligned}
+$$
 
-\(x_k = [\,x_k,\ y_k,\ \Theta_k\,]^T\)
+$$
+\begin{aligned}
+F_k = \dfrac{\partial f}{\partial x}\big|_{k-1}
+\end{aligned}
+$$
 
-\(F_k = \dfrac{\partial f}{\partial x}\big|_{k-1}\)
-
-\(F_k =
+$$
+\begin{aligned}
+F_k =
 \begin{bmatrix}
 1 & 0 & -V_k\,\Delta T\,\sin \Theta_{k-1} \\
 0 & 1 & \ \ V_k\,\Delta T\,\cos \Theta_{k-1} \\
 0 & 0 & 1
-\end{bmatrix}\)
+\end{bmatrix}
+\end{aligned}
+$$
 
-
-\(G_k =
+$$
+\begin{aligned}
+G_k =
 \begin{bmatrix}
 \Delta T \cos \Theta_{k-1} & 0 \\
 \Delta T \sin \Theta_{k-1} & 0 \\
 \dfrac{2\,\Delta T}{L}\,\tan \delta_k & \dfrac{2\,V_k\,\Delta T}{L}\,\sec^2 \delta_k
-\end{bmatrix}\)
+\end{bmatrix}
+\end{aligned}
+$$
 
 #### 4) Krok predykcji oparty na pomiarach, nie na sterowaniach
 W mojej implementacji nie korzystam z sygnałów sterujących jako wejść do predykcji. Powód jest praktyczny: opóźnienia między wydaniem komendy a realną odpowiedzią serwa i silników są na tyle duże i zmienne, że „u” nie reprezentuje tego, co działo się z pojazdem w danym kroku czasu. Zamiast tego opieram krok przewidywania bezpośrednio na pomiarach prędkości i kąta skrętu (FBK z enkoderów serw i prędkości kół po konwersji do jednostek SI). Innymi słowy: to, co zwykle w literaturze bywa traktowane jako sterowanie, u mnie pełni rolę obserwowanej wielkości kinematycznej, już uwzględniającej wewnętrzne dynamiki aktuatorów i ich opóźnienia.
 
 W tej konwencji:
 
+- Równania aktualizacji stanu pozostają bez zmian, ale symbolicznie traktuję $V_k$ i $\delta_k$ jako pomiary (z niepewnością), a nie polecenia sterujące.
 
-- Równania aktualizacji stanu pozostają bez zmian, ale symbolicznie traktuję \(V_k\) i \(\delta_k\) jako pomiary (z niepewnością), a nie polecenia sterujące.
-
-- Macierz kowariancji wejść \(Q_k\) opisuje niepewność pomiarów prędkości i kąta skrętu (szum/rozrzut FBK), a nie niepewność komend.
+- Macierz kowariancji wejść $Q_k$ opisuje niepewność pomiarów prędkości i kąta skrętu (szum/rozrzut FBK), a nie niepewność komend.
 
 Zatem propagacja niepewności w kroku „predict” ma postać
 
-\(\hat x_k^{-} = f(\hat x_{k-1},\, z_k)\),
+$$
+\begin{aligned}
+\hat x_k^{-} = f(\hat x_{k-1},\, z_k),
+\end{aligned}
+$$
 
-\(P_k^{-} = F_k P_{k-1} F_k^\top + G_k Q_k G_k^\top\),
+$$
+\begin{aligned}
+(P_k^{-} = F_k P_{k-1} F_k^\top + G_k Q_k G_k^\top,
+\end{aligned}
+$$
 
-gdzie \(z_k = [V_k,\ \delta_k]^\top\) to wektor pomiarów kinematycznych (a nie sterowań).
+gdzie $$ \begin{aligned} z_k = [V_k,\ \delta_k]^\top \end{aligned} $$ to wektor pomiarów kinematycznych (a nie sterowań).
 
 Dlaczego tak?
 
@@ -85,7 +146,7 @@ Eliminuje to błąd modelowania związany z nieznanym i zmiennym opóźnieniem w
 
 
 #### 5) O przyszłej fuzji
-W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna/SLAM, w tym wariant monokularny). Gdy będę znał niepewności lokalizacji z mapy obrazów, połączę „trajektorię kinematyczną” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, ważoną wiarygodnościami obu źródeł. Na tym etapie wystarczy świadomość, że obecny krok „predict” już uwzględnia niepewność pomiarów \(V,\delta\); dodatkowe czujniki wejdą później jako niezależne obserwacje tego samego stanu.
+W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna/SLAM, w tym wariant monokularny). Gdy będę znał niepewności lokalizacji z mapy obrazów, połączę „trajektorię kinematyczną” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, ważoną wiarygodnościami obu źródeł. Na tym etapie wystarczy świadomość, że obecny krok „predict” już uwzględnia niepewność pomiarów V,$\delta$; dodatkowe czujniki wejdą później jako niezależne obserwacje tego samego stanu.
 
 #### 6) Przejazd 1
 Wynik estymacji błędu wzdłóż trajektorii przedstawia rys:
