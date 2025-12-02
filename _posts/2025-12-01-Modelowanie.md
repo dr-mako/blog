@@ -7,7 +7,7 @@ excerpt_separator: <!--more-->
 
 ### Opis modelu <!--more-->
 
-<!-- MathJax tylko dla tego wpisu (obsługa $…$ i $$…$$) -->
+<!-- MathJax tylko dla tego wpisu ($…$ i $$…$$ + aligned) -->
 <script>
   window.MathJax = {
     tex: {
@@ -16,9 +16,7 @@ excerpt_separator: <!--more-->
       processEscapes: true,
       processEnvironments: true
     },
-    options: {
-      skipHtmlTags: ['script','noscript','style','textarea','pre','code']
-    }
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
   };
 </script>
 <script
@@ -53,13 +51,17 @@ Stosuję model 2WS „rowerowy”. Przyjmuję następujące założenia:
 Otrzymuję związek krzywizny z kątem skrętu:
 
 $$
-R_{\mathrm{ICR}} = \dfrac{L}{\tan \delta}
+\begin{aligned}
+R_{\mathrm{ICR}} &= \dfrac{L}{\tan \delta}
+\end{aligned}
 $$
 
 Długość przebytej drogi w kroku czasu $\Delta T$ w ruchu po wycinku łuku kołowego wynosi:
 
 $$
-\lambda = v\,\Delta T = R_{\mathrm{ICR}}\,\Delta \theta
+\begin{aligned}
+\lambda &= v\,\Delta T \;=\; R_{\mathrm{ICR}}\,\Delta \theta
+\end{aligned}
 $$
 
 Oznaczenia:
@@ -77,15 +79,21 @@ $[x, y, \Theta]$ — zmienne stanu: współrzędne i orientacja w układzie glob
 Równania ruchu (postać ciągła dla punktu środka osi tylnej, układ globalny) przyjmują postać:
 
 $$
-\dfrac{dx}{dt} = v \cos \Theta
+\begin{aligned}
+\dfrac{dx}{dt} &= v \cos \Theta
+\end{aligned}
 $$
 
 $$
-\dfrac{dy}{dt} = v \sin \Theta
+\begin{aligned}
+\dfrac{dy}{dt} &= v \sin \Theta
+\end{aligned}
 $$
 
 $$
-\dfrac{d\Theta}{dt} = \dfrac{v}{L}\,\tan \delta
+\begin{aligned}
+\dfrac{d\Theta}{dt} &= \dfrac{v}{L}\,\tan \delta
+\end{aligned}
 $$
 
 gdzie oznaczono:
@@ -100,13 +108,17 @@ $L$ — rozstaw osi
 Pojazd obraca się wokół punktu przecięcia promieni skrętu obu osi (Instantaneous Center of Rotation, ICR). Dla skrętu przeciwfazowego (kąty skrętu pary kół przód i tył o tej samej wartości, lecz przeciwnie skierowanej) ICR leży na osi symetrii pojazdu, a promień toru środka pojazdu wynosi:
 
 $$
-R_{\mathrm{ICR}} = \dfrac{L}{\tan \delta - \tan(-\delta)} = \dfrac{L}{2\,\tan \delta}
+\begin{aligned}
+R_{\mathrm{ICR}} &= \dfrac{L}{\tan \delta - \tan(-\delta)} \;=\; \dfrac{L}{2\,\tan \delta}
+\end{aligned}
 $$
 
 Długość przebytej drogi w kroku czasu $\Delta T$ w ruchu po wycinku łuku kołowego wynosi:
 
 $$
-\lambda = v\,\Delta T = R_{\mathrm{ICR}}\,\Delta \theta
+\begin{aligned}
+\lambda &= v\,\Delta T \;=\; R_{\mathrm{ICR}}\,\Delta \theta
+\end{aligned}
 $$
 
 <img src="{{ 'assets/images/modelowanie/model4WS.png' | relative_url }}" alt="model4WS" style="width:50%; max-width:100%; height:auto;" />
@@ -114,35 +126,48 @@ $$
 Równania ruchu (postać ciągła dla środka pojazdu, układ globalny) przyjmują postać:
 
 $$
-\dfrac{dx}{dt} = v \cos \Theta
+\begin{aligned}
+\dfrac{dx}{dt} &= v \cos \Theta
+\end{aligned}
 $$
 
 $$
-\dfrac{dy}{dt} = v \sin \Theta
+\begin{aligned}
+\dfrac{dy}{dt} &= v \sin \Theta
+\end{aligned}
 $$
 
 $$
-\dfrac{d\Theta}{dt} = \dfrac{2v}{L}\,\tan \delta
+\begin{aligned}
+\dfrac{d\Theta}{dt} &= \dfrac{2v}{L}\,\tan \delta
+\end{aligned}
 $$
 
 Przyjmując ruch bez poślizgu (uproszczenie konieczne dla zachowania „czystej” kinematyki), promienie toru kół (względem tego samego ICR) określam następująco:
 
-- wewnętrzny:
+- wewnętrzny:  
 
 $$
-R_{\mathrm{in}}(\delta) = R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}
+\begin{aligned}
+R_{\mathrm{in}}(\delta) &= R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}
+\end{aligned}
 $$
 
-- zewnętrzny:
+- zewnętrzny:  
 
 $$
-R_{\mathrm{out}}(\delta) = R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}
+\begin{aligned}
+R_{\mathrm{out}}(\delta) &= R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}
+\end{aligned}
 $$
 
 Dla sterowania „prędkością centralną” ($n_c \propto v$) otrzymuję dyferencjał prędkościowy (prędkości kół dobrane do promieni toru, aby unikać poślizgu):
 
 $$
-n_{\mathrm{in}} = n_c \dfrac{R_{\mathrm{in}}}{R_c},\quad n_{\mathrm{out}} = n_c \dfrac{R_{\mathrm{out}}}{R_c}
+\begin{aligned}
+n_{\mathrm{in}} &= n_c \dfrac{R_{\mathrm{in}}}{R_c}, \quad
+n_{\mathrm{out}} &= n_c \dfrac{R_{\mathrm{out}}}{R_c}
+\end{aligned}
 $$
 
 gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$).
@@ -186,10 +211,13 @@ Warstwa ukryta:
 Cel modelowania formułuję następująco: wyznaczyć najlepsze oszacowanie $\hat{x}$ na podstawie $u$ i $y$, mimo błędów modelu i szumów. Jest to problem probabilistyczny; zastosuję prawo propagacji niepewności i filtrację.
 
 Ujęcie równań modelu:
+
 - dynamika:
 
 $$
-x_{k+1} = f(x_k, u_k, d_k) + w_k
+\begin{aligned}
+x_{k+1} &= f(x_k, u_k, d_k) + w_k
+\end{aligned}
 $$
 
 — szum procesu $w_k$,
@@ -197,7 +225,9 @@ $$
 - pomiar:
 
 $$
-y_k = h(x_k) + v_k
+\begin{aligned}
+y_k &= h(x_k) + v_k
+\end{aligned}
 $$
 
 — szum pomiaru $v_k$.
@@ -210,15 +240,21 @@ Stan pojazdu opisuję wektorem $x = [x, y, \Theta]^{\mathsf T}$, gdzie $x$ i $y$
 Równania aktualizacji stanu otrzymuję przez dyskretyzację równań ruchu. Stosuję prostą dyskretyzację explicite (Euler w przód) z kątem liczonym z poprzedniego kroku, bo w typowym sterowaniu wartości utrzymane są stałe przez cały krok czasu $\Delta T$. Wtedy:
 
 $$
-x_k = x_{k-1} + V_k\,\Delta T \,\cos \Theta_{k-1}
+\begin{aligned}
+x_k &= x_{k-1} + V_k\,\Delta T \,\cos \Theta_{k-1}
+\end{aligned}
 $$
 
 $$
-y_k = y_{k-1} + V_k\,\Delta T \,\sin \Theta_{k-1}
+\begin{aligned}
+y_k &= y_{k-1} + V_k\,\Delta T \,\sin \Theta_{k-1}
+\end{aligned}
 $$
 
 $$
-\Theta_k = \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k
+\begin{aligned}
+\Theta_k &= \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k
+\end{aligned}
 $$
 
 gdzie: $\delta_k$ to zastępczy kąt skrętu w modelu 4WS przeciwfazowego, $\Theta_k$ to orientacja pojazdu w układzie globalnym, $V_k$ — prędkość liniowa (w środku pojazdu), $L$ — rozstaw osi, a $\Delta T$ — krok czasu. Ten schemat stanowi bazę do odometrii: integruję przebyte odcinki i przyrosty orientacji, korzystając z próbkowanych sygnałów sterujących i/lub z estymowanych prędkości. W praktycznej implementacji ograniczam kąt skrętu do dopuszczalnego zakresu, pilnuję wspólnego zegara dla wszystkich sygnałów oraz — gdy to potrzebne — stosuję korekty (np. filtrację) w celu redukcji dryftu wynikającego z szumów i błędów modelu.
