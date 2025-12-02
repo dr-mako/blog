@@ -9,13 +9,13 @@ excerpt_separator: <!--more-->
 
 Parametry geometryczne prototypu
 
-- Rozstaw kół: \(D = 153\,\mathrm{mm}\)
+- Rozstaw kół: $D = 153\,\mathrm{mm}$
 
-- Rozstaw osi: \(L = 260\,\mathrm{mm}\)
+- Rozstaw osi: $L = 260\,\mathrm{mm}$
 
-- Zakres skrętu mechaniczny: \(0^\circ\!-\!90^\circ\), ograniczenie programowe: \(35^\circ\)
+- Zakres skrętu mechaniczny: $0^\circ\!-\!90^\circ$, ograniczenie programowe: $35^\circ$
 
-- Promień koła: \(R_w = 37.25\,\mathrm{mm}\)
+- Promień koła: $R_w = 37.25\,\mathrm{mm}$
 
 
 
@@ -24,9 +24,9 @@ Zastosuję prosty model Ackermanna w ujęciu „rowerowym” (bicycle model) dla
 
 W modelu 2WS skrętna jest wyłącznie oś przednia, a oś tylna jest toczna. W idealizacji Ackermanna dopuszczamy różne kąty skrętu kół wewnętrznego i zewnętrznego na osi przedniej tak, aby przedłużenia ich płaszczyzn przecinały się w jednym punkcie ICR (środek obrotu - Instantaneous Center of Rotation). Dzięki temu ruch jest bezpoślizgowy: wszystkie koła poruszają się po współśrodkowych okręgach ze wspólnym środkiem obrotu ICR.
 
-Model „rowerowy” zastępuje pary kół kołem ekwiwalentnym: z przodu i z tyłu umieszczam po jednym „kole zastępczym” w środku osi, a skręt opisuję pojedynczym kątem \(\delta\). Ponieważ w modelu 2WS łuk ruchu wyznacza oś tylna, stan pojazdu definiuję w środku osi tylnej: zmienne stanu \([x, y, \Theta]\) to globalne współrzędne i orientacja pojazdu. Promień do ICR oznaczam \(R_{\mathrm{ICR}}\).
+Model „rowerowy” zastępuje pary kół kołem ekwiwalentnym: z przodu i z tyłu umieszczam po jednym „kole zastępczym” w środku osi, a skręt opisuję pojedynczym kątem $\delta$. Ponieważ w modelu 2WS łuk ruchu wyznacza oś tylna, stan pojazdu definiuję w środku osi tylnej: zmienne stanu $[x, y, \Theta]$ to globalne współrzędne i orientacja pojazdu. Promień do ICR oznaczam $R_{\mathrm{ICR}}$.
 
-Ten model pozwoli pokazać, że sterowanie pojazdem mogę realizować w lokalnym układzie odniesienia za pomocą pary zmiennych \([v, \delta]\) (prędkość i kąt skrętu), a jego efektem jest zmiana położenia i kursu w układzie globalnym, opisana przez zmienne \([x, y, \Theta]\). Na tej bazie w prosty sposób rozszerzę opis do przypadku 4WS.
+Ten model pozwoli pokazać, że sterowanie pojazdem mogę realizować w lokalnym układzie odniesienia za pomocą pary zmiennych $[v, \delta]$ (prędkość i kąt skrętu), a jego efektem jest zmiana położenia i kursu w układzie globalnym, opisana przez zmienne $[x, y, \Theta]$. Na tej bazie w prosty sposób rozszerzę opis do przypadku 4WS.
 
 #### 2) Model 2WS. Minimum wzorów do opisania zależności kinematycznych
 Stosuje model 2WS "rowerowy". Przyjmuję następujące założenia:
@@ -38,11 +38,11 @@ Stosuje model 2WS "rowerowy". Przyjmuję następujące założenia:
 Otrzymuje:
 Związek krzywizny z kątem skrętu:
 
-\(R_{\mathrm{ICR}} = \dfrac{L}{\tan \delta}\)
+$$R_{\mathrm{ICR}} = \dfrac{L}{\tan \delta}$$
 
-Długość przebytej drogi w kroku czasu \(\Delta T\) w ruchu po wycinku łuku kołowego wynoszą: 
+Długość przebytej drogi w kroku czasu $\Delta T$ w ruchu po wycinku łuku kołowego wynoszą: 
 
-\(\lambda = v\,\Delta T = R_{\mathrm{ICR}}\,\Delta \theta\)
+$$\lambda = v\,\Delta T = R_{\mathrm{ICR}}\,\Delta \theta$$
 
 Oznaczenia:
 
