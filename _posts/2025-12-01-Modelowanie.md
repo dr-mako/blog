@@ -11,8 +11,8 @@ excerpt_separator: <!--more-->
 <script>
   window.MathJax = {
     tex: {
-      inlineMath: [['\\(', '\\)']],
-      displayMath: [['$$', '$$']],
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
       processEscapes: true,
       processEnvironments: true
     },
@@ -21,11 +21,19 @@ excerpt_separator: <!--more-->
     }
   };
 </script>
+
 <script
   id="MathJax-script"
   async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 ></script>
+
+Inline test: $E = mc^2$
+
+Blok:
+$$
+\int_0^{2\pi} \sin x \, dx = 0
+$$
 
 Parametry geometryczne prototypu
 
