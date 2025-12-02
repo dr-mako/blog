@@ -8,6 +8,7 @@ excerpt_separator: <!--more-->
 ### Opis modelu <!--more-->
 
 <<!-- MathJax tylko dla tego wpisu -->
+<!-- MathJax dla $…$, $$…$$ oraz \( … \), \[ … \] -->
 <script>
   window.MathJax = {
     tex: {
@@ -21,12 +22,12 @@ excerpt_separator: <!--more-->
     }
   };
 </script>
-
 <script
   id="MathJax-script"
   async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 ></script>
+
 
 Parametry geometryczne prototypu
 
