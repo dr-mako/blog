@@ -5,6 +5,8 @@ author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
 
+### Rachunek niepewności i propagacja błędu w modelu ruchu (Ackermann‑predict) <!--more-->
+
 <!-- MathJax tylko dla tego wpisu -->
 <!-- MathJax dla $…$, $$…$$ oraz \( … \), \[ … \] -->
 <script>
@@ -27,7 +29,6 @@ excerpt_separator: <!--more-->
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 ></script>
 
-### Rachunek niepewności i propagacja błędu w modelu ruchu (Ackermann‑predict) <!--more-->
 
 ### 1) Koncepcja obliczania błędów
 Zakładam, że źródłem odchyleń od rzeczywistych nieznanych wartości zmiennych są szumy (procesu i pomiaru). Obliczenia prowadzę iteracyjnie w czasie dyskretnym. Ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Model wyjściowy to równania kroku aktualizacji czasu, wiec je tu przypomnę:

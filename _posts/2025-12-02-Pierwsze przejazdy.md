@@ -7,6 +7,30 @@ excerpt_separator: <!--more-->
 
 ### Surowe wyniki i wyznaczanie trajektorii w postprocesingu <!--more-->
 
+
+<!-- MathJax tylko dla tego wpisu -->
+<!-- MathJax dla $…$, $$…$$ oraz \( … \), \[ … \] -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+></script>
+
+
 ### 1) Surowe dane pomiarowe
 Zmienne sterujące i obserwowane zapisuję do pliku „out.txt” w formacie NDJSON (Newline‑Delimited JSON). Każda linia to niezależny obiekt JSON, co umożliwia strumieniowe przetwarzanie bez ładowania całego pliku do pamięci. Dzięki temu łatwo scalać różne strumienie logów oraz wykonywać filtrację i synchronizację w czasie. Dane z napędów i serw rejestruję co 10 ms.
 
