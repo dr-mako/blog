@@ -7,18 +7,21 @@ excerpt_separator: <!--more-->
 
 ### Opis modelu <!--more-->
 
-<!-- MathJax tylko dla tego wpisu ($…$ i $$…$$ + aligned) -->
+<<!-- MathJax tylko dla tego wpisu -->
 <script>
   window.MathJax = {
     tex: {
-      inlineMath: [['$', '$']],
-      displayMath: [['$$', '$$']],
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
       processEscapes: true,
       processEnvironments: true
     },
-    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
   };
 </script>
+
 <script
   id="MathJax-script"
   async
