@@ -30,17 +30,13 @@ excerpt_separator: <!--more-->
 
 Inline test: $E = mc^2$
 
-Blok:
-$$
-\int_0^{2\pi} \sin x \, dx = 0
-$$
 
 Parametry geometryczne prototypu
 
-- Rozstaw kół: \(D = 153\,\mathrm{mm}\)
-- Rozstaw osi: \(L = 260\,\mathrm{mm}\)
-- Zakres skrętu mechaniczny: \(0^\circ\!-\!90^\circ\), ograniczenie programowe: \(35^\circ\)
-- Promień koła: \(R_w = 37.25\,\mathrm{mm}\)
+- Rozstaw kół: $D = 153\,\mathrm{mm}$
+- Rozstaw osi: $L = 260\,\mathrm{mm}$
+- Zakres skrętu mechaniczny: $0^\circ\!-\!90^\circ$, ograniczenie programowe: $35^\circ$
+- Promień koła: $R_w = 37.25\,\mathrm{mm}$
 
 ### 1) Koncepcja
 Zastosuję prosty model Ackermanna w ujęciu „rowerowym” (bicycle model) dla konfiguracji 2WS (przednia para kół skrętna), a następnie rozszerzę go do mojego przypadku 4WS (przód + tył skrętne, przeciwfazowo).
@@ -156,15 +152,13 @@ $$
 
 
 Przyjmując ruch bez poślizgu (uproszczenie konieczne dla zachowania „czystej” kinematyki), promienie toru kół (względem tego samego ICR) określam następująco:
-
-wewnętrzny:  
+- wewnętrzny:  
 $$ 
 \begin{aligned}
 R_{\mathrm{in}}(\delta) = R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2} 
 \end{aligned} 
-$$ 
-
-zewnętrzny:  
+$$
+- zewnętrzny:  
 $$ 
 \begin{aligned} 
 R_{\mathrm{out}}(\delta) = R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}
