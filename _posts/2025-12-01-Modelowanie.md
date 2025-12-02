@@ -9,14 +9,13 @@ excerpt_separator: <!--more-->
 
 Parametry geometryczne prototypu
 
-- Rozstaw kół: \$$ D = 153\,\mathrm{mm} $$
+- Rozstaw kół: \$$ \begin{aligned} D = 153\,\mathrm{mm} \end{aligned} $$
 
 - Rozstaw osi: \$$ L = 260\,\mathrm{mm} $$
 
 - Zakres skrętu mechaniczny: \$$ 0^\circ\!-\!90^\circ$, ograniczenie programowe: $35^\circ $$
 
 - Promień koła: \$$ R_w = 37.25\,\mathrm{mm} $$
-
 
 
 ### 1) Koncepcja
@@ -38,7 +37,11 @@ Stosuje model 2WS "rowerowy". Przyjmuję następujące założenia:
 Otrzymuje:
 Związek krzywizny z kątem skrętu:
 
-$$ R_{\mathrm{ICR}} = \dfrac{L}{\tan \delta} $$
+$$ 
+\begin{aligned}
+R_{\mathrm{ICR}} = \dfrac{L}{\tan \delta} 
+\end{aligned}
+$$
 
 Długość przebytej drogi w kroku czasu $\Delta T$ w ruchu po wycinku łuku kołowego wynoszą: 
 
