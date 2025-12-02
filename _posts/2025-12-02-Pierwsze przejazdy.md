@@ -12,6 +12,7 @@ Zmienne sterujące i obserwowane zapisuję do pliku „out.txt” w formacie NDJ
 
 Poniżej fragment surowego logu:
 
+```
 {"type": "MOTOR", "time": "44.535256928", "data": {"T": 20010, "id": 1, "typ": 400, "spd": 222, "crt": 351, "act": 1, "tep": 19, "err": 0}}
 {"type": "SERVO", "time": "44.535667104", "data": {"setAngle": "14.557342529296875", "servo_1": "12.74", "servo_2": "-12.83", "feedback_type": "FBK"}}
 {"type": "MOTOR", "time": "44.544571104", "data": {"T": 20010, "id": 4, "typ": 400, "spd": 215, "crt": 249, "act": 1, "tep": 18, "err": 0}}
@@ -23,6 +24,7 @@ Poniżej fragment surowego logu:
 {"type": "MOTOR", "time": "44.596907488", "data": {"T": 20010, "id": 3, "typ": 400, "spd": -274, "crt": -522, "act": 1, "tep": 19, "err": 0}}
 {"type": "MOTOR", "time": "44.606897056", "data": {"T": 20010, "id": 2, "typ": 400, "spd": -271, "crt": -708, "act": 1, "tep": 19, "err": 0}}
 {"type": "SERVO", "time": "44.614625568", "data": {"setAngle": "14.557342529296875", "servo_1": "14.15", "servo_2": "-14.15", "feedback_type": "FBK"}}
+```
 
 #### 2) Struktura i znaczenie pól
 Każdy rekord zawiera typ, znacznik czasu i sekcję danych. Pole type określa źródło pomiaru: „MOTOR” dla napędów kół (DDSM400) oraz „SERVO” dla układu skrętu (ST3215). Pole time to znacznik czasu w sekundach zapisany jako tekst; w analizie rzutuję go na liczbę zmiennoprzecinkową i używam do synchronizacji. Pole data zawiera właściwe wartości telemetryczne, których zestaw zależy od typu rekordu.

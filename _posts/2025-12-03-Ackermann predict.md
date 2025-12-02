@@ -10,13 +10,19 @@ excerpt_separator: <!--more-->
 ### 1) Koncepcja obliczania błędów
 Zakładam, że źródłem odchyleń od rzeczywistych nieznanych wartości zmiennych są szumy (procesu i pomiaru). Obliczenia prowadzę iteracyjnie w czasie dyskretnym. Ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Model wyjściowy to równania kroku aktualizacji czasu, wiec je tu przypomnę:
 
-\(x_k = x_{k-1} + V_k\,\Delta T \cos \Theta_{k-1}\)
+$$
+x_k = x_{k-1} + V_k\,\Delta T \cos \Theta_{k-1}
+$$
 
-\(y_k = y_{k-1} + V_k\,\Delta T \sin \Theta_{k-1}\)
+$$
+y_k = y_{k-1} + V_k\,\Delta T \sin \Theta_{k-1}
+$$
 
-\(\Theta_k = \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k\)
+$$
+\Theta_k = \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k
+$$
 
-Chcemy znać, jak rośnie niepewność stanu między chwilami k−1 i k. Błąd stanu w k−1 opisuje macierz kowariancji \(P_{k-1}\). Naszym celem jest wyznaczyć \(P_k\).
+Chcemy znać, jak rośnie niepewność stanu między chwilami k−1 i k. Błąd stanu w k−1 opisuje macierz kowariancji $P_{k-1}$. Naszym celem jest wyznaczyć $P_k$.
 
 #### 2) Błędy stanu i sterowania
 Przyjmuję, że rozkłady gęstości prawdopodobieństw błędów są normalne. Niepewność początkową definiuję przez macierz kowariancji stanu:
