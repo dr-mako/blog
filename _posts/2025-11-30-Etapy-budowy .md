@@ -35,7 +35,12 @@ Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywneg
 </div>
 
 #### 2) Belka nośna, czyli „most”
-Kolejny element to belka, którą można nazwać mostem przednim lub tylnym. To ona trzyma po parze wózków kół i przenosi siły na ramę. Na jednym ze zdjęć rozłożone są części (elementy wykonane w technice druku 3D): czarny element belki, biała płyta – to pierwszy segment dolnej płyty nośnej – oraz pierwsza, czarna sekcja górnej płyty. Obok leżą pasek i zębatki. Ten zestaw pozwala przenieść ruch serwa skrętu na obie zwrotnice jednocześnie. Napęd skrętu działa prosto: serwo porusza zębatką, ta porusza paskiem, a pasek obraca obie kolumny z osiami kół w przeciwnych kierunkach, tak aby koła skręcały się zgodnie.
+Kolejny element to belka, którą można nazwać mostem przednim lub tylnym. Element drukuję na drukarce 3D wg projektu CAD wykonanego w Onshape. Poniżej skan zespołu belka–zawieszenie:
+
+<div style="display:flex; gap:12px; flex-wrap:wrap;">
+  <img src="{{ 'assets/images/etapy_bud/Projektowanie3D.png' | relative_url }}" alt="Projektowanie3D" style="width:40%; max-width:100%; height:auto;" />
+
+Belka trzyma parę wózków kół i przenosi siły na ramę. Na jednym ze zdjęć widać rozłożone części (wydruki 3D): czarny element belki, białą płytę (pierwszy segment dolnej płyty nośnej) oraz pierwszą, czarną sekcję płyty górnej. Obok leżą pasek i zębatki. Ten zestaw przenosi ruch serwa skrętu na obie zwrotnice jednocześnie. Mechanizm jest prosty: serwo napędza zębatkę, ta porusza paskiem, a pasek obraca kolumny z osiami kół w przeciwnych kierunkach, tak aby koła skręcały się zgodnie.
 
 Na zdjęciu zmontowanej belki widać, że już na tym etapie łączymy ją z fragmentami płyty dolnej i górnej. To wygodne, bo łatwiej zachować równoległość i proste prowadzenie paska. Gniazda pod łożyska i dystanse są „zdrukowane” od razu, więc elementy pasują na wcisk i wystarczy je skręcić śrubami, aby całość była sztywna. Co jest ważne - tak jak poprzednio należy wykonać nacięcia na osi w celu bezluzowego zablokowania zębatek. 
 Ilustracje: 
