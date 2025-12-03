@@ -31,7 +31,7 @@ excerpt_separator: <!--more-->
 
 
 ### 1) Koncepcja obliczania błędów
-Zakładam, że źródłem odchyleń od rzeczywistych nieznanych wartości zmiennych są szumy (procesu i pomiaru). Obliczenia prowadzę iteracyjnie w czasie dyskretnym. Ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Model wyjściowy to równania kroku aktualizacji czasu, wiec je tu przypomnę:
+W poprzednim poście „Pierwsze jazdy” pokazałem wrażliwość wyznaczania trajektorii na stały offset kąta skrętu: nawet +0.5° systematycznie zniekształca tor. Teraz analizuję inny aspekt — wpływ błędów przypadkowych na estymację trajektorii. Przyjmuję, że odchylenia od nieznanych wartości rzeczywistych pochodzą z szumów procesu i pomiaru. Obliczenia prowadzę iteracyjnie w czasie dyskretnym, a ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Punktem wyjścia są równania kroku aktualizacji:
 
 $$
 \begin{aligned}
@@ -150,13 +150,13 @@ Eliminuje to błąd modelowania związany z nieznanym i zmiennym opóźnieniem w
 W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna/SLAM, w tym wariant monokularny). Gdy będę znał niepewności lokalizacji z mapy obrazów, połączę „trajektorię kinematyczną” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, ważoną wiarygodnościami obu źródeł. Na tym etapie wystarczy świadomość, że obecny krok „predict” już uwzględnia niepewność pomiarów V,$\delta$; dodatkowe czujniki wejdą później jako niezależne obserwacje tego samego stanu.
 
 #### 6) Przejazd 1
-W celu wykonania obliczeń testujących, przyjmuje następujące wartości ppoczątkowe odchylenia standardowego położenia i orientacji: współrzędna x - $\sigma_x=0.05$ [m], współrzędna y - $\sigma_y=0.05$ [m], współrzędna $\theta$ - $\sigma_\theta=1^\circ$.
-Błędy sterowania: prędkośc $v$ -  $\sigma_v = 5$ [obr/min], kąt skrętu kół \delta - $\sigma_\delta=1^\circ$. 
+W celu wykonania obliczeń testujących, przyjmuje następujące wartości ppoczątkowe odchylenia standardowego położenia i orientacji: współrzędna x: $\sigma_x=0.05$ [m], współrzędna y: $\sigma_y=0.05$ [m], współrzędna $\theta$: $\sigma_\theta=1^\circ$.
+Błędy sterowania: prędkośc $v$:  $\sigma_v = 5$ [obr/min], kąt skrętu kół $\delta$: $\sigma_\delta=1^\circ$. 
 Wykres otrzymanego wyniku szcowania wartości błędu wzdłóż trajektorii przedstawia rys:
 
 <img src="{{ 'assets/images/AckermannPredict/Ackermann1.png' | relative_url }}" alt="Ackermann1" style="width:100%; max-width:100%; height:auto;" />
 
-Krzyżykami zaznaczam wybrane punkty trajektorii, w których prezentuję wynik estymaty stanu. Błędy pozycji liczone są w lokalnym układzie pojazdu (w punkcie środkowym), a ich rozrzut w kierunku wzdłużnym i poprzecznym do osi pojazdu przedstawia elipsa 3‑sigma. Niepewność orientacji (kursu) ilustruje czerwona strzałka: im dłuższa i „grubsza”, tym większy błąd kąta. Na wykresie widać, że błąd z czasem rośnie, ale robi to powoli i w przewidywalny sposób. Nie „rozjeżdża się” szybko. Dzięki temu nasza wyznaczona trajektoria pozostaje użyteczna przez dłuższy czas, nawet bez dodatkowych poprawek z innych czujników.
+Krzyżykami zaznaczam wybrane punkty trajektorii, w których prezentuję wynik estymaty stanu. Błędy pozycji liczone są w lokalnym układzie pojazdu (w punkcie środkowym), a ich rozrzut w kierunku wzdłużnym i poprzecznym do osi pojazdu przedstawia elipsa 3‑sigma. Niepewność orientacji (kursu) ilustruje czerwona strzałka: im dłuższa i „grubsza”, tym większy błąd kąta. Na wykresie widać, że błąd z czasem rośnie, ale robi to powoli i w przewidywalny sposób. Nie „rozjeżdża się” szybko. Dzięki temu nasza wyznaczona trajektoria pozostaje użyteczna przez dłuższy czas, nawet bez dodatkowych poprawek z innych czujników. 
 
 #### 6) Przejazd 2
 Rysunek przedstawia wyniki szacowania błędów pozycjonowania i kursu dla przejazdu nr 2.
@@ -166,7 +166,7 @@ Rysunek przedstawia wyniki szacowania błędów pozycjonowania i kursu dla przej
 Analiza potwierdza wcześniejsze wnioski: niepewność rośnie wzdłuż trasy stopniowo, a wartości pozostają umiarkowane w badanych warunkach prędkości i kątów skrętu.
 
 #### 7) Wnioski
-- Kinematyka 4WS (Ackermann‑predict oparta na pomiarach V, δ) pozwala stabilnie wyznaczać trajektorię bez dodatkowych czujników.
+- Kinematyka 4WS (Ackermann‑predict oparta na pomiarach (V, δ) pozwala stabilnie wyznaczać trajektorię bez dodatkowych czujników.
 - Niepewność położenia i kursu narasta w czasie stopniowo; przy małych prędkościach i umiarkowanych kątach skrętu pozostaje niewielka.
 - Elipsy 3‑sigma i wektory błędu kąta potwierdzają przewidywalny kierunek wzrostu niepewności: bardziej wzdłuż kierunku jazdy i w orientacji.
 - Oparcie predykcji na pomiarach (a nie na komendach sterujących) eliminuje problem zmiennych opóźnień aktuatorów i poprawia spójność estymacji.

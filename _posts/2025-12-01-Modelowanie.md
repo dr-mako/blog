@@ -34,7 +34,7 @@ Parametry geometryczne prototypu
 
 - Rozstaw kół: $D = 153\,\mathrm{mm}$
 - Rozstaw osi: $L = 260\,\mathrm{mm}$
-- Zakres skrętu mechaniczny: $0^\circ$-- $\!90^\circ$, ograniczenie programowe: $35^\circ$
+- Zakres skrętu mechaniczny: 0° - 90°, ograniczenie programowe: $35^\circ$
 - Promień koła: $R_w = 37.25\,\mathrm{mm}$
 
 ### 1) Koncepcja

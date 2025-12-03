@@ -109,6 +109,12 @@ Trzeci rysunek to uzyskana trajektoria w globalnym układzie współrzędnych. W
 
 <img src="{{ 'assets/images/Przejazd/Trajekt0.png' | relative_url }}" alt="Trajekt0" style="width:100%; max-width:100%; height:auto;" />
 
+Ponieważ trajektorię wyznaczam na podstawie modelu, ta metoda obliczeniowa daje dodatkową możliwość: można symulacyjnie sprawdzać wrażliwość estymacji położenia na zmianę parametrów. Łatwo pokazać, że modyfikacje rozstawu osi $L$ lub promienia koła $R_w$ istotnie wpływają na wynik integracji. W praktyce jednak oba te parametry są dobrze określone w projekcie (geometria) i w danych technicznych napędów, więc ich niepewność jest niewielka.
+Znacznie ważniejszy jest inny czynnik: ewentualny offset kąta skrętu lub luz w układzie sterowania. Nawet niewielkie przesunięcie nastawy o stałą wartość potrafi systematycznie „skrzywić” trajektorię. Obliczeniowo można wykazać, że już dodanie stałego offsetu $+0.5^\circ$ do kąta $\delta$ prowadzi do zauważalnego odchylenia toru — błąd narasta z długością przejazdu, ponieważ każdorazowo integrujemy nieco inną krzywiznę $\kappa = \tfrac{2}{L}\tan(\delta)$.
+W praktyce:   
+- Warto wprowadzić przejazdy przez punkty kontrolne o znanej pozycji (markery na macie). Porównanie pozycji z odometrii z pozycją referencyjną pozwala korygować offset kąta skrętu i oceniać dryft.
+- Dobrym kierunkiem jest dodanie prostych czujników pozycjonowania, np. tagów RFID (Radio Frequency Identification) w wybranych punktach trasy (bramy kontrolne). Odczyt RFID daje „twardą” korektę położenia w konkretnych miejscach i ogranicza kumulację błędu odometrii.
+
 #### 6) Przejazd 2
 Drugi przejazd był dłuższy — pojazd wykonał dodatkową pętlę w drugim pomieszczeniu. Jak poprzednio, wszystkie sygnały rejestrowałem. Poniżej surowe serie w jednostkach z plików. 
 
@@ -126,6 +132,8 @@ Trajektoria w układzie globalnym. Start z [0, 0]; po pętli powrót w pobliże 
 Podczas jazd pojazd poruszał się z minimalną prędkością około 0.15 m/s. Kąty skrętu były umiarkowane (±15°). W tych warunkach poślizgi boczne w łukach były niewielkie. Dzięki brakowi luzów w układzie kierowniczym pojazd poruszał się po płaszczyźnie drogi z wysoką powtarzalnością. Enkodery o rozdzielczości 4096 imp/obr zapewniły dokładne odczyty prędkości i kątów. Testy potwierdziły, że zakładane efekty modelowania i postprocessingu zostały osiągnięte.
 
 Przeprowadziłem również dłuższe jazdy. W sesjach do 30 minut. W tych przejazdach, mikrokomputer Jetson ani razu się nie zawiesił podczas rejestracji danych, co potwierdza poprawność projektu pod względem: komunikacji i zasilania.
+
+Dodatkowo potwierdziłem wrażliwość trajektorii na stały offset kąta skrętu: nawet +0.5° systematycznie zniekształca tor. Dlatego kluczowa jest kalibracja zer serw i okresowa kontrola luzów.
 
 #### 8) Co dalej
 W kolejnym wpisie pokażę rachunek niepewności i propagację błędu dla zastosowanego modelu, a następnie włączę obserwator (filtrację) do bieżącej estymacji trajektorii.
