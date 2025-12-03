@@ -150,7 +150,7 @@ Eliminuje to błąd modelowania związany z nieznanym i zmiennym opóźnieniem w
 W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna/SLAM, w tym wariant monokularny). Gdy będę znał niepewności lokalizacji z mapy obrazów, połączę „trajektorię kinematyczną” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, ważoną wiarygodnościami obu źródeł. Na tym etapie wystarczy świadomość, że obecny krok „predict” już uwzględnia niepewność pomiarów V,$\delta$; dodatkowe czujniki wejdą później jako niezależne obserwacje tego samego stanu.
 
 #### 6) Przejazd 1
-W celu wykonania obliczeń testujących, przyjmuje następujące wartości ppoczątkowe odchylenia standardowego położenia i orientacji: współrzędna x: $\sigma_x=0.05$ [m], współrzędna y: $\sigma_y=0.05$ [m], współrzędna $\theta$: $\sigma_\theta=1^\circ$.
+W celu wykonania obliczeń testujących, przyjmuje następujące wartości początkowe odchylenia standardowego położenia i orientacji: współrzędna x: $\sigma_x=0.05$ [m], współrzędna y: $\sigma_y=0.05$ [m], współrzędna $\theta$: $\sigma_\theta=1^\circ$.
 Błędy sterowania: prędkośc $v$:  $\sigma_v = 5$ [obr/min], kąt skrętu kół $\delta$: $\sigma_\delta=1^\circ$. 
 Wykres otrzymanego wyniku szcowania wartości błędu wzdłóż trajektorii przedstawia rys:
 
