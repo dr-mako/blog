@@ -175,7 +175,7 @@ n_{\mathrm{out}} &= n_c \dfrac{R_{\mathrm{out}}}{R_c}
 \end{aligned}
 $$
 
-gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$).
+gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$), $n_c$ to prędkość obrotowa kóła zastępczego w punkcie środka pojazdu  wynikająca z prędkości v lub po prostu zadana prędkość obrotowa środka pojazdu.
 
 #### 4) Model 4WS — pary kół identycznie skrętne, różnica względem Ackermanna
 W praktycznej realizacji mojego pojazdu przyjmuję równoległe ustawienie kół po lewej i prawej stronie tej samej osi (brak geometrii Ackermanna na osi). To oznacza:
