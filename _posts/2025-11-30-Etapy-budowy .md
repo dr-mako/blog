@@ -52,6 +52,7 @@ Ilustracje:
   <img src="{{ 'assets/images/etapy_bud/Belka2.jpg' | relative_url }}" alt="Belka2" style="width:40%; max-width:100%; height:auto;" />
 </div>
 
+
 #### 3) Podwozie i nadwozie – trzyczęściowa rama
 
 Rama składa się z trzech dużych wydruków 3D na dół i trzech na górę. Elementy mają wpusty, które działają jak zatrzaski prowadzące i wymuszają właściwe ułożenie. Po wstępnym „kliknięciu” skręcamy wszystko śrubami. Taka konstrukcja jest lekka, a jednocześnie sztywna. Dolna płyta tworzy podłogę na baterię i konwertery zasilania Vitron Orion. Na zdjęciu z wnętrza widać, że bateria siedzi na białej podstawie po prawej stronie, a obok niej po lewej, stoją dwa konwertery, w kolorze niebieskim. Wtyczki XT90 są łatwo dostępne z boku, więc podłączanie i odłączanie zasilania jest szybkie.
@@ -61,12 +62,14 @@ Ilustracje:
 
 <img src="{{ 'assets/images/etapy_bud/Podw1.JPG' | relative_url }}" alt="Podw1" style="width:60%; max-width:100%; height:auto;" />
 
+
 #### 4) Elektronika na pokładzie
 
 Na górze umieszczam komputer Jetson Orin Nano (master) w standardowym radiatorze z wentylatorem. Obok są dwa moduły oparte o ESP32: jeden działa jako Hub Motors i obsługuje silniki DDSM400 oraz odczyt ich enkoderów, drugi to Bus Servo, który steruje serwami ST3215 i czyta ich pozycję z enkoderów. Każdy moduł ma własny, drukowany uchwyt, tak aby złącza były skierowane do środka i żeby przewody miały krótki, prosty przebieg. W narożach płyty znajdują się białe „klocki” – to obudowy serw ST3215 odpowiedzialnych za skręt osi. Czerwony główny włącznik jest na wierzchu, w zasięgu ręki. Z tyłu mam wygodne gniazdo umożliwiające podłączenie czytnika pomiaru napięcia.
 Ilustracje:
 
 <img src="{{ 'assets/images/etapy_bud/Elektr1.JPG' | relative_url }}" alt="Elektr1" style="width:60%; max-width:100%; height:auto;" />
+
 
 #### 5) Układ zasilania
 
@@ -78,6 +81,7 @@ Szczegóły połączeń oraz zastosowane zabezpieczenia prądowe (główny bezpi
 Ilustracje:
 
 <img src="{{ 'assets/images/etapy_bud/Schemat zasilania.png' | relative_url }}" alt="Schemat zasilania" style="width:60%; max-width:100%; height:auto;" />
+
 
 #### 6) Komunikacja
 
@@ -113,6 +117,7 @@ Dlaczego to działa dobrze
 
 - Pełny dupleks utrzymuje stały strumień pomiarów, a jednocześnie reaguje natychmiast na sterowanie.
 
+
 #### 7) Tryby pracy systemu
 
 System ma kilka trybów, które przełączamy sprzętowo lub z poziomu aplikacji. Chodzi o to, aby w danym momencie robić tylko to, na co realnie starcza mocy Jetsona, i mieć jasne priorytety: albo jedziemy i logujemy, albo pokazujemy interfejs, albo uruchamiamy model.
@@ -141,6 +146,7 @@ Założenia wydajnościowe
 
 Jetson nie pociągnie jednocześnie LLM i ciężkiej analizy obrazu z kamer przy pełnej szybkości. Dlatego rozdzielamy te zadania trybami. Jeśli już coś robimy równolegle podczas jazdy, to tylko klasyczne sterowanie (pad, PID/MPC) albo inference wytrenowanej, lekkiej sieci – wtedy LLM jest wyłączony. Dane do treningu i do SLAM liczymy potem na mocniejszej maszynie, z wygodnym czasem i bez ryzyka gubienia klatek w trakcie przejazdu
 
+
 # Cele dydaktyczne
 
 - Pokazać, że całą platformę da się zaprojektować w otwartym, chmurowym CAD (np. Onshape), a następnie wykonać potrzebne elementy na drukarce 3D.
@@ -150,6 +156,7 @@ Jetson nie pociągnie jednocześnie LLM i ciężkiej analizy obrazu z kamer przy
 - Uporządkować założenia sterowania i komunikacji: dwa niezależne łącza USB do ESP32, pełny dupleks, separacja zasilania mocy i sygnału.
 
 - Uświadomić konieczność zdefiniowania trybów pracy (Drive‑Log, Autonomy‑Run, HMI‑Only, Safety Override) przed rozpoczęciem implementacji oprogramowania.
+
 
 # Co dalej
 
