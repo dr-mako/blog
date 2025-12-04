@@ -24,6 +24,7 @@ Tablica ukazuje najważniejsze elementy
 
 
 ### 1) Zawieszenie i koła
+
 Do napędu używam czterech silników DDSM400, czyli napędów bezpośrednich z wbudowanym enkoderem. Do nich dokładamy firmowe zawieszenie UGV Suspension (B). To gotowy, sprężynowany moduł, który pozwala kołu pracować na nierównościach. Do kompletu mam czarny, drukowany element – to customowa „główka” zawieszenia (element drukowany na drukarce 3D), która łączy moduł z metalową osią obrotową. Oś jest stalowa, przechodzi przez dwa łożyska i daje płynny obrót bez luzów. Mechanicznie można by obracać koło do pełnego obrotu, ale w praktyce ograniczam ten kąt programowo do 35 stopni. Ta waqrtość zapewnia wystarczającą skrętność samochodu oraz gwarantuje, że przewody zasilania mają zapas i nie skręcają się na siłę. 
 Na zdjęciach widać cztery gotowe wózki kół. Każdy ma tę samą budowę: na dole koło z silnikiem DDSM400, nad nim czerwone sprężyny firmowego zawieszenia, a na górze moja "customowa" czarna główka z gniazdem pod stalową oś. Przewód z silnika wyprowadzamy górą przez specjalnie przygotowany otwór, żeby potem łatwo prowadzić go do elektroniki. Dzięki takiej powtarzalności wszystkie narożniki montuje się tak samo, co przyspiesza składanie.
 Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywnego sprzęgła kołnierzowego, które jest blokowane wkrętami. Połączenie musi być bezluzowe tzn. osie muszą być odpowiednio ścięte w miejscu mocowania kołnierza. Ilustracje:
@@ -35,6 +36,7 @@ Co jest tu ważne: osie są mocowane do główki zawieszenia za pomocą sztywneg
 </div>
 
 #### 2) Belka nośna, czyli „most”
+
 Kolejny element to belka, którą można nazwać mostem przednim lub tylnym. Element drukuję na drukarce 3D wg projektu CAD wykonanego w Onshape. Poniżej skan zespołu belka–zawieszenie:
 
 <div style="display:flex; gap:12px; flex-wrap:wrap;">
@@ -51,6 +53,7 @@ Ilustracje:
 </div>
 
 #### 3) Podwozie i nadwozie – trzyczęściowa rama
+
 Rama składa się z trzech dużych wydruków 3D na dół i trzech na górę. Elementy mają wpusty, które działają jak zatrzaski prowadzące i wymuszają właściwe ułożenie. Po wstępnym „kliknięciu” skręcamy wszystko śrubami. Taka konstrukcja jest lekka, a jednocześnie sztywna. Dolna płyta tworzy podłogę na baterię i konwertery zasilania Vitron Orion. Na zdjęciu z wnętrza widać, że bateria siedzi na białej podstawie po prawej stronie, a obok niej po lewej, stoją dwa konwertery, w kolorze niebieskim. Wtyczki XT90 są łatwo dostępne z boku, więc podłączanie i odłączanie zasilania jest szybkie.
 
 Górna płyta to nasz „stół” pod elektronikę. Wydruk ma przeloty na śruby, gniazda pod dystanse oraz wycięcia na przewody. Wysokość dystansów jest dobrana tak, aby między piętrami zostało miejsce na ruch zawieszenia i na przewody od kół, a jednocześnie żeby środek ciężkości był jak najniżej. Po złożeniu dwóch mostów z kołami do dolnej płyty i postawieniu na dystansach górnej płyty otrzymuje sztywną, dwupiętrową konstrukcję.
@@ -59,12 +62,14 @@ Ilustracje:
 <img src="{{ 'assets/images/etapy_bud/Podw1.JPG' | relative_url }}" alt="Podw1" style="width:60%; max-width:100%; height:auto;" />
 
 #### 4) Elektronika na pokładzie
+
 Na górze umieszczam komputer Jetson Orin Nano (master) w standardowym radiatorze z wentylatorem. Obok są dwa moduły oparte o ESP32: jeden działa jako Hub Motors i obsługuje silniki DDSM400 oraz odczyt ich enkoderów, drugi to Bus Servo, który steruje serwami ST3215 i czyta ich pozycję z enkoderów. Każdy moduł ma własny, drukowany uchwyt, tak aby złącza były skierowane do środka i żeby przewody miały krótki, prosty przebieg. W narożach płyty znajdują się białe „klocki” – to obudowy serw ST3215 odpowiedzialnych za skręt osi. Czerwony główny włącznik jest na wierzchu, w zasięgu ręki. Z tyłu mam wygodne gniazdo umożliwiające podłączenie czytnika pomiaru napięcia.
 Ilustracje:
 
 <img src="{{ 'assets/images/etapy_bud/Elektr1.JPG' | relative_url }}" alt="Elektr1" style="width:60%; max-width:100%; height:auto;" />
 
 #### 5) Układ zasilania
+
 Projektując układ zasilania zaczynam od wymagań napięciowych. Jetson potrzebuje 9–20 V. Silniki DDSM400 (Hub Motors) pracują w zakresie 9–28 V. Serwa z magistrali Bus Servo wymagają 9–12.6 V. Do tego dochodzi zapotrzebowanie na moc: Jetson co najmniej 25 W, cztery silniki po około 25 W każdy, dwa serwa również po około 25 W. W krótkich szczytach cały układ może poprosić nawet o około 175 W. Jetson jest przy tym bardzo wrażliwy na zapady napięcia – przy spadkach potrafi się resetować albo „zgubić” kontrolery. Dlatego zasilanie musi być odporne i stabilne.
 
 Wybrałem układ jednobateryjny. To najprostsze rozwiązanie: jeden akumulator LiPo 6S, około 24 V, 11 Ah, z wysokim dopuszczalnym prądem rozładowania 110C. Jedna bateria to mniej przewodów, mniej złącz i prostsze ładowanie. W tym wariancie Hub Motors zasilam bezpośrednio z baterii 24 V, natomiast Jetsona i magistralę serw zasilam przez stabilne przemysłowe przetwornice buck 12 V o dużej mocy. Zastosowałem Victron Orion 18–36 V / 12 V, 20 A (240 W) – po jednej sztuce dla Jetsona i dla Bus Servo. Dzięki temu komputer i serwa dostają czyste, trzymane na sztywno 12 V, niezależnie od tego, co dzieje się na linii napędu.
@@ -75,6 +80,7 @@ Ilustracje:
 <img src="{{ 'assets/images/etapy_bud/Schemat zasilania.png' | relative_url }}" alt="Schemat zasilania" style="width:60%; max-width:100%; height:auto;" />
 
 #### 6) Komunikacja
+
 Sterowanie zaczynamy od kontrolera Bluetooth. Sygnał z pada trafia do małego odbiornika USB, który wpinamy w Jetsona. Jetson widzi go jak zwykłą klawiaturę/joystick i czyta przyciski oraz drążki. Z Jetsona wychodzą dwa kable USB – każdy do innego ESP32. Pierwszy idzie do ESP32 DDSM Driver HAT, który obsługuje cztery silniki DDSM400 (napęd). Drugi idzie do ESP32 Servo Driver, który steruje dwoma serwami ST3215 (skręt). Każdy ESP jest osobnym urządzeniem szeregowym i dostaje swój port, np. /dev/ttyUSB0 i /dev/ttyUSB1. Dzięki temu nie ma konfliktów – program na Jetsonie otwiera dwa niezależne połączenia.
 
 Zasilanie silników i serw jest oddzielne od zasilania Jetsona, ale wszystkie urządzenia mają wspólną masę z ESP. To ważne, bo sygnały wtedy „wiedzą”, gdzie jest zero volt i nie pojawiają się błędy transmisji.
@@ -108,6 +114,7 @@ Dlaczego to działa dobrze
 - Pełny dupleks utrzymuje stały strumień pomiarów, a jednocześnie reaguje natychmiast na sterowanie.
 
 #### 7) Tryby pracy systemu
+
 System ma kilka trybów, które przełączamy sprzętowo lub z poziomu aplikacji. Chodzi o to, aby w danym momencie robić tylko to, na co realnie starcza mocy Jetsona, i mieć jasne priorytety: albo jedziemy i logujemy, albo pokazujemy interfejs, albo uruchamiamy model.
 
 Drive‑Log
@@ -135,6 +142,7 @@ Założenia wydajnościowe
 Jetson nie pociągnie jednocześnie LLM i ciężkiej analizy obrazu z kamer przy pełnej szybkości. Dlatego rozdzielamy te zadania trybami. Jeśli już coś robimy równolegle podczas jazdy, to tylko klasyczne sterowanie (pad, PID/MPC) albo inference wytrenowanej, lekkiej sieci – wtedy LLM jest wyłączony. Dane do treningu i do SLAM liczymy potem na mocniejszej maszynie, z wygodnym czasem i bez ryzyka gubienia klatek w trakcie przejazdu
 
 # Cele dydaktyczne
+
 - Pokazać, że całą platformę da się zaprojektować w otwartym, chmurowym CAD (np. Onshape), a następnie wykonać potrzebne elementy na drukarce 3D.
 
 - Przedstawić przejrzysty projekt zasilania: jedna bateria 6S, rozdział gałęzi, dwa konwertery 12 V dla Jetsona i serw, bezpośrednie 24 V dla Hub Motors, bezpieczniki i wspólna masa.
@@ -144,4 +152,5 @@ Jetson nie pociągnie jednocześnie LLM i ciężkiej analizy obrazu z kamer przy
 - Uświadomić konieczność zdefiniowania trybów pracy (Drive‑Log, Autonomy‑Run, HMI‑Only, Safety Override) przed rozpoczęciem implementacji oprogramowania.
 
 # Co dalej
+
 W kolejnym kroku wykorzystamy model kinematyczny Ackermanna do planowania trajektorii i do szacowania błędu pozycjonowania. Pokażemy, jak uwzględniać opóźnienia i niepewność pomiarów oraz jak aktualizować czas i wariancję na podstawie prawa propagacji błędu, tak aby logi z Drive‑Log przekładały się na stabilną, przewidywalną jazdę w Autonomy‑Run.

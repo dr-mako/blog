@@ -32,6 +32,7 @@ excerpt_separator: <!--more-->
 
 
 #### Koncepcja. Środowisko do badań - składana mata i pasy ruchu
+
 Ten post to propozycja zestawu ćwiczeń ilustrujących estymację trajektorii z przejazdu po makiecie drogi. Najpierw prezentuję samo środowisko. Makieta to czarna, składana mata oraz białe „klocki–szyny” udające pasy ruchu, wykonane w technice druku 3D. Elementy łączę na wpusty („na klik”). Przygotowałem dwa zestawy łuków o znanych promieniach $R_{\mathrm{ICR}}$: 250 mm i 500 mm (segmenty po 15°) oraz dwa zestawy prostych (długości 100 i 200 mm). Pozwala to szybko zbudować różne trasy.
 
 Rysunek poniżej pokazuje jedną z konfiguracji toru:
@@ -65,8 +66,8 @@ Pomiary geometryczne (bez modelu):
 - Zaznacz markerem punkt dokładnie pod środkiem pojazdu (pozycja startowa). W trakcie ruchu zaznacz co najmniej trzy kolejne pozycje środka pojazdu (najlepiej rozłożone kątowo o ok. 120°).
 
 - Wyznacz promień okręgu przejazdu środka pojazdu z trzech punktów $A,B,C$:
-	- policz długości boków trójkąta: |$a=BC$| |b=AC$| |$c=AB$|,
-	- policz pole: |$A_\triangle=\tfrac{1}{2}$| |$(B-A)\times(C-A)$|,
+	- policz długości boków trójkąta: |$a=BC$| |$b=AC$| |$c=AB$|,
+	- policz pole: |$A_\triangle=\tfrac{1}{2}(B-A)\times(C-A)$|,
 	- promień okręgu opisanego:  
   $
   \begin{aligned}
@@ -146,11 +147,13 @@ Instrukcja do tej serii ćwiczeń (pdf) jest na stronie githuba.
 
 
 #### Materiały wejściowe
+
 - Pliki z logami NDJSON: `out_00.txt`, `out_01.txt`. Przygotowane wstępnie pliki będą się znajdowały na serwerze githuba. 
 - Parametry pojazdu: L = 260 mm, D = 153 mm, Rw = 37.25 mm, |δ| ≤ 35°.
 - Skrypty startowe (MATLAB/Python): do parsowania, resamplingu, odometrii i rysowania wykresów.
 
 #### 1) Import, synchronizacja, jednostki
+
 Zadanie:
 - Wczytaj log NDJSON linia po linii, rozdziel rekordy MOTOR i SERVO. 
 - Przekonwertuj jednostki:
@@ -261,7 +264,6 @@ Wyniki:
 - interpretacja wpływu $V$ i $\delta$.
 
 #### 5) Pętla zamknięta (ósemka / pętla parkingowa)
-
 Zadanie:
 - Ułóż pętlę, wykonaj przejazd.
 - Policz wektor domknięcia: |$\Delta x$| |$\Delta y$| |$\Delta \Theta$|

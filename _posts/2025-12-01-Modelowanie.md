@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Aktualizacja położenia w oparciu o model i wyznaczanie trajektorii ruchu"
+title: "Aktualizacja położenia w oparciu o model i metoda wyznaczania trajektorii ruchu"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
@@ -38,6 +38,7 @@ Parametry geometryczne prototypu
 - Promień koła: $R_w = 37.25\,\mathrm{mm}$
 
 ### 1) Koncepcja
+
 W tym poście, do opisu ruchu pojazdu zastosuję prosty model Ackermanna w ujęciu „rowerowym” (bicycle model dla konfiguracji 2WS przednia para kół skrętna), a następnie rozszerzę go do mojego przypadku 4WS (przód + tył skrętne, przeciwfazowo).
 
 W modelu 2WS skrętna jest wyłącznie oś przednia, a oś tylna jest toczna. W idealizacji Ackermanna dopuszczamy różne kąty skrętu kół wewnętrznego i zewnętrznego na osi przedniej tak, aby przedłużenia ich płaszczyzn przecinały się w jednym punkcie ICR (środek obrotu — Instantaneous Center of Rotation). Dzięki temu ruch jest bezpoślizgowy: wszystkie koła poruszają się po współśrodkowych okręgach ze wspólnym środkiem obrotu ICR.
@@ -47,6 +48,7 @@ W modelu „rowerowym” zastępuje pary kół kołem ekwiwalentnym. Z przodu i 
 Ten model pozwoli mi pokazać, że sterowanie pojazdem mogę realizować w lokalnym układzie odniesienia za pomocą pary zmiennych $[v, \delta]$ (prędkość i kąt skrętu), a jego efektem jest zmiana położenia i kursu w układzie globalnym, opisana przez zmienne $[x, y, \Theta]$ (współrzędne położenia x,y punktu środka osi tylnej w globalnym układzie odniesienia XOY oraz kąt zwrotu osi pojazdu względem osi OX). Na tej bazie w prosty sposób rozszerzę opis ruchu pojazdu do przypadku 4WS.
 
 #### 2) Model 2WS. Minimum wzorów do opisania zależności kinematycznych
+
 Stosuję model 2WS „rowerowy”. Przyjmuję następujące założenia:
 - Koła tylne są sztywne (oś tylna toczna, bez skrętu).
 - Koła przednie są skrętne; dopuszczamy różne kąty kół wewnętrznego i zewnętrznego, w ten sposób że proste prostopadłe do powierzchni bocznych przecinają się w jednym punkcie — środku obrotu pojazdu ICR.
@@ -178,6 +180,7 @@ $$
 gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$), $n_c$ to prędkość obrotowa kóła zastępczego w punkcie środka pojazdu  wynikająca z prędkości v lub po prostu zadana prędkość obrotowa środka pojazdu.
 
 #### 4) Model 4WS — pary kół identycznie skrętne, różnica względem Ackermanna
+
 W praktycznej realizacji mojego pojazdu przyjmuję równoległe ustawienie kół po lewej i prawej stronie tej samej osi (brak geometrii Ackermanna na osi).
 
 <img src="{{ 'assets/images/modelowanie/Acker_vs_4WS.png' | relative_url }}" alt="Acker_vs_4WS" style="width:75%; max-width:100%; height:auto;" />
@@ -199,6 +202,7 @@ $$
 gdzie $n_c$ to prędkość referencyjna (np. prędkość “środkowa”), $R_c$ — promień toru środka pojazdu, a $\kappa \in [0,1)$ jest regulowanym współczynnikiem redukcji różnicy prędkości. Wartość $\kappa$ wyznaczę eksperymentalnie na podstawie przejazdów po okręgu.
 
 #### 5) Obserwacja zmiennych stanu — problem do rozwiązania
+
 Jak pokazałem wcześniej, ruch pojazdu opisany zmiennymi stanu $[x, y, \Theta]$ traktuję jako konsekwencję sterowania parami $[v, \delta]$. Teraz zaglądam „pod maskę” — chcę zobaczyć, co dzieje się, gdy pojawią się błędy i zakłócenia oraz jak wpływają one na proces sterowania (którego celem jest osiągnięcie pożądanego zachowania obiektu mimo zakłóceń).
 
 <img src="{{ 'assets/images/modelowanie/Schemat_sterowania.png' | relative_url }}" alt="Schemat_sterowania" style="width:125%; max-width:100%; height:auto;" />
@@ -248,6 +252,7 @@ $$
 — szum pomiaru $v_k$.
 
 #### 6) Prosta odometria modelu 4WS
+
 Zanim zacznę modelowanie, ustalam sposób sterowania i efekt ruchu oraz wybór modelu. Pojazdem steruję, nastawiając prędkości silników i ustawiając kąty skrętu kół. Efektem jest ruch postępowy albo obrót po łuku wokół chwilowego środka obrotu ICR. Do opisu wystarczy najprostsza kinematyka — model Ackermanna w wariancie 4WS (przeciwfazowo), bez wchodzenia w dynamikę i poślizgi.
 
 Stan pojazdu opisuję wektorem $x = [x, y, \Theta]^{\mathsf T}$, gdzie $x$ i $y$ to współrzędne w globalnym układzie odniesienia, a $\Theta$ to orientacja (kąt zwrotu) nadwozia względem osi OX. Sterowanie zbieram w wektorze $u = [v_{\mathrm{icr}}, \delta]^{\mathsf T}$. W praktyce wygodniej jest sterować prędkością liniową pojazdu $v$ (w środku pojazdu) i kątem skrętu $\delta$, ale w odometrii 4WS można myśleć równoważnie o prędkości „centralnej” związanej z ruchem po okręgu wokół ICR.
@@ -272,7 +277,17 @@ $$
 \end{aligned}
 $$
 
+
 gdzie: $\delta_k$ to zastępczy kąt skrętu w modelu 4WS przeciwfazowego, $\Theta_k$ to orientacja pojazdu w układzie globalnym, $V_k$ — prędkość liniowa (w środku pojazdu), $L$ — rozstaw osi, a $\Delta T$ — krok czasu. Ten schemat stanowi bazę do odometrii: integruję przebyte odcinki i przyrosty orientacji, korzystając z próbkowanych sygnałów sterujących i/lub z estymowanych prędkości. W praktycznej implementacji ograniczam kąt skrętu do dopuszczalnego zakresu, pilnuję wspólnego zegara dla wszystkich sygnałów oraz — gdy to potrzebne — stosuję korekty (np. filtrację) w celu redukcji dryftu wynikającego z szumów i błędów modelu.
 
-#### 7) Co dalej
+# Cele dydaktyczne
+
+- Modelowanie do sterowania: zbudować i zrozumieć kinematykę 2WS/4WS (ICR, dΘ/dt, R_ICR), wskazać założenia i ograniczenia, świadomie dobrać parametry i dyferencjał prędkości (z korektą κ).
+
+- Odometria: zaimplementować i zastosować dyskretną odometrię na bazie kinematyki (integracja [x, y, Θ]), ocenić błędy i niepewność (propagacja, podstawowa filtracja).
+
+- Porównanie modeli: wyjaśnić różnice między Ackermannem a geometrią równoległą (scrub, brak wspólnego ICR) oraz dobrać model do zadania i warunków ruchu.
+
+# Co dalej
+
 W następnej sekcji opiszę wyniki pierwszych jazd i poddam je krytycznej analizie.

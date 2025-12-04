@@ -31,6 +31,7 @@ excerpt_separator: <!--more-->
 
 
 ### 1) Koncepcja obliczania błędów
+
 W poprzednim poście „Pierwsze jazdy” pokazałem wrażliwość wyznaczania trajektorii na stały offset kąta skrętu: nawet +0.5° systematycznie zniekształca tor. Teraz analizuję inny aspekt — wpływ błędów przypadkowych na estymację trajektorii. Przyjmuję, że odchylenia od nieznanych wartości rzeczywistych pochodzą z szumów procesu i pomiaru. Obliczenia prowadzę iteracyjnie w czasie dyskretnym, a ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Punktem wyjścia są równania kroku aktualizacji:
 
 $$
@@ -54,6 +55,7 @@ $$
 Chcemy znać, jak rośnie niepewność stanu między chwilami k−1 i k. Błąd stanu w k−1 opisuje macierz kowariancji $P_{k-1}$. Naszym celem jest wyznaczyć $P_k$.
 
 #### 2) Błędy stanu i sterowania
+
 Przyjmuję, że rozkłady gęstości prawdopodobieństw błędów są normalne. Niepewność początkową definiuję przez macierz kowariancji stanu:
 
 $$
@@ -73,6 +75,7 @@ $$
 gdzie $\sigma$ to odchylenie standardowe, a $\sigma^2$ wariancja.
 
 #### 3) Linearyzacja kroku (Ackermann‑predict)
+
 Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu punktu pracy $\bar x$, $\bar u$   (Euler w przód, stałe sterowanie w kroku):
 
 $$
@@ -116,6 +119,7 @@ G_k =
 $$
 
 #### 4) Krok predykcji oparty na pomiarach, nie na sterowaniach
+
 W mojej implementacji nie korzystam z sygnałów sterujących jako wejść do predykcji. Powód jest praktyczny: opóźnienia między wydaniem komendy a realną odpowiedzią serwa i silników są na tyle duże i zmienne, że „u” nie reprezentuje tego, co działo się z pojazdem w danym kroku czasu. Zamiast tego opieram krok przewidywania bezpośrednio na pomiarach prędkości i kąta skrętu (FBK z enkoderów serw i prędkości kół po konwersji do jednostek SI). Innymi słowy: to, co zwykle w literaturze bywa traktowane jako sterowanie, u mnie pełni rolę obserwowanej wielkości kinematycznej, już uwzględniającej wewnętrzne dynamiki aktuatorów i ich opóźnienia.
 
 W tej konwencji:
@@ -147,9 +151,11 @@ Eliminuje to błąd modelowania związany z nieznanym i zmiennym opóźnieniem w
 
 
 #### 5) O przyszłej fuzji
+
 W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna/SLAM, w tym wariant monokularny). Gdy będę znał niepewności lokalizacji z mapy obrazów, połączę „trajektorię kinematyczną” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, ważoną wiarygodnościami obu źródeł. Na tym etapie wystarczy świadomość, że obecny krok „predict” już uwzględnia niepewność pomiarów V,$\delta$; dodatkowe czujniki wejdą później jako niezależne obserwacje tego samego stanu.
 
 #### 6) Przejazd 1
+
 W celu wykonania obliczeń testujących, przyjmuje następujące wartości początkowe odchylenia standardowego położenia i orientacji: współrzędna x: $\sigma_x=0.05$ [m], współrzędna y: $\sigma_y=0.05$ [m], współrzędna $\theta$: $\sigma_\theta=1^\circ$.
 Błędy sterowania: prędkośc $v$:  $\sigma_v = 5$ [obr/min], kąt skrętu kół $\delta$: $\sigma_\delta=1^\circ$. 
 Wykres otrzymanego wyniku szcowania wartości błędu wzdłóż trajektorii przedstawia rys:
@@ -159,6 +165,7 @@ Wykres otrzymanego wyniku szcowania wartości błędu wzdłóż trajektorii prze
 Krzyżykami zaznaczam wybrane punkty trajektorii, w których prezentuję wynik estymaty stanu. Błędy pozycji liczone są w lokalnym układzie pojazdu (w punkcie środkowym), a ich rozrzut w kierunku wzdłużnym i poprzecznym do osi pojazdu przedstawia elipsa 3‑sigma. Niepewność orientacji (kursu) ilustruje czerwona strzałka: im dłuższa i „grubsza”, tym większy błąd kąta. Na wykresie widać, że błąd z czasem rośnie, ale robi to powoli i w przewidywalny sposób. Nie „rozjeżdża się” szybko. Dzięki temu nasza wyznaczona trajektoria pozostaje użyteczna przez dłuższy czas, nawet bez dodatkowych poprawek z innych czujników. 
 
 #### 6) Przejazd 2
+
 Rysunek przedstawia wyniki szacowania błędów pozycjonowania i kursu dla przejazdu nr 2.
 
 <img src="{{ 'assets/images/AckermannPredict/Ackermann2.png' | relative_url }}" alt="Ackermann2" style="width:100%; max-width:100%; height:auto;" />
@@ -166,11 +173,25 @@ Rysunek przedstawia wyniki szacowania błędów pozycjonowania i kursu dla przej
 Analiza potwierdza wcześniejsze wnioski: niepewność rośnie wzdłuż trasy stopniowo, a wartości pozostają umiarkowane w badanych warunkach prędkości i kątów skrętu.
 
 #### 7) Wnioski
+
 - Kinematyka 4WS (Ackermann‑predict oparta na pomiarach (V, δ) pozwala stabilnie wyznaczać trajektorię bez dodatkowych czujników.
 - Niepewność położenia i kursu narasta w czasie stopniowo; przy małych prędkościach i umiarkowanych kątach skrętu pozostaje niewielka.
 - Elipsy 3‑sigma i wektory błędu kąta potwierdzają przewidywalny kierunek wzrostu niepewności: bardziej wzdłuż kierunku jazdy i w orientacji.
 - Oparcie predykcji na pomiarach (a nie na komendach sterujących) eliminuje problem zmiennych opóźnień aktuatorów i poprawia spójność estymacji.
 - Dla dłuższych odcinków przydatna będzie dodatkowa korekcja z niezależnego źródła (np. wizja/SLAM), łączona bayesowsko z odometrią, aby ograniczyć kumulację błędu.
 
-#### 8) Co dalej
+# Cele dydaktyczne
+
+- Zrozumieć, jak propagować niepewność stanu w kinematyce 4WS (Ackermann‑predict) za pomocą liniaryzacji i macierzy kowariancji.
+
+- Wyprowadzić i zastosować macierze $F_k$, $G_k$ do kroku predykcji oraz poprawnie zdefiniować $Q_k$ dla pomiarów V i δ.
+
+- Ocenić wpływ szumów procesu/pomiaru na wzrost błędu pozycji i orientacji w czasie (elipsy 3‑sigma, wektor błędu kąta).
+
+- Porównać predykcję opartą na komendach sterujących vs na pomiarach i uzasadnić wybór „predict-from-measurements”.
+
+- Interpretować wyniki na trajektorii (kierunki największej niepewności) i wskazać, kiedy potrzebna jest korekcja z dodatkowych czujników (np. SLAM).
+
+# Co dalej
+
 W kolejnym wpisie omówie propozycje ćwiczeń dydaktycznych bazujących na przedstawionym dotychczas materiale

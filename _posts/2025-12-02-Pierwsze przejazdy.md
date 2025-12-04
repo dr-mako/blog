@@ -32,6 +32,7 @@ excerpt_separator: <!--more-->
 
 
 ### 1) Surowe dane pomiarowe
+
 Zmienne sterujące i obserwowane zapisuję do pliku „out.txt” w formacie NDJSON (Newline‑Delimited JSON). Każda linia to niezależny obiekt JSON, co umożliwia strumieniowe przetwarzanie bez ładowania całego pliku do pamięci. Dzięki temu łatwo scalać różne strumienie logów oraz wykonywać filtrację i synchronizację w czasie. Dane z napędów i serw rejestruję co 10 ms.
 
 Poniżej fragment surowego logu:
@@ -51,6 +52,7 @@ Poniżej fragment surowego logu:
 ```
 
 #### 2) Struktura i znaczenie pól
+
 Każdy rekord zawiera typ, znacznik czasu i sekcję danych. Pole type określa źródło pomiaru: „MOTOR” dla napędów kół (DDSM400) oraz „SERVO” dla układu skrętu (ST3215). Pole time to znacznik czasu w sekundach zapisany jako tekst; w analizie rzutuję go na liczbę zmiennoprzecinkową i używam do synchronizacji. Pole data zawiera właściwe wartości telemetryczne, których zestaw zależy od typu rekordu.
 
 MOTOR: identyfikator napędu (id), tryb/typ ramki (typ), prędkość obrotowa (spd), prąd (crt), temperatura (tep), flaga aktywności (act), kod błędu (err).
@@ -65,6 +67,7 @@ W feedback_type rozróżniam:
 To właśnie FBK wykorzystuję w postprocessingu do wyznaczania kąta skrętu δ (konwersja ze stopni na radiany i ewentualna fuzja kanałów servo_1/servo_2).
 
 #### 3) Parsowanie i synchronizacja
+
 Plik przetwarzam strumieniowo. Każdą linię parsuję jako JSON i — wg pola type — kieruję do dekodera MOTOR lub SERVO. Następnie:
 
 - normalizuję jednostki (kąty: deg→rad; prędkości: na SI),
@@ -76,6 +79,7 @@ Plik przetwarzam strumieniowo. Każdą linię parsuję jako JSON i — wg pola t
 - resampluję do interwału 20 ms (50 Hz), aby ujednolicić krok obliczeń.
 
 #### 4) Jednostki i wagi według dokumentacji. Obróbka danych
+
 Skale wynikają z dokumentacji:
 
 - DDSM400: prędkość spd w dziesiątych części rpm (0.1 rpm), prąd crt w mA.
@@ -97,6 +101,7 @@ Model obliczeniowy wymaga jednej pary zmiennych sterujących {prędkość, kąt 
 Tak przygotowany sygnał zasila model 4WS do wyznaczania trajektorii środka geometrycznego w globalnym układzie.
 
 #### 5) Przejazd 1
+
 Pierwszy rysunek pokazuje wykresy surowych serii: prędkości i prądy silników oraz kąty skrętu serw — bez ingerencji, w jednostkach z plików.
 
 <img src="{{ 'assets/images/Przejazd/Przejazd0bezobrobki.png' | relative_url }}" alt="Przejazd0bezobrobki" style="width:100%; max-width:100%; height:auto;" />
@@ -116,6 +121,7 @@ W praktyce:
 - Dobrym kierunkiem jest dodanie prostych czujników pozycjonowania, np. tagów RFID (Radio Frequency Identification) w wybranych punktach trasy (bramy kontrolne). Odczyt RFID daje „twardą” korektę położenia w konkretnych miejscach i ogranicza kumulację błędu odometrii.
 
 #### 6) Przejazd 2
+
 Drugi przejazd był dłuższy — pojazd wykonał dodatkową pętlę w drugim pomieszczeniu. Jak poprzednio, wszystkie sygnały rejestrowałem. Poniżej surowe serie w jednostkach z plików. 
 
 <img src="{{ 'assets/images/Przejazd/Przejazd1bezobrobki.png' | relative_url }}" alt="Przejazd1bezobrobki" style="width:100%; max-width:100%; height:auto;" />
@@ -129,11 +135,21 @@ Trajektoria w układzie globalnym. Start z [0, 0]; po pętli powrót w pobliże 
 <img src="{{ 'assets/images/Przejazd/Trajekt1.png' | relative_url }}" alt="Trajekt1" style="width:100%; max-width:100%; height:auto;" />
 
 #### 7) Wnioski
+
 Podczas jazd pojazd poruszał się z minimalną prędkością około 0.15 m/s. Kąty skrętu były umiarkowane (±15°). W tych warunkach poślizgi boczne w łukach były niewielkie. Dzięki brakowi luzów w układzie kierowniczym pojazd poruszał się po płaszczyźnie drogi z wysoką powtarzalnością. Enkodery o rozdzielczości 4096 imp/obr zapewniły dokładne odczyty prędkości i kątów. Testy potwierdziły, że zakładane efekty modelowania i postprocessingu zostały osiągnięte.
 
 Przeprowadziłem również dłuższe jazdy. W sesjach do 30 minut. W tych przejazdach, mikrokomputer Jetson ani razu się nie zawiesił podczas rejestracji danych, co potwierdza poprawność projektu pod względem: komunikacji i zasilania.
 
 Dodatkowo potwierdziłem wrażliwość trajektorii na stały offset kąta skrętu: nawet +0.5° systematycznie zniekształca tor. Dlatego kluczowa jest kalibracja zer serw i okresowa kontrola luzów.
 
-#### 8) Co dalej
+# Cele dydaktyczne
+
+- Od surowych logów do wglądu: nauczysz się zamieniać strumień NDJSON (MOTOR/SERVO) w czyste, zsynchronizowane dane w SI, gotowe do obliczeń.
+
+- Ruch „widoczny” w liczbach: zbudujesz sygnały $V_k$ i $δ_k$ z pomiarów, sprawdzisz ich jakość (zgodność kanałów, zakresy) i zobaczysz, jak przekładają się na trajektorię.
+
+- Nauczysz się stosować proste reguły kontroli jakości i resamplingu, by Twoje wykresy i wnioski były powtarzalne i wiarygodne.
+
+# 8) Co dalej
+
 W kolejnym wpisie pokażę rachunek niepewności i propagację błędu dla zastosowanego modelu, a następnie włączę obserwator (filtrację) do bieżącej estymacji trajektorii.
