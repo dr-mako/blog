@@ -180,7 +180,7 @@ gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$), $n_c
 #### 4) Model 4WS — pary kół identycznie skrętne, różnica względem Ackermanna
 W praktycznej realizacji mojego pojazdu przyjmuję równoległe ustawienie kół po lewej i prawej stronie tej samej osi (brak geometrii Ackermanna na osi).
 
-<img src="{{ 'assets/images/modelowanie/Acker_vs_4WS.png' | relative_url }}" alt="Acker_vs_4WS" style="width:50%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/modelowanie/Acker_vs_4WS.png' | relative_url }}" alt="Acker_vs_4WS" style="width:75%; max-width:100%; height:auto;" />
 
 To oznacza: kąty skrętu kół lewe/prawe na danej osi są identyczne, proste prostopadłe do płaszczyzn kół na tej osi są równoległe i nie przecinają się w jednym punkcie, nie istnieje jeden wspólny ICR dla wszystkich kół.
 
