@@ -32,7 +32,7 @@ excerpt_separator: <!--more-->
 
 
 #### Koncepcja. Środowisko do badań - składana mata i pasy ruchu
-Ten post to propozycja zestawu ćwiczeń ilustrujących estymację trajektorii z przejazdu po makiecie drogi. Najpierw prezentuję samo środowisko. Makieta to czarna, składana mata oraz białe „klocki–szyny” udające pasy ruchu, wykonane w technice druku 3D. Elementy łączę na wpusty („na klik”). Przygotowałem dwa zestawy łuków o znanych promieniach \(R_{\mathrm{ICR}}\): 250 mm i 500 mm (segmenty po 15°) oraz dwa zestawy prostych (długości 100 i 200 mm). Pozwala to szybko zbudować różne trasy.
+Ten post to propozycja zestawu ćwiczeń ilustrujących estymację trajektorii z przejazdu po makiecie drogi. Najpierw prezentuję samo środowisko. Makieta to czarna, składana mata oraz białe „klocki–szyny” udające pasy ruchu, wykonane w technice druku 3D. Elementy łączę na wpusty („na klik”). Przygotowałem dwa zestawy łuków o znanych promieniach $R_{\mathrm{ICR}}$: 250 mm i 500 mm (segmenty po 15°) oraz dwa zestawy prostych (długości 100 i 200 mm). Pozwala to szybko zbudować różne trasy.
 
 Rysunek poniżej pokazuje jedną z konfiguracji toru:
 
@@ -40,7 +40,7 @@ Rysunek poniżej pokazuje jedną z konfiguracji toru:
 
 Ponieważ mata składa się z płytek o stałych wymiarach, a łuki i proste mają zadaną geometrię, traktuję trasę jako skalibrowaną. Na tak przygotowanej makiecie sprawdzam funkcjonalność modelu pojazdu i przydatność modeli obliczeniowych. Na ostrych zakrętach jadę wolno, aby ograniczyć poślizgi (pojazd nie ma dyferencjału kątowego). Poniżej surowe serie: prędkości i prądy silników oraz kąty serw (FBK) przed obróbką — dane wejściowe do resamplingu 50 Hz.
 
-<img src="{{ 'assets/images/cwiczenie1/DaneSur.png' | relative_url }}" alt="DaneSur" style="width:50%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/cwiczenie1/DaneSur.png' | relative_url }}" alt="DaneSur" style="width:100%; max-width:100%; height:auto;" />
 
 Następnie, jak wcześniej, wyznaczam sygnały sterujące w punkcie środka pojazdu:
 
@@ -186,7 +186,7 @@ Wyniki:
 
 Zadanie:
 - Ułóż pętlę, wykonaj przejazd.
-- Policz wektor domknięcia: $|\Delta x|, |\Delta y|, |\Delta \Theta|$.
+- Policz wektor domknięcia: $|\Delta x|$, $|\Delta y|$, $|\Delta \Theta|$.
 
 Wyniki:
 - trajektoria + wektor domknięcia,
