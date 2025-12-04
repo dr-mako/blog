@@ -157,7 +157,6 @@ G_k =
 \end{aligned}
 $$
 
-
 Propagacja:
 $\hat x_k^{-} = f(\hat x_{k-1}, z_k)$
 $P_k^{-} = F_k P_{k-1} F_k^\top + G_k Q_k G_k^\top$
@@ -186,7 +185,7 @@ Wyniki:
 
 Zadanie:
 - Ułóż pętlę, wykonaj przejazd.
-- Policz wektor domknięcia: $|\Delta x|$, $|\Delta y|$, $|\Delta \Theta|$.
+- Policz wektor domknięcia: |$\Delta x$|, |$\Delta y$|, |$\Delta \Theta$|.
 
 Wyniki:
 - trajektoria + wektor domknięcia,
