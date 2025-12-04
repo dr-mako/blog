@@ -65,8 +65,8 @@ Pomiary geometryczne (bez modelu):
 - Zaznacz markerem punkt dokładnie pod środkiem pojazdu (pozycja startowa). W trakcie ruchu zaznacz co najmniej trzy kolejne pozycje środka pojazdu (najlepiej rozłożone kątowo o ok. 120°).
 
 - Wyznacz promień okręgu przejazdu środka pojazdu z trzech punktów $A,B,C$:
-	- policz długości boków trójkąta: $a=|BC|,\ b=|AC|,\ c=|AB|$,
-	- policz pole: $A_\triangle=\tfrac{1}{2}\,| (B-A)\times(C-A) |$,
+	- policz długości boków trójkąta: |$a=BC$| |b=AC$| |$c=AB$|,
+	- policz pole: |$A_\triangle=\tfrac{1}{2}$| |$(B-A)\times(C-A)$|,
 	- promień okręgu opisanego:  
   $
   \begin{aligned}
@@ -99,8 +99,23 @@ Oblicz przewidywne wartości teoretyczne z modelu Ackermana (idealna zbieżnoś�
 $
 \begin{aligned}
 R_{\mathrm{ICR}}(\delta) &= \dfrac{L}{2\,\tan \delta} \\
+\end{aligned}
+$
+
+$
+\begin{aligned}
 R_{\mathrm{in}}(\delta)  &= \sqrt{\left(R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}\right)^{2} + \left(\dfrac{L}{2}\right)^{2}} \\
+\end{aligned}
+$
+
+$
+\begin{aligned}
 R_{\mathrm{out}}(\delta) &= \sqrt{\left(R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}\right)^{2} + \left(\dfrac{L}{2}\right)^{2}} \\
+\end{aligned}
+$
+
+$
+\begin{aligned}
 S_{\mathrm{model}}(\delta) &= \dfrac{R_{\mathrm{out}}(\delta)}{R_{\mathrm{in}}(\delta)}
 \end{aligned}
 $
@@ -249,7 +264,7 @@ Wyniki:
 
 Zadanie:
 - Ułóż pętlę, wykonaj przejazd.
-- Policz wektor domknięcia: |$\Delta x$|, |$\Delta y$|, |$\Delta \Theta$|.
+- Policz wektor domknięcia: |$\Delta x$| |$\Delta y$| |$\Delta \Theta$|
 
 Wyniki:
 - trajektoria + wektor domknięcia,
