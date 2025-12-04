@@ -154,7 +154,7 @@ Przyjmując ruch bez poślizgu (uproszczenie konieczne dla zachowania „czystej
 
 $$
 \begin{aligned}
-R_{\mathrm{in}}(\delta) &= R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}
+R_{\mathrm{in}}(\delta) &= \sqrt{\left(R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}\right)^{2} + \left(\dfrac{L}{2}\right)^{2}}
 \end{aligned}
 $$
 
@@ -162,7 +162,7 @@ $$
 
 $$
 \begin{aligned}
-R_{\mathrm{out}}(\delta) &= R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}
+R_{\mathrm{out}}(\delta) &= \sqrt{\left(R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}\right)^{2} + \left(\dfrac{L}{2}\right)^{2}}
 \end{aligned}
 $$
 
@@ -178,15 +178,15 @@ $$
 gdzie $R_c$ to promień toru środka pojazdu (tu $R_c = R_{\mathrm{ICR}}$), $n_c$ to prędkość obrotowa kóła zastępczego w punkcie środka pojazdu  wynikająca z prędkości v lub po prostu zadana prędkość obrotowa środka pojazdu.
 
 #### 4) Model 4WS — pary kół identycznie skrętne, różnica względem Ackermanna
-W praktycznej realizacji mojego pojazdu przyjmuję równoległe ustawienie kół po lewej i prawej stronie tej samej osi (brak geometrii Ackermanna na osi). To oznacza:
-- kąty skrętu kół lewe/prawe na danej osi są identyczne,
-- proste prostopadłe do płaszczyzn kół na tej osi są równoległe i nie przecinają się w jednym punkcie,
-- nie istnieje jeden wspólny ICR dla wszystkich kół.
+W praktycznej realizacji mojego pojazdu przyjmuję równoległe ustawienie kół po lewej i prawej stronie tej samej osi (brak geometrii Ackermanna na osi).
 
-Konsekwencje:
-- pojawiają się poślizgi wiertne (lateral scrub) i momenty obrotowe,
-- rzeczywiste położenie „efektywnego” ICR oraz rozkład prędkości/poślizgów wynikają z sił kontaktowych opona–podłoże,
-- aby je ująć, potrzebny byłby model dynamiki opon (np. Pacejka/Magic Formula) lub przynajmniej quasi‑statyczny model sił bocznych.
+<img src="{{ 'assets/images/modelowanie/Acker_vs_4WS.png' | relative_url }}" alt="Acker_vs_4WS" style="width:50%; max-width:100%; height:auto;" />
+
+To oznacza: kąty skrętu kół lewe/prawe na danej osi są identyczne, proste prostopadłe do płaszczyzn kół na tej osi są równoległe i nie przecinają się w jednym punkcie, nie istnieje jeden wspólny ICR dla wszystkich kół.
+
+Na ukazanym rysunku koła ustawione są równolegle. Pojazd ma dwa “fikcyjne” ICR (chociaż w rzeczywistości może mieć tylko jeden) narzucane przez pary kół wewnętrznych i zewnętrznych. W konsekwencji pojawiają się poślizgi wiertne (lateral scrub) i dodatkowe momenty; rzeczywiste położenie „efektywnego” ICR oraz rozkład prędkości/poślizgów wynikają z sił kontaktowych opona–podłoże. Aby to ująć, potrzebny byłby model dynamiki opon (np. Pacejka/Magic Formula) lub przynajmniej quasi‑statyczny model sił bocznych.
+
+Stosują w moim modelu zależności kinematyki Ackermanna zakładam idealną symetrię pojazdu i jeden wspólny ICR w punkcie wynikającym z idealnej geometrii (zaznaczonym na rysunku). Wtedy wszystkie płaszczyzny kół przecinają się w tym samym punkcie, co oznacza idealną zbieżność w ujęciu kinematycznym.
 
 #### 5) Obserwacja zmiennych stanu — problem do rozwiązania
 Jak pokazałem wcześniej, ruch pojazdu opisany zmiennymi stanu $[x, y, \Theta]$ traktuję jako konsekwencję sterowania parami $[v, \delta]$. Teraz zaglądam „pod maskę” — chcę zobaczyć, co dzieje się, gdy pojawią się błędy i zakłócenia oraz jak wpływają one na proces sterowania (którego celem jest osiągnięcie pożądanego zachowania obiektu mimo zakłóceń).
