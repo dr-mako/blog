@@ -56,6 +56,70 @@ Widać rozbieżność końcowej pozycji w kierunku osi \(Y\) (w \(X\) jej nie ma
 
 Błędy narastają powoli i przewidywalnie wzdłuż trasy, co potwierdza stabilność odometrii przy niskich prędkościach i umiarkowanych kątach skrętu.
 
+#### Zadanie wprowadzające. Sprawdzenie poprawności nastaw dyferencjału
+
+Nastaw programowo kąt skrętu na jedną z wartości $\delta \in \{5^\circ,10^\circ,\ldots,35^\circ\}$ i wyłącz pojazd z takim ustawieniem kół. Wolno przepychaj pojazd po macie tak, aby środek pojazdu wykonał 1–2 pełne okręgi. Zlicz obroty kół: $N_{\mathrm{in}}$, $N_{\mathrm{out}}$.
+
+Pomiary geometryczne (bez modelu):
+
+- Zaznacz markerem punkt dokładnie pod środkiem pojazdu (pozycja startowa). W trakcie ruchu zaznacz co najmniej trzy kolejne pozycje środka pojazdu (najlepiej rozłożone kątowo o ok. 120°).
+
+- Wyznacz promień okręgu przejazdu środka pojazdu z trzech punktów $A,B,C$:
+	- policz długości boków trójkąta: $a=|BC|,\ b=|AC|,\ c=|AB|$,
+	- policz pole: $A_\triangle=\tfrac{1}{2}\,| (B-A)\times(C-A) |$,
+	- promień okręgu opisanego:  
+  $
+  \begin{aligned}
+  R_{\mathrm{ICR}}=\frac{a\,b\,c}{4\,A_\triangle}
+  \end{aligned}
+  $
+
+	- powtórz dla kilku trójek punktów i uśrednij wynik.
+
+- Alternatywnie możesz użyć metody cięciwy i strzałki (dla jednej pary punktów oddalonych kątowo o co najmniej 120°):
+	- dla długości cięciwy $c$ i strzałki $s$:
+  $
+\begin{aligned}
+R_{\mathrm{ICR}}=\frac{c^{2}}{8s}+\frac{s}{2}
+\end{aligned}
+$
+
+Obliczenia z pomiarów:
+- Oblicz stosunek obrotów:
+$
+\begin{aligned}
+S_{\mathrm{meas}}=\dfrac{N_{\mathrm{out}}}{N_{\mathrm{in}}}
+\end{aligned}
+$
+
+Oblicz przewidywne wartości teoretyczne z modelu Ackermana (idealna zbieżność):
+
+- Dla zadanego $\delta$ policz wartości teoretyczne:
+
+$
+\begin{aligned}
+R_{\mathrm{ICR}}(\delta) &= \dfrac{L}{2\,\tan \delta} \\
+R_{\mathrm{in}}(\delta)  &= \sqrt{\left(R_{\mathrm{ICR}}(\delta) - \dfrac{D}{2}\right)^{2} + \left(\dfrac{L}{2}\right)^{2}} \\
+R_{\mathrm{out}}(\delta) &= \sqrt{\left(R_{\mathrm{ICR}}(\delta) + \dfrac{D}{2}\right)^{2} + \left(\dfrac{L}{2}\right)^{2}} \\
+S_{\mathrm{model}}(\delta) &= \dfrac{R_{\mathrm{out}}(\delta)}{R_{\mathrm{in}}(\delta)}
+\end{aligned}
+$
+
+Oceń wyniki i sformułuj wnioski:
+- Zestaw w tabeli dla każdej wartości $\delta$: $R_{\mathrm{ICR}}$ (z pomiaru), $S_{\mathrm{meas}}$, $S_{\mathrm{model}}$.
+- Oceń konieczność korekty wzorów dyferencjału: jeśli $S_{\mathrm{meas}}<S_{\mathrm{model}}$, wprowadź współczynnik redukcji $\kappa$ tak, aby
+
+$
+\begin{aligned}
+\frac{n_{\mathrm{out}}}{n_{\mathrm{in}}}
+=\frac{1-\kappa}{1+\kappa}\;S_{\mathrm{model}}
+\quad\Rightarrow\quad
+\kappa=\frac{S_{\mathrm{model}}-S_{\mathrm{meas}}}{S_{\mathrm{model}}+S_{\mathrm{meas}}}
+\end{aligned}
+$
+
+i podaj proponowaną wartość $\kappa(\delta)$ z eksperymentu.
+
 #### Cel pierwszej serii ćwiczeń
 
 - Zastosować odometrię 4WS (Ackermann‑predict) na danych z przejazdów.
@@ -235,9 +299,3 @@ Ocena 3 - 51%, 3.5 - 61%, 4 - 71%, 4.5 - 81%, 5 ponad 91%.
 
 Uwaga praktyczna
 - W tej implementacji krok „predict” opiera się na pomiarach $V, \delta$ (FBK), nie na komendach, aby uniknąć błędów od opóźnień aktuatorów.
-
-
-
-
-
-
