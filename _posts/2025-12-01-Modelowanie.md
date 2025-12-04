@@ -187,6 +187,16 @@ To oznacza: kąty skrętu kół lewe/prawe na danej osi są identyczne, proste p
 Na ukazanym rysunku koła ustawione są równolegle. Pojazd ma dwa “fikcyjne” ICR (chociaż w rzeczywistości może mieć tylko jeden) narzucane przez pary kół wewnętrznych i zewnętrznych. W konsekwencji pojawiają się poślizgi wiertne (lateral scrub) i dodatkowe momenty; rzeczywiste położenie „efektywnego” ICR oraz rozkład prędkości/poślizgów wynikają z sił kontaktowych opona–podłoże. Aby to ująć, potrzebny byłby model dynamiki opon (np. Pacejka/Magic Formula) lub przynajmniej quasi‑statyczny model sił bocznych.
 
 Stosują w moim modelu zależności kinematyki Ackermanna zakładam idealną symetrię pojazdu i jeden wspólny ICR w punkcie wynikającym z idealnej geometrii (zaznaczonym na rysunku). Wtedy wszystkie płaszczyzny kół przecinają się w tym samym punkcie, co oznacza idealną zbieżność w ujęciu kinematycznym.
+W praktyce (po pierwszych przejazdach na macie, których wyniki opiszę później) można zauważyć efekt “przyduszania prędkości” kół zewnętrznych w skręcie. Wynika to prawdopodobnie z wyższej przyczepności podłoża maty, która ogranicza poślizg kompensujący nieidealną zbieżność. W związku z tym w sterowaniu dyferencjałem planuję zmniejszyć różnicę prędkości po stronach poprzez współczynnik redukcji:
+
+$$
+\begin{aligned}
+n_{\mathrm{in}} &= n_c (1+\kappa) \dfrac{R_{\mathrm{in}}}{R_c}, \quad
+n_{\mathrm{out}} &= n_c (1-\kappa) \dfrac{R_{\mathrm{out}}}{R_c}
+\end{aligned}
+$$
+
+gdzie $n_c$ to prędkość referencyjna (np. prędkość “środkowa”), $R_c$ — promień toru środka pojazdu, a $\kappa \in [0,1)$ jest regulowanym współczynnikiem redukcji różnicy prędkości. Wartość $\kappa$ wyznaczę eksperymentalnie na podstawie przejazdów po okręgu.
 
 #### 5) Obserwacja zmiennych stanu — problem do rozwiązania
 Jak pokazałem wcześniej, ruch pojazdu opisany zmiennymi stanu $[x, y, \Theta]$ traktuję jako konsekwencję sterowania parami $[v, \delta]$. Teraz zaglądam „pod maskę” — chcę zobaczyć, co dzieje się, gdy pojawią się błędy i zakłócenia oraz jak wpływają one na proces sterowania (którego celem jest osiągnięcie pożądanego zachowania obiektu mimo zakłóceń).
