@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "Niezbędne poprawki konstrukcyjnei"
+title: "Niezbędne poprawki konstrukcyjne"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
 
-### Pełna kinematyka Ackermanna<!--more-->
+### Kierunek zmian: pełna kinematyka Ackermanna<!--more-->
 
 
 <!-- MathJax tylko dla tego wpisu -->
