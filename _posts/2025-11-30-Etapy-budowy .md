@@ -52,9 +52,10 @@ Ilustracje:
   <img src="{{ 'assets/images/etapy_bud/Belka2.jpg' | relative_url }}" alt="Belka2" style="width:40%; max-width:100%; height:auto;" />
 </div>
 
+a
 
+####
 #### 3) Podwozie i nadwozie – trzyczęściowa rama
-
 Rama składa się z trzech dużych wydruków 3D na dół i trzech na górę. Elementy mają wpusty, które działają jak zatrzaski prowadzące i wymuszają właściwe ułożenie. Po wstępnym „kliknięciu” skręcamy wszystko śrubami. Taka konstrukcja jest lekka, a jednocześnie sztywna. Dolna płyta tworzy podłogę na baterię i konwertery zasilania Vitron Orion. Na zdjęciu z wnętrza widać, że bateria siedzi na białej podstawie po prawej stronie, a obok niej po lewej, stoją dwa konwertery, w kolorze niebieskim. Wtyczki XT90 są łatwo dostępne z boku, więc podłączanie i odłączanie zasilania jest szybkie.
 
 Górna płyta to nasz „stół” pod elektronikę. Wydruk ma przeloty na śruby, gniazda pod dystanse oraz wycięcia na przewody. Wysokość dystansów jest dobrana tak, aby między piętrami zostało miejsce na ruch zawieszenia i na przewody od kół, a jednocześnie żeby środek ciężkości był jak najniżej. Po złożeniu dwóch mostów z kołami do dolnej płyty i postawieniu na dystansach górnej płyty otrzymuje sztywną, dwupiętrową konstrukcję.
