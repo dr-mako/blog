@@ -41,15 +41,17 @@ Kolejny element to belka, którą można nazwać mostem przednim lub tylnym. Ele
 
 <div style="display:flex; gap:12px; flex-wrap:wrap;">
   <img src="{{ 'assets/images/etapy_bud/Projektowanie3D.png' | relative_url }}" alt="Projektowanie3D" style="width:60%; max-width:100%; height:auto;" />
+</div>
 
 Belka trzyma parę wózków kół i przenosi siły na ramę. Na jednym ze zdjęć widać rozłożone części (wydruki 3D): czarny element belki, białą płytę (pierwszy segment dolnej płyty nośnej) oraz pierwszą, czarną sekcję płyty górnej. Obok leżą pasek i zębatki. Ten zestaw przenosi ruch serwa skrętu na obie zwrotnice jednocześnie. Mechanizm jest prosty: serwo napędza zębatkę, ta porusza paskiem, a pasek obraca kolumny z osiami kół w przeciwnych kierunkach, tak aby koła skręcały się zgodnie.
 
 Na zdjęciu zmontowanej belki widać, że już na tym etapie łączymy ją z fragmentami płyty dolnej i górnej. To wygodne, bo łatwiej zachować równoległość i proste prowadzenie paska. Gniazda pod łożyska i dystanse są „zdrukowane” od razu, więc elementy pasują na wcisk i wystarczy je skręcić śrubami, aby całość była sztywna. Co jest ważne - tak jak poprzednio należy wykonać nacięcia na osi w celu bezluzowego zablokowania zębatek. 
 Ilustracje: 
 
-<div style="display:flex; gap:12px; flex-wrap:wrap;">
+
   <img src="{{ 'assets/images/etapy_bud/Belka1.jpg' | relative_url }}" alt="Belka1" style="width:40%; max-width:100%; height:auto;" />
-  <img src="{{ 'assets/images/etapy_bud/Belka2.jpg' | relative_url }}" alt="Belka2" style="width:40%; max-width:100%; height:auto;" /> 
+  <img src="{{ 'assets/images/etapy_bud/Belka2.jpg' | relative_url }}" alt="Belka2" style="width:40%; max-width:100%; height:auto;" />
+
 
 #### 3) Podwozie i nadwozie – trzyczęściowa rama
 Rama składa się z trzech dużych wydruków 3D na dół i trzech na górę. Elementy mają wpusty, które działają jak zatrzaski prowadzące i wymuszają właściwe ułożenie. Po wstępnym „kliknięciu” skręcamy wszystko śrubami. Taka konstrukcja jest lekka, a jednocześnie sztywna. Dolna płyta tworzy podłogę na baterię i konwertery zasilania Vitron Orion. Na zdjęciu z wnętrza widać, że bateria siedzi na białej podstawie po prawej stronie, a obok niej po lewej, stoją dwa konwertery, w kolorze niebieskim. Wtyczki XT90 są łatwo dostępne z boku, więc podłączanie i odłączanie zasilania jest szybkie.
