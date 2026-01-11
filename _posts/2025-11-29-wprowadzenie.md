@@ -19,7 +19,7 @@ Na dziś mam gotowe podwozie samochodu z czterema kołami napędzanymi niezależ
 
 <img src="{{ 'assets/images/Wprowadzenie/Wprowadzenie.JPG' | relative_url }}" alt="Wprowadzenie" style="width:60%; max-width:100%; height:auto;" />
 
-Rys. 1 wykonany model pojazdu (stan listopad 2024)
+Rys. 1 wykonany model pojazdu (stan listopad 2025)
 
 # Co planuję w najbliższych wpisach
 
