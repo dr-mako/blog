@@ -15,9 +15,11 @@ Buduję model pojazdu, który ma jeździć po:
 To jedna wspólna platforma do ćwiczenia sterowania, pomiaru, estymacji stanu, percepcji i elementów AI. Będę pokazywał rzeczy działające, ale też ograniczenia i błędy.
 
 ## Co już jest
-Na dziś mam gotowe podwozie samochodu z czterema kołami napędzanymi niezależnie — to tzw. napęd bezpośredni, z silnikami umieszczonymi w kołach. Skręt realizuję dwoma serwami: jednym dla pary kół przednich i jednym dla pary tylnych. Każda para kół jest sprzężona paskiem rozrządu. Taki układ jest sztywny i pozbawiony luzów, ale ma tę wadę, że koła skręcają się pod identycznym kątem. W efekcie promienie zataczane przez koła nie przecinają się w jednym wspólnym środku obrotu. Zastosowany napęd pozwala programowo wprowadzić wirtualny dyferencjał prędkościowy, ale nie umożliwia dyferencjału kątowego. Używam silników DDSM400 oraz serw ST3215 z wbudowanymi enkoderami magnetycznymi. Dzięki temu mogę stale kontrolować prędkość i kurs pojazdu, a odpowiednie filtry pozwalają na bieżąco śledzić jego trajektorię. Do sterowania i zapisu logów wykorzystuję komputer Jetson Orin Nano (wersja Super), który umożliwia uruchomienie lokalnego, małego modelu językowego. Komputer przyjmuje komendy głosowe i może zaplanować trasę przejazdu, a warstwę wykonawczą realizuje serwer w Pythonie. 
+Na dziś mam gotowe podwozie samochodu z czterema kołami napędzanymi niezależnie — to tzw. napęd bezpośredni, z silnikami umieszczonymi w kołach. Skręt realizuję dwoma serwami: jednym dla pary kół przednich i jednym dla pary tylnych. Każda para kół jest sprzężona paskiem rozrządu. Taki układ jest sztywny i pozbawiony luzów, ale ma tę wadę, że koła skręcają się pod identycznym kątem. W efekcie promienie zataczane przez koła nie przecinają się w jednym wspólnym środku obrotu. Zastosowany napęd pozwala programowo wprowadzić wirtualny dyferencjał prędkościowy, ale nie umożliwia dyferencjału kątowego. Używam silników DDSM400 oraz serw ST3215 z wbudowanymi enkoderami magnetycznymi. Dzięki temu mogę stale kontrolować prędkość i kurs pojazdu, a odpowiednie filtry pozwalają na bieżąco śledzić jego trajektorię. Do sterowania i zapisu logów wykorzystuję komputer Jetson Orin Nano (wersja Super), który umożliwia uruchomienie lokalnego, małego modelu językowego. Komputer przyjmuje komendy głosowe i może zaplanować trasę przejazdu, a warstwę wykonawczą realizuje serwer w Pythonie. Obecny stan modelu pojazdu przedstawiam na rys. 1. Przewiduje, że ten model, będzie mógł jeżdzić zarówno po makietach układów drogowych, makiecie toru PRT w laboratoryjum  Wydziału Transportu Politechniki Warszawskiej jak i w różnych przestrzeniach magazynowych. Propozycję układu "środowiska drogi" złożonej z rozkładanej maty i składanych pasów ruchu przedstawia rys. 2. Rys. 3 przedstawia pojazd na torze próbnym PRT w laboratorium Wydziału Transportu Politechniki Warszawskiej.    
 
 <img src="{{ 'assets/images/Wprowadzenie/Wprowadzenie.JPG' | relative_url }}" alt="Wprowadzenie" style="width:60%; max-width:100%; height:auto;" />
+
+Rys. 1 wykonany model pojazdu (stan listopad 2024)
 
 # Co planuję w najbliższych wpisach
 
@@ -47,6 +49,12 @@ Wykorzystam mały model językowy (Gemma 3 uruchomiona lokalnie na komputerze �
 - Otworzyć dyskusję o sensownych zastosowaniach małych LLM w sterowaniu.
 
 <img src="{{ 'assets/images/cwiczenie1/TorCw1.JPG' | relative_url }}" alt="TorCw1" style="width:75%; max-width:100%; height:auto;" />
+
+Rys. 2 ukazje model pojazdu na macie "środowiska drogi" - linie pasów ruchu wykonano w technice wydrunku 3D 
+
+<img src="{{ 'assets/images/Wprowadzenie/Model PRT.JPG' | relative_url }}" alt="Wprowadzenie" style="width:60%; max-width:100%; height:auto;" />
+
+Rys. 3 przedstawia model pojazdu na "torze próbnym systemu PRT" w laboratorium Wydziału Transportu Politechniki Warszawskiej
 
 # Co dalej
 W następnym wpisie: etapy budowy platformy modelu — pokażę listę elementów, gdzie je kupić oraz jakie wydruki 3D przygotowałem, żeby złożyć prototyp.
