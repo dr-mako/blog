@@ -48,7 +48,7 @@ Wykorzystam mały model językowy (Gemma 3 uruchomiona lokalnie na komputerze �
 - Zbudować minimalny przykład SLAM na jednej kamerze.
 - Otworzyć dyskusję o sensownych zastosowaniach małych LLM w sterowaniu.
 
-<img src="{{ 'assets/images/cwiczenie1/TorCw1.JPG' | relative_url }}" alt="TorCw1" style="width:75%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/cwiczenie1/TorCw1.jpg' | relative_url }}" alt="TorCw1" style="width:75%; max-width:100%; height:auto;" />
 
 Rys. 2 ukazje model pojazdu na macie "środowiska drogi" - linie pasów ruchu wykonano w technice wydrunku 3D 
 
