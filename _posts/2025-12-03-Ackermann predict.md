@@ -82,7 +82,7 @@ Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu pu
 
 $$
 \begin{aligned}
-x_k \approx f(\bar x,\bar u) + F_k\,(x_{k-1}-\bar x) + G_k\,(u_k-\bar u)
+\(x_k \approx f(\bar{x},\,\bar{u}) + F_k\,(x_{k-1}-\bar{x}) + G_k\,(u_k-\bar{u})\)
 \end{aligned}
 $$
 
