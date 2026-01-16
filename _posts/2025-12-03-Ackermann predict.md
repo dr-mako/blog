@@ -64,8 +64,6 @@ P_0 = \mathrm{diag}\big(\sigma_x^2,\ \sigma_y^2,\ \sigma_\Theta^2\big)
 \end{aligned}
 $$
 
-<img src="{{ 'assets/images/AckermannPredict/P0.PNG' | relative_url }}" alt="P0" style="width:100%; max-width:100%; height:auto;" />
-
 Niepewność sterowania (wejść) opisuje macierz kowariancji:
 
 $$
@@ -74,7 +72,6 @@ $$
 \end{aligned}
 $$
 
-<img src="{{ 'assets/images/AckermannPredict/Q0.PNG' | relative_url }}" alt="Q0" style="width:100%; max-width:100%; height:auto;" />
 
 gdzie $\sigma$ to odchylenie standardowe, a $\sigma^2$ wariancja.
 
