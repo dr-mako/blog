@@ -60,7 +60,7 @@ Przyjmuję, że rozkłady gęstości prawdopodobieństw błędów są normalne. 
 
 $$
 \begin{aligned}
-P_0 = \mathrm{diag}\big(\sigma_x ^2,\ \sigma_y ^2,\ \sigma_\Theta ^2\big)
+P_0 = \mathrm{diag}\big((\sigma_x)^2,\ (\sigma_y)^2,\ (\sigma_\Theta)^2\big)
 \end{aligned}
 $$
 
