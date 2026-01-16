@@ -64,6 +64,8 @@ P_0 = \mathrm{diag}\big(\sigma_x^2,\ \sigma_y^2,\ \sigma_\Theta^2\big)
 \end{aligned}
 $$
 
+<img src="{{ 'assets/images/P0.png' | relative_url }}" alt="P0" style="width:100%; max-width:100%; height:auto;" />
+
 Niepewność sterowania (wejść) opisuje macierz kowariancji:
 
 $$
@@ -72,12 +74,13 @@ $$
 \end{aligned}
 $$
 
+<img src="{{ 'assets/images/Q0.png' | relative_url }}" alt="Q0" style="width:100%; max-width:100%; height:auto;" />
 
 gdzie $\sigma$ to odchylenie standardowe, a $\sigma^2$ wariancja.
 
 #### 3) Linearyzacja kroku (Ackermann‑predict)
 
-Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu punktu pracy $\bar x$, $\bar u$   (Euler w przód, stałe sterowanie w kroku):
+Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu punktu pracy $\bar x$, $\bar u$  aby można było zastosować prawo propagacji błędu w transformacjach liniowych (Euler w przód, stałe sterowanie w kroku):
 
 $$
 \begin{aligned}
