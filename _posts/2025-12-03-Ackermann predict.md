@@ -90,36 +90,57 @@ gdzie $\sigma$ to odchylenie standardowe, a $\sigma^2$ wariancja.
 
 #### 3) Linearyzacja kroku (Ackermann‑predict)
 
-Równania ruchu sa nieliniowe. Stosuję ich liniowe przybliżenie w otoczeniu punktu pracy ${x}^{-}$, ${u}^{-}$  aby można było zastosować prawo propagacji błędu w transformacjach liniowych (Euler w przód, stałe sterowanie w kroku):
+Równania ruchu są nieliniowe, dlatego w celu analizy propagacji niepewności stosuję ich liniowe przybliżenie w otoczeniu punktu pracy $x^-$ oraz $u^-$. Umożliwia to zastosowanie prawa propagacji błędu dla transformacji liniowych. W rozważaniach przyjmuję dyskretyzację metodą Eulera w przód oraz stałe sterowanie w obrębie kroku czasowego.
+
+Liniaryzację modelu ruchu można zapisać w postaci:
 
 $$
 \begin{aligned}
-x_k \approx f({x}^{-},\,{u}^{-}) + F_k\,(x_{k-1}-{x}^{-}) + G_k\,(u_k-{u}^{-})
+x_k \approx
+f(x^-,\,u^-)
++ F_k\,(x_{k-1}-x^-)
++ G_k\,(u_k-u^-)
 \end{aligned}
 $$
 
-$$
-\begin{aligned}
-x_k = [\,x_k,\ y_k,\ \Theta_k\,]^T
-\end{aligned}
-$$
+gdzie wektor stanu ma postać:
 
 $$
 \begin{aligned}
-F_k = \dfrac{\partial f}{\partial x}\big|_{k-1}
+x_k =
+\begin{bmatrix}
+x_k & y_k & \Theta_k
+\end{bmatrix}^\top
 \end{aligned}
 $$
+
+Macierz Jacobiego względem stanu
+Macierz $F_k$ jest Jacobianem funkcji przejścia stanu względem wektora stanu, wyznaczonym w punkcie $(x_{k-1}, u_k)$:
+
+$$
+\begin{aligned}
+F_k =
+\left.
+\frac{\partial f}{\partial x}
+\right|_{k-1}
+\end{aligned}
+$$
+
+co dla rozważanego modelu prowadzi do postaci:
 
 $$
 \begin{aligned}
 F_k =
 \begin{bmatrix}
 1 & 0 & -V_k\,\Delta T\,\sin \Theta_{k-1} \\
-0 & 1 & \ \ V_k\,\Delta T\,\cos \Theta_{k-1} \\
+0 & 1 & \ \,V_k\,\Delta T\,\cos \Theta_{k-1} \\
 0 & 0 & 1
 \end{bmatrix}
 \end{aligned}
 $$
+
+Macierz Jacobiego względem sterowania. 
+Macierz \(G_k\) jest Jacobianem funkcji przejścia stanu względem wektora sterowania:
 
 $$
 \begin{aligned}
@@ -127,7 +148,8 @@ G_k =
 \begin{bmatrix}
 \Delta T \cos \Theta_{k-1} & 0 \\
 \Delta T \sin \Theta_{k-1} & 0 \\
-\dfrac{2\,\Delta T}{L}\,\tan \delta_k & \dfrac{2\,V_k\,\Delta T}{L}\,\sec^2 \delta_k
+\dfrac{2\,\Delta T}{L}\,\tan \delta_k &
+\dfrac{2\,V_k\,\Delta T}{L}\,\sec^2 \delta_k
 \end{bmatrix}
 \end{aligned}
 $$
