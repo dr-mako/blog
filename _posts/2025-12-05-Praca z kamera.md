@@ -59,7 +59,7 @@ Używam taśmy CSI do kamery która ma długość 15 cm. Próba z taśmą 30 cm 
 
 ### 4 co dalej?
 
-- Budowa mapy obrazów. Do łączenia klatek rozważam RANSAC (detekcja i dopasowanie cech, odrzucanie outlierów), a następnie złożenie mozaiki.
+- Budowa mapy obrazów. Korekta perspektywy "fisheye" do widoku z lotu ptaka "bird's eye view". Do łączenia klatek rozważam RANSAC (detekcja i dopasowanie cech, odrzucanie outlierów), a następnie złożenie mozaiki.
 
 - Fuzja map: spróbuję scalić mapę odometryczną i wizyjną metodą bayesowską (ważenie wiarygodności źródeł).
 
