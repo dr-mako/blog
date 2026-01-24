@@ -164,7 +164,7 @@ W tej konwencji:
 - 
 równania propagacji stanu pozostają bez zmian, jednak wielkości $V_k$ oraz $\delta_k$ traktowane są jako pomiary obarczone niepewnością, a nie sygnały sterujące,
 - 
-macierz kowariancji wejść \(Q_k\) opisuje niepewność pomiarów prędkości i kąta skrętu (szum oraz rozrzut sygnałów FBK), a nie niepewność komend sterujących.
+macierz kowariancji wejść $Q_k$ opisuje niepewność pomiarów prędkości i kąta skrętu (szum oraz rozrzut sygnałów FBK), a nie niepewność komend sterujących.
 
 
 W efekcie propagacja stanu i niepewności w kroku predict przyjmuje postać:
@@ -200,7 +200,9 @@ Eliminuje ono błąd modelowania wynikający z nieznanych i zmiennych opóźnie�
 
 #### 5) O przyszłej fuzji
 
-W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna/SLAM, w tym wariant monokularny). Gdy będę znał niepewności lokalizacji z mapy obrazów, połączę „trajektorię kinematyczną” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, ważoną wiarygodnościami obu źródeł. Na tym etapie wystarczy świadomość, że obecny krok „predict” już uwzględnia niepewność pomiarów V,$\delta$; dodatkowe czujniki wejdą później jako niezależne obserwacje tego samego stanu.
+W kolejnych etapach projektu planuję dołożyć niezależne źródło informacji o położeniu z wizji (mapa wizualna / SLAM, w tym wariant monokularny). Po określeniu niepewności lokalizacji pochodzącej z mapy obrazów możliwe będzie połączenie „trajektorii kinematycznej” (z enkoderów) z „trajektorią wizualną” metodą bayesowską, z ważeniem obu źródeł zgodnie z ich wiarygodnością.
+
+Na obecnym etapie wystarczające jest podkreślenie, że krok predict już uwzględnia niepewność pomiarów $V$ i $\delta$. Dodatkowe czujniki będą w przyszłości wprowadzane jako niezależne obserwacje tego samego stanu, realizowane w kroku korekcji filtru.
 
 #### 6) Przejazd 1
 
@@ -212,7 +214,7 @@ Wykres otrzymanego wyniku szcowania wartości błędu wzdłóż trajektorii prze
 
 Krzyżykami zaznaczam wybrane punkty trajektorii, w których prezentuję wynik estymaty stanu. Błędy pozycji liczone są w lokalnym układzie pojazdu (w punkcie środkowym), a ich rozrzut w kierunku wzdłużnym i poprzecznym do osi pojazdu przedstawia elipsa 3‑sigma. Niepewność orientacji (kursu) ilustruje czerwona strzałka: im dłuższa i „grubsza”, tym większy błąd kąta. Na wykresie widać, że błąd z czasem rośnie, ale robi to powoli i w przewidywalny sposób. Nie „rozjeżdża się” szybko. Dzięki temu nasza wyznaczona trajektoria pozostaje użyteczna przez dłuższy czas, nawet bez dodatkowych poprawek z innych czujników. 
 
-#### 6) Przejazd 2
+#### 7) Przejazd 2
 
 Rysunek przedstawia wyniki szacowania błędów pozycjonowania i kursu dla przejazdu nr 2.
 
@@ -220,7 +222,7 @@ Rysunek przedstawia wyniki szacowania błędów pozycjonowania i kursu dla przej
 
 Analiza potwierdza wcześniejsze wnioski: niepewność rośnie wzdłuż trasy stopniowo, a wartości pozostają umiarkowane w badanych warunkach prędkości i kątów skrętu.
 
-#### 7) Wnioski
+#### 8) Wnioski
 
 - Kinematyka 4WS (Ackermann‑predict oparta na pomiarach (V, δ) pozwala stabilnie wyznaczać trajektorię bez dodatkowych czujników.
 - Niepewność położenia i kursu narasta w czasie stopniowo; przy małych prędkościach i umiarkowanych kątach skrętu pozostaje niewielka.
