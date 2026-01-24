@@ -158,7 +158,9 @@ $$
 
 W mojej implementacji nie korzystam z sygnałów sterujących jako wejść do kroku predykcji. Powód jest natury praktycznej: opóźnienia pomiędzy wydaniem komendy a rzeczywistą odpowiedzią serwomechanizmów i silników są istotne, zmienne w czasie i trudne do wiarygodnego modelowania. W konsekwencji wektor sterowania $u_k$ nie reprezentuje faktycznego ruchu pojazdu w danym kroku czasowym.
 
-Zamiast tego krok predykcji opieram bezpośrednio na pomiarach prędkości i kąta skrętu, pochodzących z enkoderów serw oraz czujników prędkości kół (po przeliczeniu do jednostek SI). Innymi słowy, wielkości, które w klasycznym ujęciu traktowane są jako sterowania, pełnią tutaj rolę obserwowanych zmiennych kinematycznych, uwzględniających już wewnętrzną dynamikę aktuatorów oraz ich opóźnienia.
+Takie sformułowanie kroku predykcji odpowiada podejściu znanemu w literaturze jako dead‑reckoning driven by measured inputs, w którym estymacja ruchu opiera się na mierzonych wielkościach kinematycznych zamiast sygnałów sterujących.
+
+Zamiast tego krok predykcji opieram bezpośrednio na pomiarach prędkości $V_k$ oraz kąta skrętu $\delta_k$, pochodzących z enkoderów serwomechanizmów oraz czujników prędkości kół (po przeliczeniu do jednostek SI). Innymi słowy, wielkości, które w klasycznym ujęciu traktowane są jako sterowania, pełnią tutaj rolę obserwowanych zmiennych kinematycznych, uwzględniających już wewnętrzną dynamikę aktuatorów oraz ich opóźnienia.
 
 W tej konwencji:
 - 
