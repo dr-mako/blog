@@ -55,7 +55,7 @@ $$
 \end{aligned}
 $$
 
-Powyższe równania opisują deterministyczną propagację stanu pomiędzy chwilami \(k-1\) i \(k\). Interesuje nas jednak, w jaki sposób w tym kroku narasta niepewność estymacji. Błąd stanu w chwili \(k-1\) opisany jest macierzą kowariancji \(P_{k-1}\). Celem dalszych rozważań jest wyznaczenie macierzy kowariancji stanu po predykcji, \(P_k^-\).
+Powyższe równania opisują deterministyczną propagację stanu pomiędzy chwilami $k-1$ i $k$. Interesuje nas jednak, w jaki sposób w tym kroku narasta niepewność estymacji. Błąd stanu w chwili $k-1$ opisany jest macierzą kowariancji $P_{k-1}$. Celem dalszych rozważań jest wyznaczenie macierzy kowariancji stanu po predykcji, $P_k^-$.
 
 #### 2) Błędy stanu i sterowania
 
