@@ -126,7 +126,7 @@ W mojej implementacji nie korzystam z sygnałów sterujących jako wejść do pr
 
 W tej konwencji:
 
-- Równania aktualizacji stanu pozostają bez zmian, ale symbolicznie traktuję $V_k$ i $\delta_k$ jako pomiary (z niepewnością), a nie polecenia sterujące.
+- Równania aktualizacji stanu pozostają bez zmian, ale symbolicznie traktuję $\V_k$ i $\delta_k$ jako pomiary (z niepewnością), a nie polecenia sterujące.
 
 - Macierz kowariancji wejść $Q_k$ opisuje niepewność pomiarów prędkości i kąta skrętu (szum/rozrzut FBK), a nie niepewność komend.
 
