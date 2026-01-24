@@ -156,15 +156,18 @@ $$
 
 #### 4) Krok predykcji oparty na pomiarach, nie na sterowaniach
 
-W mojej implementacji nie korzystam z sygnałów sterujących jako wejść do predykcji. Powód jest praktyczny: opóźnienia między wydaniem komendy a realną odpowiedzią serwa i silników są na tyle duże i zmienne, że „u” nie reprezentuje tego, co działo się z pojazdem w danym kroku czasu. Zamiast tego opieram krok przewidywania bezpośrednio na pomiarach prędkości i kąta skrętu (FBK z enkoderów serw i prędkości kół po konwersji do jednostek SI). Innymi słowy: to, co zwykle w literaturze bywa traktowane jako sterowanie, u mnie pełni rolę obserwowanej wielkości kinematycznej, już uwzględniającej wewnętrzne dynamiki aktuatorów i ich opóźnienia.
+W mojej implementacji nie korzystam z sygnałów sterujących jako wejść do kroku predykcji. Powód jest natury praktycznej: opóźnienia pomiędzy wydaniem komendy a rzeczywistą odpowiedzią serwomechanizmów i silników są istotne, zmienne w czasie i trudne do wiarygodnego modelowania. W konsekwencji wektor sterowania $u_k$ nie reprezentuje faktycznego ruchu pojazdu w danym kroku czasowym.
+
+Zamiast tego krok predykcji opieram bezpośrednio na pomiarach prędkości i kąta skrętu, pochodzących z enkoderów serw oraz czujników prędkości kół (po przeliczeniu do jednostek SI). Innymi słowy, wielkości, które w klasycznym ujęciu traktowane są jako sterowania, pełnią tutaj rolę obserwowanych zmiennych kinematycznych, uwzględniających już wewnętrzną dynamikę aktuatorów oraz ich opóźnienia.
 
 W tej konwencji:
+- 
+równania propagacji stanu pozostają bez zmian, jednak wielkości $V_k$ oraz $\delta_k$ traktowane są jako pomiary obarczone niepewnością, a nie sygnały sterujące,
+- 
+macierz kowariancji wejść \(Q_k\) opisuje niepewność pomiarów prędkości i kąta skrętu (szum oraz rozrzut sygnałów FBK), a nie niepewność komend sterujących.
 
-- Równania aktualizacji stanu pozostają bez zmian, ale symbolicznie traktuję $\V_k$ i $\delta_k$ jako pomiary (z niepewnością), a nie polecenia sterujące.
 
-- Macierz kowariancji wejść $Q_k$ opisuje niepewność pomiarów prędkości i kąta skrętu (szum/rozrzut FBK), a nie niepewność komend.
-
-Zatem propagacja niepewności w kroku „predict” ma postać
+W efekcie propagacja stanu i niepewności w kroku predict przyjmuje postać:
 
 $$
 \begin{aligned}
@@ -174,16 +177,25 @@ $$
 
 $$
 \begin{aligned}
-P_k^- &= F_k\,P_{k-1}\,F_k^\top + G_k\,Q_k\,G_k^\top
+P_k^- &= F_k\,P_{k-1}\,F_k^\top
+       + G_k\,Q_k\,G_k^\top
 \end{aligned}
 $$
 
-gdzie $$ \begin{aligned} z_k = [V_k,\ \delta_k]^\top \end{aligned} $$ to wektor pomiarów kinematycznych (a nie sterowań).
+gdzie
+$$
+\begin{aligned}
+z_k =
+\begin{bmatrix}
+V_k & \delta_k
+\end{bmatrix}^\top
+\end{aligned}
+$$
 
-Dlaczego tak?
+ Dlaczego takie podejście?
 
 
-Eliminuje to błąd modelowania związany z nieznanym i zmiennym opóźnieniem wykonawczym. Predykcja opiera się na tym, co rzeczywiście zaszło w pojeździe w danym kroku, a nie na intencji sterowania.
+Eliminuje ono błąd modelowania wynikający z nieznanych i zmiennych opóźnień wykonawczych. Predykcja opiera się na tym, co faktycznie wydarzyło się w pojeździe w danym kroku czasowym, a nie na intencji sterowania, która mogła zostać zrealizowana z opóźnieniem lub w zmienionej postaci.
 
 
 #### 5) O przyszłej fuzji
