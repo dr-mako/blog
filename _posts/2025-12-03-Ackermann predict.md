@@ -59,11 +59,16 @@ Powyższe równania opisują deterministyczną propagację stanu pomiędzy chwil
 
 #### 2) Błędy stanu i sterowania
 
-Przyjmuję, że rozkłady gęstości prawdopodobieństw błędów są normalne. Niepewność początkową definiuję przez macierz kowariancji stanu:
+Przyjmuję, że rozkłady gęstości prawdopodobieństw błędów mają charakter normalny. Niepewność początkową stanu opisuję macierzą kowariancji:
 
 $$
 \begin{aligned}
-P_0 = \mathrm{diag}\big((\sigma_x)^2,\ (\sigma_y)^2,\ (\sigma_\Theta)^2\big)
+P_0
+= \mathrm{diag}\!\left(
+(\sigma_x)^2,\,
+(\sigma_y)^2,\,
+(\sigma_\Theta)^2
+\right)
 \end{aligned}
 $$
 
@@ -72,7 +77,11 @@ Niepewność sterowania (wejść) opisuje macierz kowariancji:
 
 $$
 \begin{aligned}
-Q_0 = \mathrm{diag}\big((\sigma_V)^2,\ (\sigma_\delta)^2\big)
+Q_0
+= \mathrm{diag}\!\left(
+(\sigma_V)^2,\,
+(\sigma_\delta)^2
+\right)
 \end{aligned}
 $$
 
