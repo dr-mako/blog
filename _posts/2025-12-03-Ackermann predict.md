@@ -32,27 +32,30 @@ excerpt_separator: <!--more-->
 
 ### 1) Koncepcja obliczania błędów
 
-W poprzednim poście „Pierwsze jazdy” pokazałem wrażliwość wyznaczania trajektorii na stały offset kąta skrętu: nawet +0.5° systematycznie zniekształca tor. Teraz analizuję inny aspekt — wpływ błędów przypadkowych na estymację trajektorii. Przyjmuję, że odchylenia od nieznanych wartości rzeczywistych pochodzą z szumów procesu i pomiaru. Obliczenia prowadzę iteracyjnie w czasie dyskretnym, a ruch opisuję kinematyką 4WS (przeciwfazowo): przemieszczeniem po łuku i obrotem wokół ICR. Punktem wyjścia są równania kroku aktualizacji:
+W poprzednim poście „Pierwsze jazdy” pokazałem wrażliwość wyznaczania trajektorii na stały offset kąta skrętu: nawet +0.5° systematycznie zniekształca tor ruchu. W niniejszym wpisie analizuję inny aspekt — wpływ błędów losowych na estymację trajektorii. Przyjmuję, że odchylenia od nieznanych wartości rzeczywistych wynikają z obecności szumu procesu oraz szumu pomiaru.
+
+Obliczenia prowadzę iteracyjnie w czasie dyskretnym. Ruch pojazdu opisuję modelem kinematycznym 4WS w konfiguracji przeciwfazowej, w którym przemieszczenie realizowane jest po łuku okręgu, a obrót następuje wokół chwilowego środka obrotu (ICR). Punktem wyjścia są równania kroku predykcji stanu:
 
 $$
 \begin{aligned}
-x_k = x_{k-1} + V_k\,\Delta T \cos \Theta_{k-1}
+x_k &= x_{k-1} + V_k\,\Delta T \cos \Theta_{k-1}
 \end{aligned}
 $$
 
 $$
 \begin{aligned}
-y_k = y_{k-1} + V_k\,\Delta T \sin \Theta_{k-1}
+y_k &= y_{k-1} + V_k\,\Delta T \sin \Theta_{k-1}
 \end{aligned}
 $$
 
 $$
 \begin{aligned}
-\Theta_k = \Theta_{k-1} + \dfrac{2 V_k\,\Delta T}{L}\,\tan \delta_k
+\Theta_k &= \Theta_{k-1}
+          + \frac{2 V_k\,\Delta T}{L}\,\tan \delta_k
 \end{aligned}
 $$
 
-Chcemy znać, jak rośnie niepewność stanu między chwilami k−1 i k. Błąd stanu w k−1 opisuje macierz kowariancji $P_{k-1}$. Naszym celem jest wyznaczyć $P_k$.
+Powyższe równania opisują deterministyczną propagację stanu pomiędzy chwilami \(k-1\) i \(k\). Interesuje nas jednak, w jaki sposób w tym kroku narasta niepewność estymacji. Błąd stanu w chwili \(k-1\) opisany jest macierzą kowariancji \(P_{k-1}\). Celem dalszych rozważań jest wyznaczenie macierzy kowariancji stanu po predykcji, \(P_k^-\).
 
 #### 2) Błędy stanu i sterowania
 
