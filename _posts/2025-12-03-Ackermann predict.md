@@ -134,13 +134,13 @@ Zatem propagacja niepewności w kroku „predict” ma postać
 
 $$
 \begin{aligned}
-\hat{{x_k}^-} = f\!\left(\hat{x_{k-1}},\, z_k\right)
+\hat{x}_k^- &= f\!\left(\hat{x}_{k-1},\, z_k\right)
 \end{aligned}
 $$
 
 $$
 \begin{aligned}
-{P_k}^- &= F_k\,P_{k-1}\,{F_k}^\top + G_k\,Q_k\,{G_k}^\top
+P_k^- &= F_k\,P_{k-1}\,F_k^\top + G_k\,Q_k\,G_k^\top
 \end{aligned}
 $$
 
