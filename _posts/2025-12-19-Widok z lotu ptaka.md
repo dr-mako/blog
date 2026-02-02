@@ -76,6 +76,6 @@ Na obrazie toru „z lotu ptaka” widać, że po korekcji przebieg krawędzi pa
 
 To podejście działa dobrze dla płaszczyzny podłogi, ale ma oczywiste ograniczenia. Po pierwsze, mapowanie jest poprawne tylko dla konkretnego ustawienia kamery: wysokości, kąta nachylenia i obszaru widzenia. Po drugie, obiekty pionowe są w BEV przedstawione błędnie — i to nie jest wada implementacji, tylko konsekwencja założenia, że interesuje mnie płaszczyzna drogi
 
-### 5 Co dalej
+### 5 Co dalej 
 
 W kolejnym kroku wykorzystam obraz w układzie drogi (w szczególności wariant krawędziowy) do złożenia wielu klatek w jedną monokularną mapę przejazdu. W tym miejscu bardzo przydaje się fakt, że odometria w moim pojeździe daje dobrą prognozę przesunięć i obrotów, a korekta wizyjna może pełnić rolę dopasowania i kompensacji poślizgów.
