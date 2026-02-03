@@ -54,9 +54,13 @@ Na tej podstawie buduję mapę przekształcenia (lookup/remap), która dla każd
 ### 3 Mapy $Xmap$ i $Ymap$ — co to właściwie jest?
 
 Efektem „klikania” nie jest żadna magiczna funkcja, tylko dwie zwykłe macierze liczb: $Xmap$ i $Ymap$. Powstają one przez interpolacyjne „wypełnienie” całego obszaru roboczego na podstawie zebranych korespondencji. Można je rozumieć jak tablicę odsyłaczy: dla każdego piksela obrazu wyjściowego (BEV w układzie drogi) mówią, z jakiego miejsca w obrazie źródłowym należy pobrać próbkę. W skrócie:
+
 $$
+\begin{aligned}
 I_{out}(u,v) = I_{src}(Xmap(v,u),\; Ymap(v,u)).
+\end{aligned}
 $$
+
 Cała korekcja w runtime sprowadza się więc do jednego remapowania (resamplingu). To jest ważne, bo na pokładzie chcę mieć rozwiązanie proste i szybkie: mapa jest stała, a koszt przeliczenia pojedynczej klatki jest przewidywalny.
 Kolaż poniżej przedstawia obraz szachownicy widziany z kamery, na którym oznaczono użyte punkty „obraz $\leftrightarrow$ droga”, fragment tablicy w wersji numerycznej oraz „wyprostowany” obraz po korekcji. Obraz po korekcji jest w skali: 1 piksel odpowiada 1 mm, a jego rozdzielczość to $840 \times 420$ pikseli.
 
