@@ -36,7 +36,7 @@ excerpt_separator: <!--more-->
 W projekcie korzystam z kamery typu rybie oko $170^\circ$. Powód jest prosty: kamera jest zamontowana nisko, a ja chcę widzieć możliwie dużo „podłogi” i toru jazdy tuż przed pojazdem. Przy klasycznym obiektywie z takiej pozycji szybko tracę pole widzenia, natomiast rybie oko daje szeroki kadr i dużo informacji o przebiegu pasa.
 Cena za ten komfort jest jednak wysoka: obraz z rybiego oka jest silnie zniekształcony. Linie, które w rzeczywistości są proste, w obrazie stają się krzywe, a skala obiektów mocno zależy od położenia w kadrze. Ten efekt najłatwiej zauważyć na szachownicy kalibracyjnej — rys. poniżej pokazuje ustawienie pojazdu podczas wykonywania zdjęcia oraz przykładowy obraz z kamery.
 
-<img src="{{ 'assets/images/Widok_z_lotu/1.png' | relative_url }}" alt="1" style="width:75%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/Widok_z_lotu/F1.png' | relative_url }}" alt="F1" style="width:75%; max-width:100%; height:auto;" />
 
 Dla człowieka „wygięta” szachownica nie stanowi problemu — mózg koryguje to automatycznie. Dla algorytmu sterowania, który ma wykrywać krawędzie pasa i utrzymywać pojazd w jego środku, jest to już realna przeszkoda. To samo miejsce na torze może wyglądać inaczej w kolejnych klatkach, a proste operacje geometryczne przestają działać stabilnie.
 Najlepsze własności geometryczne ma sytuacja, w której obserwujemy podłogę prostopadle z góry — „z lotu ptaka”. Taki obraz ma w przybliżeniu stałą skalę, a linie na podłodze pozostają liniami. Dokładnie tego chcę. Dlatego wprowadzam korektę obrazów do widoku z lotu ptaka (bird’s eye view, BEV). Zakładam przy tym, że interesuje mnie przede wszystkim płaszczyzna drogi (mata/tor), a wszystko, co jest „pionowe”, traktuję jako efekt uboczny. BEV nie jest rekonstrukcją 3D — to świadome uproszczenie: buduję przekształcenie 2D, które na podłodze daje obraz o bardziej stałej geometrii, wygodny do sterowania, składania mapy z wielu klatek oraz ewentualnego uczenia sieci.
@@ -64,7 +64,7 @@ $$
 Cała korekcja w runtime sprowadza się więc do jednego remapowania (resamplingu). To jest ważne, bo na pokładzie chcę mieć rozwiązanie proste i szybkie: mapa jest stała, a koszt przeliczenia pojedynczej klatki jest przewidywalny.
 Kolaż poniżej przedstawia obraz szachownicy widziany z kamery, na którym oznaczono użyte punkty „obraz $\leftrightarrow$ droga”, fragment tablicy w wersji numerycznej oraz „wyprostowany” obraz po korekcji. Obraz po korekcji jest w skali: 1 piksel odpowiada 1 mm, a jego rozdzielczość to $840 \times 420$ pikseli.
 
-<img src="{{ 'assets/images/Widok_z_lotu/2.png' | relative_url }}" alt="2" style="width:75%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/Widok_z_lotu/F2.png' | relative_url }}" alt="F2" style="width:75%; max-width:100%; height:auto;" />
 
 Warto zwrócić uwagę na dwa czarne trójkąty w lewym i prawym dolnym rogu — to obszary „poza mapą”, czyli miejsca, dla których nie da się wiarygodnie wskazać piksela źródłowego. Dodatkowo widać, że ostrość pól szachownicy nie jest w BEV idealnie równomierna. Obraz źródłowy ma równą gęstość pikseli, ale w widoku rybiego oka skrajne pola szachownicy zajmują mniej pikseli niż te bliżej środka kadru. W BEV oznacza to, że w niektórych obszarach algorytm musi „dopowiadać” szczegóły interpolacją — i tam obraz może być mniej ostry.
 
@@ -74,7 +74,7 @@ Warto zwrócić uwagę na dwa czarne trójkąty w lewym i prawym dolnym rogu —
 Kolaż poniżej przedstawia widoki w zastosowanym układzie drogi: widok z góry całej trasy, widok z kamery w wybranym punkcie, obraz po korekcji oraz miejsce na torze, z którego wykonano zdjęcie. Czerwona ramka określa obszar drogi widoczny na zdjęciu z kamery (i odpowiadający mu obszar po korekcji).
 Na obrazie toru „z lotu ptaka” widać, że po korekcji przebieg krawędzi pasa jest znacznie bardziej regularny i stabilny w kolejnych klatkach. To ma bezpośrednie konsekwencje: taki obraz jest wygodny do budowy mapy przejazdu, a także do prostych algorytmów prowadzenia po linii. Dodatkowo BEV ułatwia uczenie sieci CNN do prowadzenia pojazdu, ponieważ sieć dostaje obraz w geometrii bliższej planowi podłogi, a nie w perspektywie rybiego oka
 
-<img src="{{ 'assets/images/Widok_z_lotu/3.png' | relative_url }}" alt="3" style="width:75%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/Widok_z_lotu/F3.png' | relative_url }}" alt="F3" style="width:75%; max-width:100%; height:auto;" />
 
 ### 5 Ograniczenia, o których trzeba pamiętać
 
