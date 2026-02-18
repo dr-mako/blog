@@ -32,9 +32,8 @@ excerpt_separator: <!--more-->
 
 
 ### 1) Problem
-Robię mapę pasów ruchu. Zaczynam od obrazu, który na pierwszy rzut oka wygląda poprawnie. Widzimy trajektorię pojazdu i fragmenty pasów ruchu przeniesione do wspólnego, globalnego układu odniesienia. Każda klatka kamery została przekształcona do widoku z lotu ptaka (BEV), a następnie “położona” na mapie w oparciu o odometrię. Intuicyjnie wszystko się zgadza: kamera widzi podłogę, znamy pozycję pojazdu, więc wystarczy te obserwacje przesuwać i obracać zgodnie z ruchem.
+Zaczynam od obrazu przedstawionego na ry. 1, który na pierwszy rzut oka wygląda poprawnie. Widzimy trajektorię pojazdu i fragmenty pasów ruchu przeniesione do wspólnego, globalnego układu odniesienia. Każda klatka kamery została przekształcona do widoku z lotu ptaka (BEV), a następnie “położona” na mapie w oparciu o odometrię. Intuicyjnie wszystko się zgadza: kamera widzi podłogę, znamy pozycję pojazdu, więc wystarczy te obserwacje przesuwać i obracać zgodnie z ruchem.
 Problem polega na tym, że to nie powinno działać. A jeśli działa — to tylko pozornie.
-Rys. 1 przedstawia uzyskaną trajektorię odometryczną i lokalne obserwacje pasa ruchu w układzie świata. W wybranym punkcie ruchu pokazano położenie osi podłużnej kamery między punktami C (środek pojazdu) i G (kotwica kamery), w którym znajduje się lokalny układ współrzędnych BEV (widok z lotu ptaka klatki obrazu). Na ten obraz nałożono punkty pasów ruchu z tej klatki. Ramka określa pole widzenia BEV.
 
 <img src="{{ 'assets/images/KameraCzujnik/surowa_traj.png' | relative_url }}" alt="surowa_traj" style="width:100%; max-width:100%; height:auto;" />
 
@@ -54,6 +53,7 @@ To jest konsekwencja niespójności transformacji między lokalnym układem kame
 <img src="{{ 'assets/images/KameraCzujnik/makieta.png' | relative_url }}" alt="makieta" style="width:100%; max-width:100%; height:auto;" />
 
 Każdy marker ma unikalne ID, jest jednoznacznie rozpoznawalny i daje precyzyjnie wyznaczoną pozycję w obrazie. W kolejnych klatkach, po transformacji do BEV, zapisujemy położenie markerów w lokalnym układzie kamery (albo w “lokalnym BEV” związanym z pojazdem). Każda klatka daje nam więc dwie rzeczy:
+
 -	fragment pasa ruchu,
 -	współrzędne punktu środkowego markera, który w rzeczywistości jest nieruchomy.
 
@@ -67,6 +67,7 @@ Pozycje markerów zapisuje w odpowiedniej tablicy csv. Jeżeli po przekształcen
 W tym miejscu warto jasno powiedzieć, co robimę.
 To nie jest jeszcze SLAM.
 Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założenia:
+
 - trajektoria pojazdu jest zamrożona i traktowana jako prawda,
 -	nie wolno jej zmieniać,
 -	estymujemy tylko:
@@ -83,11 +84,12 @@ W dalszym opisie użyję dwóch pojęć:
 
 W chwili $k$ znamy (z odometrii) pozę pojazdu: 
 $$
-\mathbf{x}_k = (x_k, y_k, \psi_k)
+\mathbf{x}_k = (x_k, y_k, \psi_k).
 $$
 Z detekcji dostajemy pomiar landmarku: $\mathbf{z}_{k,j}$
 w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku $\mathbf{p}_j$.
 W praktyce (w 2D) sprowadza się to do składania transformacji:
+
 -	najpierw “lokalny punkt z BEV”,
 -	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
 -	potem poza pojazdu w świecie.
@@ -104,6 +106,7 @@ gdzie:
 -	$T_{G\leftarrow C}(\mathbf{x}_k)$ wynika z zamrożonej trajektorii,
 -	$T_{C}(\theta)$ to estymowana ekstrynsyka (np. przesunięcie i skręt kamery/BEV względem pojazdu),
 -	$\mathbf{z}_{k,j}$ to pomiar landmarku w układzie lokalnym.
+
 A cel Etapu I to minimalizacja rozrzutu obserwacji tego samego landmarku w świecie, przy stałej trajektorii:
 
 $$
@@ -127,7 +130,7 @@ W projekcie CAD samochodu przyjąłem, że punkt G ("kotwica" kamery tzn. począ
 Kamera może być minimalnie skręcona. Oś optyczna może nie być idealnie równoległa do osi pojazdu. A co ważniejsze — sam model ruchu jest kompromisem. Choć korzystamy z uproszczonego modelu Ackermanna, pojazd ma cztery koła skrętne sterowane parami. Koła wewnętrzne i zewnętrzne skręcają się pod tym samym kątem. Nie ma dyferencjału kątowego — jest tylko dyferencjał prędkościowy. W praktyce oznacza to jedno: rzeczywisty tor ruchu nie może idealnie odpowiadać modelowi. Pojawiają się poślizgi, sprężystość opon, asymetrie napędu. Tego nie da się „dokalibrować” jedną stałą.
 Dlatego zamiast wierzyć geometrii, stosujemy kryterium obiektywne: minimalizujemy rozrzut globalnych pozycji tych samych landmarków. Szukamy takich parametrów transformacji, dla których landmarki w układzie świata są możliwie najbardziej zwarte.
 Punkt G został wyznaczony projektowo jako L/2+R. Jednak analiza wariancji landmarków ujawniła,
-że rzeczywiste położenie układu BEV różni się o od tej wartości. Projekt przestał być założeniem — stał się hipotezą, którą można weryfikować danymi. To moment, w którym projekt mechaniczny przestaje być założeniem, a staje się elementem systemu pomiarowego, który można oceniać statystycznie. Efekty minimalizacji rozrzutu grup landmarków poprzez zmiany współrzędnych punku G przedstawia rys. 6. 
+że rzeczywiste położenie układu BEV różni się o od tej wartości. Projekt przestał być założeniem — stał się hipotezą, którą można weryfikować danymi. To moment, w którym projekt mechaniczny staje się elementem systemu pomiarowego, który można oceniać statystycznie. Efekty minimalizacji rozrzutu grup landmarków poprzez zmiany współrzędnych punku G przedstawia rys. 6. 
 
 
 <img src="{{ 'assets/images/KameraCzujnik/ekstrynsyka.png' | relative_url }}" alt="ekstrynsyka" style="width:100%; max-width:100%; height:auto;" />
@@ -141,18 +144,25 @@ Zielone i różowe punkty na wykresach nie są trajektorią. One pokazują, gdzi
 Jeżeli trajektoria byłaby idealna, wszystkie obserwacje tego samego obiektu nałożyłyby się na siebie. Jeżeli nie jest — chmury zaczynają się wyginać, przesuwać i rozjeżdżać. Szczególnie wyraźnie widać to na ostrych zakrętach. W tych miejscach rzeczywisty promień skrętu jest większy niż wynikałoby to z modelu. Pojazd nie obraca się wokół jednego, idealnego środka chwilowego obrotu. Może to być efektem poślizgów. Model Ackermanna przestaje być dobrym przybliżeniem — a kamera bezlitośnie to ujawnia.
 
 ### 8) A jak to się ma do rzeczywistości?
-Na rysunku 8 zestawiono trzy informacje: trajektorię odometryczną, globalne skupiska landmarków po map fittingu oraz rzeczywiste położenia markerów. Dla części landmarków (1–5) zgodność jest bardzo dobra, natomiast dla kolejnych (6–8) pojawiają się systematyczne przesunięcia. Od tego momentu cały układ zaczyna „odjeżdżać”. Różnice te korelują z ostrymi zakrętami, gdzie rzeczywisty ruch pojazdu odbiega od uproszczonego modelu kinematycznego. 
+Na rysunku 8 zestawiono trzy informacje: trajektorię odometryczną, globalne skupiska landmarków po map fittingu oraz rzeczywiste położenia markerów. Dla części landmarków (1–5) zgodność jest bardzo dobra, natomiast dla kolejnych (6–8) pojawiają się systematyczne przesunięcia. Od tego momentu cały układ zaczyna „odjeżdżać”. Różnice te korelują z ostrymi zakrętami, gdzie rzeczywisty ruch pojazdu odbiega od uproszczonego modelu kinematycznego.
+
 Można się w tym miejscu zastanowić dlaczego map fitting „nie działa” i co z tego wynika?
+
 Offline map fitting robi dokładnie to, co do niego należy:
-•	nie poprawia trajektorii,
-•	przesuwa landmarki tak, aby pasowały do przyjętego ruchu.
+
+-	nie poprawia trajektorii,
+-	przesuwa landmarki tak, aby pasowały do przyjętego ruchu.
+
 Jeżeli trajektoria jest błędna, mapa zostanie zdeformowana. Algorytm nie ma innego wyjścia.
 I właśnie dlatego ten etap jest tak ważny dydaktycznie. On nie służy do „naprawiania mapy”. On służy do zdiagnozowania, gdzie i dlaczego model ruchu przestaje być zgodny z rzeczywistością. 
+
 Na tym etapie pipeline jest spójny, ale ograniczony:
-•	kamera daje lokalne obserwacje w BEV,
-•	odometria zapewnia ciągłość ruchu,
-•	transformacja między układami jest skalibrowana,
-•	landmarki pozwalają mierzyć rozjazd pętli.
+
+-	kamera daje lokalne obserwacje w BEV,
+-	odometria zapewnia ciągłość ruchu,
+-	transformacja między układami jest skalibrowana,
+-	landmarki pozwalają mierzyć rozjazd pętli.
+
 Ale jedna rzecz jest już jasna: nie da się zbudować poprawnej mapy świata, jeżeli nie pozwolimy trajektorii się zmieniać. I to jest dokładnie moment, w którym Etap I musi się skończyć.
 
 ### 9) co dalej
