@@ -70,8 +70,8 @@ Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założeni
 - trajektoria pojazdu jest zamrożona i traktowana jako prawda,
 -	nie wolno jej zmieniać,
 -	estymujemy tylko:
-  -   parametry systemowe (ekstrynsykę kamery),
-  - 	położenia landmarków w jednej, wspólnej mapie.
+-  -  parametry systemowe (ekstrynsykę kamery),
+-  - 	położenia landmarków w jednej, wspólnej mapie.
 Innymi słowy: szukamy najlepiej dopasowanej mapy świata, zakładając, że trajektoria jest idealna.
 To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 
@@ -101,22 +101,20 @@ gdzie:
 A cel Etapu I to minimalizacja rozrzutu obserwacji tego samego landmarku w świecie, przy stałej trajektorii:
 
 $$
-\begin{aligned}
 \min_{\theta,\{\mathbf{p}_j\}} \sum_{(k,j)\in\mathcal{O}} \left\| \hat{\mathbf{p}}_{k,j}^{G} - \mathbf{p}_j \right\|^2
-\end{aligned}
 $$
 
 To są dwa wzory, które “spinają” cały tekst: pokazują, co liczymy i dlaczego.
 W wersji “programistycznej” (czytelniejszą dla osób z robotyki), to ten sam łańcuch można zapisać tak:
 
-$$
+'''
 landmark_in_G = pose_G_from_traj[k] ∘ T_extrinsic ∘ z_kj
-$$
+'''
 
 gdzie:
--	$pose_G_from_traj[k]$ – zamrożona trajektoria (odometria),
--	$T_extrinsic$ – estymowana ekstrynsyka,
--	$z_kj$ – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
+-	'''pose_G_from_traj[k]''' – zamrożona trajektoria (odometria),
+-	'''T_extrinsic''' – estymowana ekstrynsyka,
+-	'''z_kj''' – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
 
 ### 6) Kalibracja ekstrynsyki, czyli kiedy geometria przestaje wystarczać
 W projekcie CAD samochodu przyjąłem, że punkt G ("kotwica" kamery tzn. początek lokalnego układu współrzędnych związanego z BEV) znajduje się w określonej odległości od środka modelu kinematycznego pojazdu. Znamy rozstaw osi, znamy promień kół, znamy przybliżone położenie kamery względem konstrukcji. To naturalny punkt startowy. Tyle że model nigdy nie jest rzeczywistością.
