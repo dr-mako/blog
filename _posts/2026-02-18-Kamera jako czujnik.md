@@ -67,40 +67,60 @@ Pozycje markerów zapisuje w odpowiedniej tablicy csv. Jeżeli po przekształcen
 W tym miejscu warto jasno powiedzieć, co robimę.
 To nie jest jeszcze SLAM.
 Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założenia:
-•	trajektoria pojazdu jest zamrożona i traktowana jako prawda,
-•	nie wolno jej zmieniać,
-•	estymujemy tylko:
-o	parametry systemowe (ekstrynsykę kamery),
-o	położenia landmarków w jednej, wspólnej mapie.
+- trajektoria pojazdu jest zamrożona i traktowana jako prawda,
+-	nie wolno jej zmieniać,
+-	estymujemy tylko:
+-   	parametry systemowe (ekstrynsykę kamery),
+-   	położenia landmarków w jednej, wspólnej mapie.
 Innymi słowy: szukamy najlepiej dopasowanej mapy świata, zakładając, że trajektoria jest idealna.
 To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 
 ### 5) Minimalna formalizacja (żeby nie zgubić sensu)
 W dalszym opisie użyję dwóch pojęć:
-•	$C$ — “trajektoria” (kolejne pozycje pojazdu w czasie),
-•	$G$ — “mapa” (globalny układ odniesienia i pozycje landmarków w tym układzie).
-W chwili $k$ znamy (z odometrii) pozę pojazdu $\mathbf{x}_k = (x_k, y_k, \psi_k)$. 
-Z detekcji dostajemy pomiar landmarku $\mathbf{z}_{k,j}$ w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku $\mathbf{p}_j$.
+-	$C$ — “trajektoria” (kolejne pozycje pojazdu w czasie),
+-	$G$ — “mapa” (globalny układ odniesienia i pozycje landmarków w tym układzie).
+W chwili $k$ znamy (z odometrii) pozę pojazdu:
+
+$$
+\mathbf{x}_k = (x_k, y_k, \psi_k)
+$$.
+
+Z detekcji dostajemy pomiar landmarku:
+
+$$
+\mathbf{z}_{k,j}
+$$
+
+w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku
+
+$$
+\mathbf{p}_j
+$$.
+
 W praktyce (w 2D) sprowadza się to do składania transformacji:
 •	najpierw “lokalny punkt z BEV”,
 •	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
 •	potem poza pojazdu w świecie.
 Można to zapisać zwięźle jako:
+
 $$
 \begin{aligned}
 \hat{\mathbf{p}}_{k,j}^{G} = T_{G\leftarrow C}(\mathbf{x}_k)\ \circ\ T_{C}(\theta)\ \circ\ \mathbf{z}_{k,j}
 \end{aligned}
 $$
+
 gdzie:
-•	$T_{G\leftarrow C}(\mathbf{x}_k)$ wynika z zamrożonej trajektorii,
-•	$T_{C}(\theta)$ to estymowana ekstrynsyka (np. przesunięcie i skręt kamery/BEV względem pojazdu),
-•	\(\mathbf{z}_{k,j}\) to pomiar landmarku w układzie lokalnym.
+-	$T_{G\leftarrow C}(\mathbf{x}_k)$ wynika z zamrożonej trajektorii,
+-	$T_{C}(\theta)$ to estymowana ekstrynsyka (np. przesunięcie i skręt kamery/BEV względem pojazdu),
+-	\(\mathbf{z}_{k,j}\) to pomiar landmarku w układzie lokalnym.
 A cel Etapu I to minimalizacja rozrzutu obserwacji tego samego landmarku w świecie, przy stałej trajektorii:
+
 $$
 \begin{aligned}
 \(\min_{\theta,\{\mathbf{p}_j\}} \sum_{(k,j)\in\mathcal{O}} \left\| \hat{\mathbf{p}}_{k,j}^{G} - \mathbf{p}_j \right\|^2\)
 \end{aligned}
 $$
+
 To są dwa wzory, które “spinają” cały tekst: pokazują, co liczymy i dlaczego.
 W wersji “programistycznej” (czytelniejszą dla osób z robotyki), to ten sam łańcuch można zapisać tak:
 landmark_in_G = pose_G_from_traj[k] ∘ T_extrinsic ∘ z_kj
