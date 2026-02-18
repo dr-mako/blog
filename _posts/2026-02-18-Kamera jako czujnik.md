@@ -70,8 +70,8 @@ Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założeni
 - trajektoria pojazdu jest zamrożona i traktowana jako prawda,
 -	nie wolno jej zmieniać,
 -	estymujemy tylko:
--   	parametry systemowe (ekstrynsykę kamery),
--   	położenia landmarków w jednej, wspólnej mapie.
+- -   parametry systemowe (ekstrynsykę kamery),
+- - 	położenia landmarków w jednej, wspólnej mapie.
 Innymi słowy: szukamy najlepiej dopasowanej mapy świata, zakładając, że trajektoria jest idealna.
 To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 
@@ -85,22 +85,14 @@ $$
 \mathbf{x}_k = (x_k, y_k, \psi_k)
 $$.
 
-Z detekcji dostajemy pomiar landmarku:
+Z detekcji dostajemy pomiar landmarku: $\mathbf{z}_{k,j}$
 
-$$
-\mathbf{z}_{k,j}
-$$
-
-w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku
-
-$$
-\mathbf{p}_j
-$$.
+w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku $\mathbf{p}_j$.
 
 W praktyce (w 2D) sprowadza się to do składania transformacji:
-•	najpierw “lokalny punkt z BEV”,
-•	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
-•	potem poza pojazdu w świecie.
+-	najpierw “lokalny punkt z BEV”,
+-	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
+-	potem poza pojazdu w świecie.
 Można to zapisać zwięźle jako:
 
 $$
