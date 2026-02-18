@@ -72,6 +72,7 @@ Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założeni
 -	estymujemy tylko:
 -  -  parametry systemowe (ekstrynsykę kamery),
 -  - 	położenia landmarków w jednej, wspólnej mapie.
+
 Innymi słowy: szukamy najlepiej dopasowanej mapy świata, zakładając, że trajektoria jest idealna.
 To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 
@@ -79,13 +80,18 @@ To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 W dalszym opisie użyję dwóch pojęć:
 -	$C$ — “trajektoria” (kolejne pozycje pojazdu w czasie),
 -	$G$ — “mapa” (globalny układ odniesienia i pozycje landmarków w tym układzie).
-W chwili $k$ znamy (z odometrii) pozę pojazdu: $\mathbf{x}_k = (x_k, y_k, \psi_k)$. 
+
+W chwili $k$ znamy (z odometrii) pozę pojazdu: 
+$$
+\mathbf{x}_k = (x_k, y_k, \psi_k)
+$$
 Z detekcji dostajemy pomiar landmarku: $\mathbf{z}_{k,j}$
 w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku $\mathbf{p}_j$.
 W praktyce (w 2D) sprowadza się to do składania transformacji:
 -	najpierw “lokalny punkt z BEV”,
 -	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
 -	potem poza pojazdu w świecie.
+
 Można to zapisać zwięźle jako:
 
 $$
@@ -107,14 +113,14 @@ $$
 To są dwa wzory, które “spinają” cały tekst: pokazują, co liczymy i dlaczego.
 W wersji “programistycznej” (czytelniejszą dla osób z robotyki), to ten sam łańcuch można zapisać tak:
 
-'''
+```
 landmark_in_G = pose_G_from_traj[k] ∘ T_extrinsic ∘ z_kj
-'''
+```
 
 gdzie:
--	'''pose_G_from_traj[k]''' – zamrożona trajektoria (odometria),
--	'''T_extrinsic''' – estymowana ekstrynsyka,
--	'''z_kj''' – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
+-	```pose_G_from_traj[k]``` – zamrożona trajektoria (odometria),
+-	```T_extrinsic``` – estymowana ekstrynsyka,
+-	```z_kj``` – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
 
 ### 6) Kalibracja ekstrynsyki, czyli kiedy geometria przestaje wystarczać
 W projekcie CAD samochodu przyjąłem, że punkt G ("kotwica" kamery tzn. początek lokalnego układu współrzędnych związanego z BEV) znajduje się w określonej odległości od środka modelu kinematycznego pojazdu. Znamy rozstaw osi, znamy promień kół, znamy przybliżone położenie kamery względem konstrukcji. To naturalny punkt startowy. Tyle że model nigdy nie jest rzeczywistością.
