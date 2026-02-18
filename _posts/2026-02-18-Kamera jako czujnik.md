@@ -54,8 +54,8 @@ To jest konsekwencja niespójności transformacji między lokalnym układem kame
 <img src="{{ 'assets/images/KameraCzujnik/makieta.png' | relative_url }}" alt="makieta" style="width:100%; max-width:100%; height:auto;" />
 
 Każdy marker ma unikalne ID, jest jednoznacznie rozpoznawalny i daje precyzyjnie wyznaczoną pozycję w obrazie. W kolejnych klatkach, po transformacji do BEV, zapisujemy położenie markerów w lokalnym układzie kamery (albo w “lokalnym BEV” związanym z pojazdem). Każda klatka daje nam więc dwie rzeczy:
-•	fragment pasa ruchu,
-•	współrzędne punktu środkowego markera, który w rzeczywistości jest nieruchomy.
+-	fragment pasa ruchu,
+-	współrzędne punktu środkowego markera, który w rzeczywistości jest nieruchomy.
 
 <img src="{{ 'assets/images/KameraCzujnik/markery.png' | relative_url }}" alt="markery" style="width:100%; max-width:100%; height:auto;" />
 
@@ -70,8 +70,8 @@ Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założeni
 - trajektoria pojazdu jest zamrożona i traktowana jako prawda,
 -	nie wolno jej zmieniać,
 -	estymujemy tylko:
-- -   parametry systemowe (ekstrynsykę kamery),
-- - 	położenia landmarków w jednej, wspólnej mapie.
+  -   parametry systemowe (ekstrynsykę kamery),
+  - 	położenia landmarków w jednej, wspólnej mapie.
 Innymi słowy: szukamy najlepiej dopasowanej mapy świata, zakładając, że trajektoria jest idealna.
 To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 
@@ -79,16 +79,9 @@ To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
 W dalszym opisie użyję dwóch pojęć:
 -	$C$ — “trajektoria” (kolejne pozycje pojazdu w czasie),
 -	$G$ — “mapa” (globalny układ odniesienia i pozycje landmarków w tym układzie).
-W chwili $k$ znamy (z odometrii) pozę pojazdu:
-
-$$
-\mathbf{x}_k = (x_k, y_k, \psi_k)
-$$.
-
+W chwili $k$ znamy (z odometrii) pozę pojazdu: $\mathbf{x}_k = (x_k, y_k, \psi_k)$. 
 Z detekcji dostajemy pomiar landmarku: $\mathbf{z}_{k,j}$
-
 w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku $\mathbf{p}_j$.
-
 W praktyce (w 2D) sprowadza się to do składania transformacji:
 -	najpierw “lokalny punkt z BEV”,
 -	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
@@ -104,22 +97,26 @@ $$
 gdzie:
 -	$T_{G\leftarrow C}(\mathbf{x}_k)$ wynika z zamrożonej trajektorii,
 -	$T_{C}(\theta)$ to estymowana ekstrynsyka (np. przesunięcie i skręt kamery/BEV względem pojazdu),
--	\(\mathbf{z}_{k,j}\) to pomiar landmarku w układzie lokalnym.
+-	$\mathbf{z}_{k,j}$ to pomiar landmarku w układzie lokalnym.
 A cel Etapu I to minimalizacja rozrzutu obserwacji tego samego landmarku w świecie, przy stałej trajektorii:
 
 $$
 \begin{aligned}
-\(\min_{\theta,\{\mathbf{p}_j\}} \sum_{(k,j)\in\mathcal{O}} \left\| \hat{\mathbf{p}}_{k,j}^{G} - \mathbf{p}_j \right\|^2\)
+\min_{\theta,\{\mathbf{p}_j\}} \sum_{(k,j)\in\mathcal{O}} \left\| \hat{\mathbf{p}}_{k,j}^{G} - \mathbf{p}_j \right\|^2
 \end{aligned}
 $$
 
 To są dwa wzory, które “spinają” cały tekst: pokazują, co liczymy i dlaczego.
 W wersji “programistycznej” (czytelniejszą dla osób z robotyki), to ten sam łańcuch można zapisać tak:
+
+$$
 landmark_in_G = pose_G_from_traj[k] ∘ T_extrinsic ∘ z_kj
+$$
+
 gdzie:
-•	pose_G_from_traj[k] – zamrożona trajektoria (odometria),
-•	T_extrinsic – estymowana ekstrynsyka,
-•	z_kj – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
+-	$pose_G_from_traj[k]$ – zamrożona trajektoria (odometria),
+-	$T_extrinsic$ – estymowana ekstrynsyka,
+-	$z_kj$ – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
 
 ### 6) Kalibracja ekstrynsyki, czyli kiedy geometria przestaje wystarczać
 W projekcie CAD samochodu przyjąłem, że punkt G ("kotwica" kamery tzn. początek lokalnego układu współrzędnych związanego z BEV) znajduje się w określonej odległości od środka modelu kinematycznego pojazdu. Znamy rozstaw osi, znamy promień kół, znamy przybliżone położenie kamery względem konstrukcji. To naturalny punkt startowy. Tyle że model nigdy nie jest rzeczywistością.
