@@ -32,7 +32,7 @@ excerpt_separator: <!--more-->
 
 
 ### 1) Problem
-Zaczynam od obrazu przedstawionego na ry. 1, który na pierwszy rzut oka wygląda poprawnie. Widzimy trajektorię pojazdu i fragmenty pasów ruchu przeniesione do wspólnego, globalnego układu odniesienia. Każda klatka kamery została przekształcona do widoku z lotu ptaka (BEV), a następnie “położona” na mapie w oparciu o odometrię. Intuicyjnie wszystko się zgadza: kamera widzi podłogę, znamy pozycję pojazdu, więc wystarczy te obserwacje przesuwać i obracać zgodnie z ruchem.
+Zaczynam od obrazu przedstawionego na rys. 1, który na pierwszy rzut oka wygląda poprawnie. Widzimy trajektorię pojazdu i dwa fragmenty pasów ruchu przeniesione do wspólnego, globalnego układu odniesienia. Każda klatka kamery została przekształcona do widoku z lotu ptaka (BEV), a następnie “położona” na mapie w oparciu o odometrię. Intuicyjnie wszystko się zgadza: kamera widzi podłogę, znamy pozycję pojazdu, więc wystarczy te obserwacje przesuwać i obracać zgodnie z ruchem.
 Problem polega na tym, że to nie powinno działać. A jeśli działa — to tylko pozornie.
 
 <img src="{{ 'assets/images/CameraSensor/surowa_traj.png' | relative_url }}" alt="surowa_traj" style="width:100%; max-width:100%; height:auto;" />
@@ -42,7 +42,7 @@ Problem polega na tym, że to nie powinno działać. A jeśli działa — to tyl
 Kamera w każdej chwili obserwuje fragment rzeczywistości w swoim lokalnym układzie odniesienia. Po przekształceniu do BEV geometria staje się w przybliżeniu metryczna: odległości mają sens, kąty są zachowane, a perspektywa przestaje dominować. To bardzo kuszące — skoro mamy lokalny “plan podłogi”, to wystarczy go umieścić w układzie świata. I dokładnie w tym miejscu zaczynają się kłopoty.
 Jeżeli składamy kolejne klatki wyłącznie na podstawie surowej odometrii, każda drobna niedokładność modelu ruchu — minimalny błąd kąta, niewielka asymetria skrętu, makro poślizg koła — powoduje, że kolejny fragment pasa odkładany jest w nieco złym miejscu. Te błędy nie znikają. One się sumują.
 Po przejechaniu pętli mapa nie domyka się, a pas zaczyna “płynąć”. To nie jest błąd obrazu.
-To jest konsekwencja niespójności transformacji między lokalnym układem kamery a układem świata — wymuszonej przez błędy trajektorii. Rys. 2 przedstawia błędnie złożoną mapę przy użyciu samej odometrii. 
+To jest konsekwencja niespójności transformacji między lokalnym układem kamery a układem świata — wymuszonej przez błędy trajektorii. Rys. 2 przedstawia kilka wybranych klatek obrazów z całego przejazdu złożonych w opisany powyżej sposób. Pasy ruchu rozjeżdzają się - szczególnie w okolicy ostrych zakrętów. Wynik ten pokazuje, że przy użyciu samej odometrii nie da się z obrazów BEV prawidłowo złożyć mapy. 
 
 <img src="{{ 'assets/images/CameraSensor/bledna_mapa.png' | relative_url }}" alt="bledna_mapa" style="width:100%; max-width:100%; height:auto;" />
 
@@ -136,7 +136,7 @@ Punkt G został wyznaczony projektowo jako L/2+R. Jednak analiza wariancji landm
 <img src="{{ 'assets/images/CameraSensor/ekstrynsyka.png' | relative_url }}" alt="ekstrynsyka" style="width:100%; max-width:100%; height:auto;" />
 
 ### 7) Algorytm "map fitting" działa świetnie. Mapa? – niekoniecznie
-Po optymalizacji "map fitting" dzieje się coś pozornie idealnego. Koszt funkcji dopasowania grup landmarków do trajektorii gwałtownie spada. Landmarki układają się w zwarte skupiska. Algorytm nie widzi już sprzeczności — wszystko „pasuje”. Tylko, że gdy na tę mapę spojrzymy w odniesieniu do rzeczywistości, coś się nie zgadza. Landmarki są spójne względem trajektorii, ale nie względem świata. Fragmenty pasa ruchu są przesunięte. A różnice nie są losowe — pojawiają się dokładnie tam, gdzie ruch pojazdu był najbardziej wymagający. I to nie jest błąd optymalizacji. To jej logiczna konsekwencja. Dzieje się tak dlatego, że algorytm znajduje rozwiązanie matematycznie spójne — ale tylko względem przyjętej trajektorii (ponieważ ona z zalożenia jest "zamrożona" - prawdziwa i nie mogże być korygowana). Wynik działania "map fittigu" ukazuje rys. 7. 
+Po optymalizacji "map fitting" dzieje się coś pozornie idealnego. Koszt funkcji dopasowania grup landmarków do trajektorii gwałtownie spada. Landmarki układają się w zwarte skupiska. Algorytm nie widzi już sprzeczności — wszystko „pasuje”. Tylko, że gdy na tę mapę spojrzymy w odniesieniu do rzeczywistości, coś się nie zgadza. Landmarki są spójne względem trajektorii, ale nie względem świata. Fragmenty pasa ruchu są przesunięte. A różnice nie są losowe — pojawiają się dokładnie tam, gdzie ruch pojazdu był najbardziej wymagający. I to nie jest błąd optymalizacji. To jej logiczna konsekwencja. Dzieje się tak dlatego, że algorytm znajduje rozwiązanie matematycznie spójne — ale tylko względem przyjętej trajektorii (ponieważ ona z zalożenia jest "zamrożona" - prawdziwa i nie może być korygowana). Wynik działania "map fittigu" ukazuje rys. 7. 
 
 <img src="{{ 'assets/images/CameraSensor/map_fitting.png' | relative_url }}" alt="map_fitting" style="width:100%; max-width:100%; height:auto;" />
 
@@ -160,6 +160,9 @@ I właśnie dlatego ten etap jest tak ważny dydaktycznie. On nie służy do „
 
 Na tym etapie pipeline jest spójny, ale ograniczony:
 
+Algorytm znajduje rozwiązanie matematycznie poprawne, lecz fizycznie błędne.
+Koszt maleje nie dlatego, że świat został dobrze opisany, ale dlatego, że mapa została zdeformowana tak, aby zgadzała się z błędną trajektorią.
+
 -	kamera daje lokalne obserwacje w BEV,
 -	odometria zapewnia ciągłość ruchu,
 -	transformacja między układami jest skalibrowana,
@@ -168,5 +171,5 @@ Na tym etapie pipeline jest spójny, ale ograniczony:
 Ale jedna rzecz jest już jasna: nie da się zbudować poprawnej mapy świata, jeżeli nie pozwolimy trajektorii się zmieniać. I to jest dokładnie moment, w którym Etap I musi się skończyć. Można go podsymować następującym sformułowaniem: "Best-fit map of landmarks assuming the trajectory is ground truth" czyli "najlepiej dopasowana mapa punktów orientacyjnych, przy założeniu, że trajektoria jest zgodna z rzeczywistością.
 
 ### 9) co dalej
-Dopiero kolejne kroki — korekta trajektorii, pełny SLAM i modelowanie poślizgu — mają sens. Ale to już osobna historia. Spróbuje to zrobić póżniej. Na razie kamera zrobiła coś znacznie ważniejszego niż „zobaczenie pasa”. Stała się czujnikiem niespójności modelu ruchu. A to jest fundament każdego sensownego systemu lokalizacji.
+Dopiero kolejne kroki — korekta trajektorii, pełny SLAM i modelowanie poślizgu — mają sens. Ale to już osobna historia. Spróbuje to zrobić później. Na razie kamera zrobiła coś znacznie ważniejszego niż „zobaczenie pasa”. Stała się czujnikiem niespójności modelu ruchu. A to jest fundament każdego sensownego systemu lokalizacji.
 
