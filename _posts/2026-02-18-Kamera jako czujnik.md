@@ -146,7 +146,7 @@ Jeżeli trajektoria byłaby idealna, wszystkie obserwacje tego samego obiektu na
 ### 8) A jak to się ma do rzeczywistości?
 Na rysunku 8 zestawiono trzy informacje: trajektorię odometryczną, globalne skupiska landmarków po map fittingu oraz rzeczywiste położenia markerów. Dla części landmarków (1–5) zgodność jest bardzo dobra, natomiast dla kolejnych (6–8) pojawiają się systematyczne przesunięcia. Od tego momentu cały układ zaczyna „odjeżdżać”. Różnice te korelują z ostrymi zakrętami, gdzie rzeczywisty ruch pojazdu odbiega od uproszczonego modelu kinematycznego.
 
-<img src="{{ 'assets/images/CameraSensor/assets/images/CameraSensor/map_fitting 2.png' | relative_url }}" alt="map_fitting 2" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/map_fitting2.png' | relative_url }}" alt="map_fitting2" style="width:100%; max-width:100%; height:auto;" />
 
 Można się w tym miejscu zastanowić dlaczego map fitting „nie działa” i co z tego wynika?
 
