@@ -44,24 +44,24 @@ Jeżeli składamy kolejne klatki wyłącznie na podstawie surowej odometrii, ka�
 Po przejechaniu pętli mapa nie domyka się, a pas zaczyna “płynąć”. To nie jest błąd obrazu.
 To jest konsekwencja niespójności transformacji między lokalnym układem kamery a układem świata — wymuszonej przez błędy trajektorii. Rys. 2 przedstawia błędnie złożoną mapę przy użyciu samej odometrii. 
 
-<img src="{{ 'assets/images/KameraCzujnik/bledna_mapa.png' | relative_url }}" alt="ledna_mapa" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/bledna_mapa.png' | relative_url }}" alt="ledna_mapa" style="width:100%; max-width:100%; height:auto;" />
 
 
 ### 3) Landmarki jako punkty stałe
 Żeby zrozumieć, gdzie leży problem, potrzebny jest punkt odniesienia. A najlepiej kilka — i to takich, które na pewno się nie poruszają. Dlatego pojawiają się landmarki. Na podłodze leży mata z markerami ArUco. Mata zastosowana w eksperymencie z rozłożonymi na niej pasami ruchu i markerami jest przedstawiona na rys. 3.
 
-<img src="{{ 'assets/images/KameraCzujnik/makieta.png' | relative_url }}" alt="makieta" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/makieta.png' | relative_url }}" alt="makieta" style="width:100%; max-width:100%; height:auto;" />
 
 Każdy marker ma unikalne ID, jest jednoznacznie rozpoznawalny i daje precyzyjnie wyznaczoną pozycję w obrazie. W kolejnych klatkach, po transformacji do BEV, zapisujemy położenie markerów w lokalnym układzie kamery (albo w “lokalnym BEV” związanym z pojazdem). Każda klatka daje nam więc dwie rzeczy:
 
 -	fragment pasa ruchu,
 -	współrzędne punktu środkowego markera, który w rzeczywistości jest nieruchomy.
 
-<img src="{{ 'assets/images/KameraCzujnik/markery.png' | relative_url }}" alt="markery" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/markery.png' | relative_url }}" alt="markery" style="width:100%; max-width:100%; height:auto;" />
 
 Pozycje markerów zapisuje w odpowiedniej tablicy csv. Jeżeli po przekształceniu do układu świata ten sam marker pojawia się w różnych miejscach, wiemy jedno: to nie podłoga się rusza. To model ruchu przestaje być zgodny z rzeczywistością. Na rysunku 5 pokazano globalne pozycje tych samych landmarków obserwowanych w różnych momentach przejazdu. Landmarki o tym samym ID tworzą wyraźne, rozdzielone skupiska. Każde skupisko odpowiada innemu fragmentowi trajektorii. Różnice między nimi nie są losowe — odzwierciedlają systematyczny dryf odometrii oraz błędne założenia co do położenia i orientacji kamery względem pojazdu.
 
-<img src="{{ 'assets/images/KameraCzujnik/surowe.png' | relative_url }}" alt="surowe" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/surowe.png' | relative_url }}" alt="surowe" style="width:100%; max-width:100%; height:auto;" />
 
 ### 4) Etap I – Offline Map Fitting
 W tym miejscu warto jasno powiedzieć, co robimę.
@@ -133,18 +133,20 @@ Punkt G został wyznaczony projektowo jako L/2+R. Jednak analiza wariancji landm
 że rzeczywiste położenie układu BEV różni się o od tej wartości. Projekt przestał być założeniem — stał się hipotezą, którą można weryfikować danymi. To moment, w którym projekt mechaniczny staje się elementem systemu pomiarowego, który można oceniać statystycznie. Efekty minimalizacji rozrzutu grup landmarków poprzez zmiany współrzędnych punku G przedstawia rys. 6. 
 
 
-<img src="{{ 'assets/images/KameraCzujnik/ekstrynsyka.png' | relative_url }}" alt="ekstrynsyka" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/ekstrynsyka.png' | relative_url }}" alt="ekstrynsyka" style="width:100%; max-width:100%; height:auto;" />
 
 ### 7) Algorytm "map fitting" działa świetnie. Mapa? – niekoniecznie
 Po optymalizacji "map fitting" dzieje się coś pozornie idealnego. Koszt funkcji dopasowania grup landmarków do trajektorii gwałtownie spada. Landmarki układają się w zwarte skupiska. Algorytm nie widzi już sprzeczności — wszystko „pasuje”. Tylko, że gdy na tę mapę spojrzymy w odniesieniu do rzeczywistości, coś się nie zgadza. Landmarki są spójne względem trajektorii, ale nie względem świata. Fragmenty pasa ruchu są przesunięte. A różnice nie są losowe — pojawiają się dokładnie tam, gdzie ruch pojazdu był najbardziej wymagający. I to nie jest błąd optymalizacji. To jej logiczna konsekwencja. Dzieje się tak dlatego, że algorytm znajduje rozwiązanie matematycznie spójne — ale tylko względem przyjętej trajektorii (ponieważ ona z zalożenia jest "zamrożona" - prawdziwa i nie mogże być korygowana). Wynik działania "map fittigu" ukazuje rys. 7. 
 
-<img src="{{ 'assets/images/KameraCzujnik/mapFitting.png' | relative_url }}" alt="mapFitting" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/map_fitting.png' | relative_url }}" alt="map_fitting" style="width:100%; max-width:100%; height:auto;" />
 
 Zielone i różowe punkty na wykresach nie są trajektorią. One pokazują, gdzie w globalnym układzie lądują lokalne obserwacje landmarków, gdy przeniesiemy je przez zamrożoną trajektorię.
 Jeżeli trajektoria byłaby idealna, wszystkie obserwacje tego samego obiektu nałożyłyby się na siebie. Jeżeli nie jest — chmury zaczynają się wyginać, przesuwać i rozjeżdżać. Szczególnie wyraźnie widać to na ostrych zakrętach. W tych miejscach rzeczywisty promień skrętu jest większy niż wynikałoby to z modelu. Pojazd nie obraca się wokół jednego, idealnego środka chwilowego obrotu. Może to być efektem poślizgów. Model Ackermanna przestaje być dobrym przybliżeniem — a kamera bezlitośnie to ujawnia.
 
 ### 8) A jak to się ma do rzeczywistości?
 Na rysunku 8 zestawiono trzy informacje: trajektorię odometryczną, globalne skupiska landmarków po map fittingu oraz rzeczywiste położenia markerów. Dla części landmarków (1–5) zgodność jest bardzo dobra, natomiast dla kolejnych (6–8) pojawiają się systematyczne przesunięcia. Od tego momentu cały układ zaczyna „odjeżdżać”. Różnice te korelują z ostrymi zakrętami, gdzie rzeczywisty ruch pojazdu odbiega od uproszczonego modelu kinematycznego.
+
+<img src="{{ 'assets/images/CameraSensor/map_fitting2.png' | relative_url }}" alt="map_fitting2" style="width:100%; max-width:100%; height:auto;" />
 
 Można się w tym miejscu zastanowić dlaczego map fitting „nie działa” i co z tego wynika?
 
