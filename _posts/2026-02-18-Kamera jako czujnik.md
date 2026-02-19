@@ -35,7 +35,7 @@ excerpt_separator: <!--more-->
 Zaczynam od obrazu przedstawionego na ry. 1, który na pierwszy rzut oka wygląda poprawnie. Widzimy trajektorię pojazdu i fragmenty pasów ruchu przeniesione do wspólnego, globalnego układu odniesienia. Każda klatka kamery została przekształcona do widoku z lotu ptaka (BEV), a następnie “położona” na mapie w oparciu o odometrię. Intuicyjnie wszystko się zgadza: kamera widzi podłogę, znamy pozycję pojazdu, więc wystarczy te obserwacje przesuwać i obracać zgodnie z ruchem.
 Problem polega na tym, że to nie powinno działać. A jeśli działa — to tylko pozornie.
 
-<img src="{{ 'assets/images/KameraCzujnik/surowa_traj.png' | relative_url }}" alt="surowa_traj" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/surowa_traj.png' | relative_url }}" alt="surowa_traj" style="width:100%; max-width:100%; height:auto;" />
 
 
 ### 2) Od obrazu do świata
