@@ -44,7 +44,7 @@ Jeżeli składamy kolejne klatki wyłącznie na podstawie surowej odometrii, ka�
 Po przejechaniu pętli mapa nie domyka się, a pas zaczyna “płynąć”. To nie jest błąd obrazu.
 To jest konsekwencja niespójności transformacji między lokalnym układem kamery a układem świata — wymuszonej przez błędy trajektorii. Rys. 2 przedstawia błędnie złożoną mapę przy użyciu samej odometrii. 
 
-<img src="{{ 'assets/images/CameraSensor/bledna_mapa.png' | relative_url }}" alt="ledna_mapa" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/bledna_mapa.png' | relative_url }}" alt="bledna_mapa" style="width:100%; max-width:100%; height:auto;" />
 
 
 ### 3) Landmarki jako punkty stałe
@@ -165,7 +165,7 @@ Na tym etapie pipeline jest spójny, ale ograniczony:
 -	transformacja między układami jest skalibrowana,
 -	landmarki pozwalają mierzyć rozjazd pętli.
 
-Ale jedna rzecz jest już jasna: nie da się zbudować poprawnej mapy świata, jeżeli nie pozwolimy trajektorii się zmieniać. I to jest dokładnie moment, w którym Etap I musi się skończyć.
+Ale jedna rzecz jest już jasna: nie da się zbudować poprawnej mapy świata, jeżeli nie pozwolimy trajektorii się zmieniać. I to jest dokładnie moment, w którym Etap I musi się skończyć. Można go podsymować następującym sformułowaniem: "Best-fit map of landmarks assuming the trajectory is ground truth" czyli "najlepiej dopasowana mapa punktów orientacyjnych, przy założeniu, że trajektoria jest zgodna z rzeczywistością.
 
 ### 9) co dalej
 Dopiero kolejne kroki — korekta trajektorii, pełny SLAM i modelowanie poślizgu — mają sens. Ale to już osobna historia. Spróbuje to zrobić póżniej. Na razie kamera zrobiła coś znacznie ważniejszego niż „zobaczenie pasa”. Stała się czujnikiem niespójności modelu ruchu. A to jest fundament każdego sensownego systemu lokalizacji.
