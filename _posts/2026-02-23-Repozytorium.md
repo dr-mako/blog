@@ -3,7 +3,6 @@ layout: post
 title: "REPOZYTORIUM PROJEKTU"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
-sticky: true
 ---
 
 Jeśli mój projekt Cię zaciekawił ... 
