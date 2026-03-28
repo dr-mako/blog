@@ -33,9 +33,10 @@ excerpt_separator: <!--more-->
 
 ### 1) Koncepcja
 W projekcie korzystam z kamery typu rybie oko $170^\circ$. Powód jest prosty: kamera jest zamontowana nisko, a ja chcę widzieć możliwie dużo „podłogi” i toru jazdy tuż przed pojazdem. Przy klasycznym obiektywie z takiej pozycji szybko tracę pole widzenia, natomiast rybie oko daje szeroki kadr i dużo informacji o przebiegu pasa.
-Cena za ten komfort jest jednak wysoka: obraz z rybiego oka jest silnie zniekształcony. Linie, które w rzeczywistości są proste, w obrazie stają się krzywe, a skala obiektów mocno zależy od położenia w kadrze. Ten efekt najłatwiej zauważyć na szachownicy kalibracyjnej — rys. poniżej pokazuje ustawienie pojazdu podczas wykonywania zdjęcia oraz przykładowy obraz z kamery.
+Cena za ten komfort jest jednak wysoka: obraz z rybiego oka jest silnie zniekształcony. Linie, które w rzeczywistości są proste, w obrazie stają się krzywe, a skala obiektów mocno zależy od położenia w kadrze. Ten efekt najłatwiej zauważyć na szachownicy kalibracyjnej — rys. poniżej pokazuje ustawienie pojazdu podczas wykonywania zdjęcia oraz przykładowy obraz z kamery (rys. 1).
 
 <img src="{{ 'assets/images/Widok_z_lotu/F1.png' | relative_url }}" alt="F1" style="width:75%; max-width:100%; height:auto;" />
+<p><i>Rys. 1. Ustawienie pojazdu podczas wykonywania zdjęcia szachownicy oraz przykładowy obraz z kamery.</i></p>
 
 Dla człowieka „wygięta” szachownica nie stanowi problemu — mózg koryguje to automatycznie. Dla algorytmu sterowania, który ma wykrywać krawędzie pasa i utrzymywać pojazd w jego środku, jest to już realna przeszkoda. To samo miejsce na torze może wyglądać inaczej w kolejnych klatkach, a proste operacje geometryczne przestają działać stabilnie.
 Najlepsze własności geometryczne ma sytuacja, w której obserwujemy podłogę prostopadle z góry — „z lotu ptaka”. Taki obraz ma w przybliżeniu stałą skalę, a linie na podłodze pozostają liniami. Dokładnie tego chcę. Dlatego wprowadzam korektę obrazów do widoku z lotu ptaka (bird’s eye view, BEV). Zakładam przy tym, że interesuje mnie przede wszystkim płaszczyzna drogi (mata/tor), a wszystko, co jest „pionowe”, traktuję jako efekt uboczny. BEV nie jest rekonstrukcją 3D — to świadome uproszczenie: buduję przekształcenie 2D, które na podłodze daje obraz o bardziej stałej geometrii, wygodny do sterowania, składania mapy z wielu klatek oraz ewentualnego uczenia sieci.
@@ -51,25 +52,25 @@ W efekcie żadna z metod nie jest idealna. Interpolacja daje wysoką dokładnoś
 
 ### 3) Plansza kalibracyjna $ChArUco$
 Kluczowym elementem całego procesu jest sposób pozyskania danych. Zamiast ręcznego wskazywania punktów wykorzystuję planszę typu ChArUco, która łączy szachownicę z markerami ArUco.
-Planszę wykorzystaną w projekcie przedstawiono na rys. 1.
+Planszę wykorzystaną w projekcie przedstawiono na rys. 2.
 
-<img src="{{ 'assets/images/Widok_z_lotu/charuco_840x420.png' | relative_url }}" alt="charuco_840x420" style="width:15%; max-width:100%; height:auto;" />
-<p><i>Rys. 1. Plansza kalibracyjna ChArUco wykorzystująca słownik markerów DICT_6X6_250.</i></p>
+<img src="{{ 'assets/images/Widok_z_lotu/charuco_840x420.png' | relative_url }}" alt="charuco_840x420" style="width:45%; max-width:100%; height:auto;" />
+<p><i>Rys. 2. Plansza kalibracyjna ChArUco wykorzystująca słownik markerów DICT_6X6_250.</i></p>
 
 Każdy marker posiada unikalny identyfikator, dzięki czemu możliwe jest jednoznaczne przypisanie wykrytych punktów do ich pozycji na planszy. W praktyce oznacza to, że nawet przy częściowym widoku planszy możliwe jest uzyskanie poprawnych korespondencji.
-Efektem działania algorytmu detekcji jest zbiór danych, w którym każdemu punktowi obrazu odpowiada punkt na planszy. Etapy procesu detekcji markerów przedstawiam na rys. 2: wykonanie zdjęcia, obraz z kamery, wynik detekcji markerów i szczegóły oznaczenia identyfikatorów narożników. 
+Efektem działania algorytmu detekcji jest zbiór danych, w którym każdemu punktowi obrazu odpowiada punkt na planszy. Etapy procesu detekcji markerów przedstawiam na rys. 3: wykonanie zdjęcia, obraz z kamery, wynik detekcji markerów i szczegóły oznaczenia identyfikatorów narożników. 
 
 <img src="{{ 'assets/images/Widok_z_lotu/Uklad.png' | relative_url }}" alt="Uklad" style="width:75%; max-width:100%; height:auto;" />
-<p><i>Rys. 2. Przykład detekcji markerów ChArUco: obraz wejściowy, wykryte markery oraz szczegóły (ID, narożniki, ramki).</i></p>
+<p><i>Rys. 3. Przykład detekcji markerów ChArUco: obraz wejściowy, wykryte markery oraz szczegóły (ID, narożniki, ramki).</i></p>
 
 Powstaje w ten sposób gęsta, metryczna tabela odwzorowania przestrzeni. W porównaniu do ręcznego klikania pozwala to uzyskać znacznie większą liczbę punktów, a jednocześnie eliminuje błędy wynikające z niejednoznaczności.
 
 ### 4) Model kamery
 Niezależnie od sposobu pozyskiwania punktów korespondencji pomiędzy obrazem a podłogą — czy jest to metoda ręczna oparta na szachownicy, czy automatyczna detekcja z wykorzystaniem planszy ChArUco — możliwe jest zbudowanie modelu kamery. Biblioteka OpenCV udostępnia w tym celu gotowe narzędzia, które na podstawie wykrytych narożników estymują parametry optyczne układu.
-Warunkiem działania tej procedury jest wykonanie serii zdjęć planszy kalibracyjnej przy zachowaniu stałej geometrii układu, w szczególności niezmiennego położenia kamery względem podłogi. Przykładowy zestaw takich obrazów przedstawiono na rys. 3.
+Warunkiem działania tej procedury jest wykonanie serii zdjęć planszy kalibracyjnej przy zachowaniu stałej geometrii układu, w szczególności niezmiennego położenia kamery względem podłogi. Przykładowy zestaw takich obrazów przedstawiono na rys. 4.
 
 <img src="{{ 'assets/images/Widok_z_lotu/mozaika_frame.png' | relative_url }}" alt="mozaika_frame" style="width:75%; max-width:100%; height:auto;" />
-<p><i>Rys. 3. Zestaw obrazów wykorzystanych do kalibracji kamery typu rybie oko.</i></p>
+<p><i>Rys. 4. Zestaw obrazów wykorzystanych do kalibracji kamery typu rybie oko.</i></p>
 
 W wyniku kalibracji otrzymywany jest model kamery, który można interpretować jako zestaw parametrów opisujących transformację pomiędzy przestrzenią trójwymiarową a obrazem. W jego skład wchodzą między innymi ogniskowa, położenie środka optycznego oraz współczynniki dystorsji, które modelują deformacje charakterystyczne dla obiektywów szerokokątnych. Model ten pozwala na „odwrócenie” zniekształceń i rzutowanie promieni kamery na płaszczyznę podłogi, co teoretycznie umożliwia uzyskanie widoku z lotu ptaka w sposób fizycznie poprawny. 
 W praktyce pojawia się jednak istotny problem. Estymacja parametrów odbywa się na podstawie skończonej liczby punktów i zawsze obarczona jest błędem. Błąd ten jest niewielki w centralnej części obrazu, ale rośnie w jego obszarach peryferyjnych, gdzie dystorsja obiektywu jest największa. W rezultacie model kamery, choć spójny geometrycznie, nie odwzorowuje idealnie relacji pomiędzy obrazem a płaszczyzną podłogi. To ograniczenie ma bezpośredni wpływ na jakość obrazu BEV i stanowi jeden z powodów, dla których warto porównać to podejście z innymi metodami. Oznacza to, że sam model kamery nie jest wystarczający do uzyskania stabilnego i metrycznie poprawnego obrazu BEV.
@@ -82,14 +83,14 @@ Model kamery stanowi próbę fizycznie poprawnego opisu układu, jednak w prakty
 W efekcie mamy do czynienia z dwoma przeciwstawnymi podejściami: lokalnym i globalnym. Jedno zapewnia wysoką dokładność, drugie stabilność. Żadne z nich nie daje obu jednocześnie.
 
 <img src="{{ 'assets/images/Widok_z_lotu/BEV.png' | relative_url }}" alt="BEV" style="width:75%; max-width:100%; height:auto;" />
-<p><i>Rys. 4. Porównanie obrazu BEV uzyskanego metodą interpolacji (po prawej) oraz homografii (po lewej).</i></p>
+<p><i>Rys. 5. Porównanie obrazu BEV uzyskanego metodą interpolacji (po prawej) oraz homografii (po lewej).</i></p>
 
-Różnice pomiędzy podejściem lokalnym i globalnym są dobrze widoczne na rys. 4. Interpolacja zachowuje wysoką dokładność w obszarach pokrytych punktami pomiarowymi, natomiast homografia zapewnia ciągłość obrazu kosztem deformacji geometrycznych, szczególnie na obrzeżach.
+Różnice pomiędzy podejściem lokalnym i globalnym są dobrze widoczne na rys. 5. Interpolacja zachowuje wysoką dokładność w obszarach pokrytych punktami pomiarowymi, natomiast homografia zapewnia ciągłość obrazu kosztem deformacji geometrycznych, szczególnie na obrzeżach.
 
 <img src="{{ 'assets/images/Widok_z_lotu/Difference.png' | relative_url }}" alt="DifferenceV" style="width:75%; max-width:100%; height:auto;" />
-<p><i>Rys. 5. Analiza różnic pomiędzy metodami: maska obszarów dodatkowych, mapa różnic oraz próba fuzji wyników.</i></p>
+<p><i>Rys. 6. Analiza różnic pomiędzy metodami: maska obszarów dodatkowych, mapa różnic oraz próba fuzji wyników.</i></p>
 
-Próba bezpośredniego połączenia obu metod prowadzi jedynie do poprawy wizualnej, ale nie tworzy jednego spójnego modelu odwzorowania. Interpolacja i homografia opisują przestrzeń w różny sposób — odpowiednio lokalny i globalny — dlatego ich wyniki nie są bezpośrednio kompatybilne (rys. 5).
+Próba bezpośredniego połączenia obu metod prowadzi jedynie do poprawy wizualnej, ale nie tworzy jednego spójnego modelu odwzorowania. Interpolacja i homografia opisują przestrzeń w różny sposób — odpowiednio lokalny i globalny — dlatego ich wyniki nie są bezpośrednio kompatybilne (rys. 6).
 
 ### 6) Wybór rozwiązania: mapy $Xmap$ i $Ymap$
 Zamiast wybierać jedną z metod w czystej postaci, stosuję podejście pośrednie oparte na jawnej mapie przekształcenia. Buduję dwie macierze: $Xmap$ oraz $Ymap$, które dla każdego punktu obrazu wynikowego wskazują odpowiadający mu punkt w obrazie źródłowym. 
