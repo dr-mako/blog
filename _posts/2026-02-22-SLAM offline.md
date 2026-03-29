@@ -5,7 +5,7 @@ author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
 
-### Kiedy trajektoria wreszcie może się poprawić”?<!--more-->
+### Kiedy trajektoria wreszcie może się poprawić?<!--more-->
 
 
 <!-- MathJax tylko dla tego wpisu -->
