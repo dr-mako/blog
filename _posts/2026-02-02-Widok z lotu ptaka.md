@@ -59,6 +59,7 @@ W drugim podejściu najpierw wyznaczam parametry kamery fisheye, a następnie ko
 Dopiero dla tak skorygowanego obrazu wyznaczam homografię, czyli transformację projektową pomiędzy płaszczyzną obrazu a płaszczyzną planszy kalibracyjnej. 
 Homografia opisuje jedną zależność obowiązującą na całej rozpatrywanej płaszczyźnie. Umożliwia też obliczanie odwzorowania poza obszarem bezpośrednio pokrytym punktami kalibracyjnymi, choć dokładność takiego przeliczenia zależy od jakości wyznaczonej transformacji. 
 Oba podejścia prowadzą do obrazu BEV, lecz w inny sposób opisują geometrię. Ich porównanie pozwala sprawdzić, jak wynik zależy od przyjętej metody.
+Zanim przejdę do wyznaczania obu przekształceń, potrzebuję zestawu punktów o znanych współrzędnych. Do ich pozyskania wykorzystuję planszę ChArUco. Ta sama plansza pozwala przygotować dane zarówno do interpolacji, jak i do kalibracji kamery oraz obliczenia homografii.
 
 ### 3) Plansza kalibracyjna $ChArUco$
 Kluczowym elementem całego procesu jest sposób pozyskania danych. Zamiast ręcznego wskazywania punktów wykorzystuję planszę typu ChArUco, która łączy szachownicę z markerami ArUco.
@@ -75,16 +76,16 @@ Po wykryciu markera, program zapisuje odpowiadające sobie współrzędne:
 - $((X_B,Y_B))$ – położenie tego narożnika na planszy, wyrażone w milimetrach.
 
 Dzięki temu otrzymuję zbiór korespondencji pomiędzy obrazem a rzeczywistą geometrią stanowiska. 
-Efektem działania algorytmu detekcji jest zbiór danych, w którym każdemu punktowi obrazu odpowiada punkt na planszy. Etapy procesu detekcji markerów przedstawiam na rys. 3: wykonanie zdjęcia, obraz z kamery, wynik detekcji markerów i szczegóły oznaczenia identyfikatorów narożników. 
+Etapy procesu detekcji markerów przedstawiam na rys. 3: wykonanie zdjęcia, obraz z kamery, wynik detekcji markerów i szczegóły oznaczenia identyfikatorów narożników. 
 
 <img src="{{ 'assets/images/Widok_z_lotu/Uklad.png' | relative_url }}" alt="Uklad" style="width:75%; max-width:100%; height:auto;" />
 <p><i>Rys. 3. Przykład detekcji markerów ChArUco: obraz wejściowy, wykryte markery oraz szczegóły (ID, narożniki, ramki).</i></p>
 
-Powstaje w ten sposób gęsta, metryczna tabela odwzorowania przestrzeni. Ten sam zbiór punktów może służyć do budowy interpolacji, wyznaczania homografii i kalibracji modelu kamery.
+Ten sam zbiór punktów może służyć do budowy interpolacji, wyznaczania homografii i kalibracji modelu kamery.
 
 ### 4) Model kamery fisheye
-Niezależnie od sposobu pozyskiwania punktów korespondencji pomiędzy obrazem a podłogą — czy jest to metoda ręczna oparta na szachownicy, czy automatyczna detekcja z wykorzystaniem planszy ChArUco — możliwe jest zbudowanie modelu kamery. Biblioteka OpenCV udostępnia w tym celu gotowe narzędzia, które na podstawie wykrytych narożników estymują parametry optyczne układu.
-Warunkiem działania tej procedury jest wykonanie serii zdjęć planszy kalibracyjnej przy zachowaniu stałej geometrii układu, w szczególności niezmiennego położenia kamery względem podłogi. Przykładowy zestaw takich obrazów przedstawiono na rys. 4.
+Niezależnie od sposobu pozyskiwania punktów korespondencji pomiędzy obrazem a podłogą — czy jest to metoda ręczna oparta na szachownicy, czy automatyczna detekcja z wykorzystaniem planszy ChArUco — możliwe jest zbudowanie modelu kamery. Biblioteka OpenCV udostępnia narzędzia, które na podstawie wykrytych narożników ChArUco pozwalają wyznaczyć parametry optyczne kamery. W tym celu wykorzystuję serię zdjęć planszy widocznej w różnych częściach kadru. Pozwala to uwzględnić charakterystyczne dla obiektywu fisheye zniekształcenia, również na obrzeżach obrazu. Przykładowy zestaw zdjęć wykorzystanych podczas kalibracji przedstawiono na rys. 4.
+Po zakończeniu kalibracji kamera pozostaje zamocowana względem samochodu. Jest to istotne dla zachowania zależności pomiędzy pikselami obrazu a współrzędnymi punktów na podłodze.
 
 <img src="{{ 'assets/images/Widok_z_lotu/mozaika_frame.png' | relative_url }}" alt="mozaika_frame" style="width:75%; max-width:100%; height:auto;" />
 <p><i>Rys. 4. Zestaw obrazów wykorzystanych do kalibracji kamery typu rybie oko.</i></p>
@@ -105,11 +106,19 @@ Na tej podstawie wyznaczam macierz homografii $(H_{\mathrm{board}})$.
 Dla punktu obrazu po korekcji dystorsji zapisuję zależność:
 
 $$
+\lambda
+\begin{bmatrix}
+X_B \\
+Y_B \\
+1
+\end{bmatrix}
+=
 H_{\mathrm{board}}
 \begin{bmatrix}
-u_{\mathrm{ud}}\v_{\mathrm{ud}}\1
+u_{\mathrm{ud}} \\
+v_{\mathrm{ud}} \\
+1
 \end{bmatrix}
-]
 $$
 
 gdzie $(\lambda)$ jest współczynnikiem skali współrzędnych jednorodnych.
@@ -196,18 +205,20 @@ Z punktu widzenia dalszej lokalizacji samochodu najważniejsze jest to, czy punk
 <img src="{{ 'assets/images/Widok_z_lotu/BEV.png' | relative_url }}" alt="BEV" style="width:75%; max-width:100%; height:auto;" />
 <p><i>Rys. 5. Porównanie obrazu BEV uzyskanego metodą interpolacji (po prawej) oraz homografii (po lewej).</i></p>
 
-Różnice pomiędzy podejściem lokalnym i globalnym są dobrze widoczne na rys. 5. Interpolacja zachowuje wysoką dokładność w obszarach pokrytych punktami pomiarowymi, natomiast homografia zapewnia ciągłość obrazu kosztem deformacji geometrycznych, szczególnie na obrzeżach.
+Różnice pomiędzy podejściem lokalnym i globalnym są dobrze widoczne na rys. 5. Interpolacja odtwarza obraz w obszarze objętym punktami pomiarowymi, natomiast homografia pozwala rozszerzyć przekształcenie na większy fragment płaszczyzny. W przypadku homografii widoczne są jednak deformacje geometryczne, szczególnie na obrzeżach. Sam wygląd obrazów nie przesądza jeszcze o dokładności metrycznej obu metod.
+Podjąłem również próbę połączenia wyników, wykorzystując obszary dostępne w jednym przekształceniu, a nieobecne w drugim (rys. 6). Takie zestawienie może zwiększyć widoczny fragment podłogi, ale nie usuwa różnic pomiędzy odwzorowaniami. Powstały obraz nie musi więc zachowywać jednej spójnej geometrii metrycznej.
 
 <img src="{{ 'assets/images/Widok_z_lotu/Difference.png' | relative_url }}" alt="DifferenceV" style="width:75%; max-width:100%; height:auto;" />
 <p><i>Rys. 6. Analiza różnic pomiędzy metodami: maska obszarów dodatkowych, mapa różnic oraz próba fuzji wyników.</i></p>
 
 Próba bezpośredniego połączenia obu metod prowadzi jedynie do poprawy wizualnej, ale nie tworzy jednego spójnego modelu odwzorowania. Interpolacja i homografia opisują przestrzeń w różny sposób — odpowiednio lokalny i globalny — dlatego ich wyniki nie są bezpośrednio kompatybilne (rys. 6).
 
-### 9) Wybór rozwiązania: mapy $Xmap$ i $Ymap$
-Zamiast wybierać jedną z metod w czystej postaci, stosuję podejście pośrednie oparte na jawnej mapie przekształcenia. Buduję dwie macierze: $Xmap$ oraz $Ymap$, które dla każdego punktu obrazu wynikowego wskazują odpowiadający mu punkt w obrazie źródłowym. 
-W praktyce oznacza to, że całe przekształcenie sprowadza się do operacji remapowania obrazu. Rozwiązanie to nie wymaga ani idealnego modelu kamery, ani globalnego uproszczenia geometrii. Jednocześnie zachowuje wysoką dokładność lokalną, ponieważ opiera się bezpośrednio na danych pomiarowych, oraz zapewnia pełne pokrycie obrazu dzięki interpolacyjnemu wypełnieniu przestrzeni. 
-Można więc powiedzieć, że jest to kompromis pomiędzy podejściem lokalnym i globalnym — wykorzystuje rzeczywiste dane, ale prowadzi do jednego, spójnego odwzorowania.
-Efektem jest stabilny, metryczny obraz podłogi, który nadaje się zarówno do sterowania pojazdem, jak i do budowy mapy z wielu klatek.
+### 9) Wnioski z porównania metod
+Porównanie pokazało, że interpolacja i homografia mają różne ograniczenia. Interpolacja wykorzystuje bezpośrednio punkty pomiarowe, ale jej zakres jest ograniczony do obszaru, w którym można wyznaczyć wartości na podstawie tych punktów. Homografia umożliwia przeliczenie większego fragmentu płaszczyzny, jednak jej dokładność zależy od jakości kalibracji kamery i wyznaczenia transformacji projektowej.
+Próba połączenia obu wyników nie rozwiązuje automatycznie problemu. Nawet jeśli uzyskany obraz wygląda poprawnie, nie oznacza to, że wszystkie jego fragmenty mają jednakową dokładność metryczną.
+W obu podejściach końcowe przekształcenie można zapisać w postaci macierzy Xmap i Ymap. Są to mapy odwzorowania odwrotnego, które dla kolejnych pikseli obrazu BEV określają położenie odpowiadających im punktów w obrazie źródłowym.
+Pozwala to oddzielić etap wyznaczania zależności geometrycznej od późniejszego przetwarzania obrazów. Po przygotowaniu map kolejne klatki można przekształcać za pomocą funkcji cv2.remap, bez ponownego wykrywania narożników ChArUco i obliczania całej transformacji.
+Dla dalszych prac najważniejsza jest zgodność współrzędnych BEV z lokalnym układem pojazdu. Zależność tę ustalam na podstawie znanej geometrii planszy i jej położenia względem samochodu, zamiast wykorzystywać estymowane parametry zewnętrzne kamery do wyznaczania tego przejścia.dłogi, który nadaje się zarówno do sterowania pojazdem, jak i do budowy mapy z wielu klatek.
 
 ### 10) Ograniczenia 
 Obie metody zakładają, że obserwowane punkty leżą na płaszczyźnie drogi. Elementy znajdujące się ponad nią zostaną w obrazie BEV przekształcone niezgodnie z ich rzeczywistą geometrią.
