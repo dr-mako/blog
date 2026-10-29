@@ -218,7 +218,7 @@ Porównanie pokazało, że interpolacja i homografia mają różne ograniczenia.
 Próba połączenia obu wyników nie rozwiązuje automatycznie problemu. Nawet jeśli uzyskany obraz wygląda poprawnie, nie oznacza to, że wszystkie jego fragmenty mają jednakową dokładność metryczną.
 W obu podejściach końcowe przekształcenie można zapisać w postaci macierzy Xmap i Ymap. Są to mapy odwzorowania odwrotnego, które dla kolejnych pikseli obrazu BEV określają położenie odpowiadających im punktów w obrazie źródłowym.
 Pozwala to oddzielić etap wyznaczania zależności geometrycznej od późniejszego przetwarzania obrazów. Po przygotowaniu map kolejne klatki można przekształcać za pomocą funkcji cv2.remap, bez ponownego wykrywania narożników ChArUco i obliczania całej transformacji.
-Dla dalszych prac najważniejsza jest zgodność współrzędnych BEV z lokalnym układem pojazdu. Zależność tę ustalam na podstawie znanej geometrii planszy i jej położenia względem samochodu, zamiast wykorzystywać estymowane parametry zewnętrzne kamery do wyznaczania tego przejścia.dłogi, który nadaje się zarówno do sterowania pojazdem, jak i do budowy mapy z wielu klatek.
+Dla dalszych prac najważniejsza jest zgodność współrzędnych BEV z lokalnym układem pojazdu. Zależność tę ustalam na podstawie znanej geometrii planszy i jej położenia względem samochodu, zamiast wykorzystywać estymowane parametry zewnętrzne kamery do wyznaczania tego przejścia.
 
 ### 10) Ograniczenia 
 Obie metody zakładają, że obserwowane punkty leżą na płaszczyźnie drogi. Elementy znajdujące się ponad nią zostaną w obrazie BEV przekształcone niezgodnie z ich rzeczywistą geometrią.
