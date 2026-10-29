@@ -70,9 +70,9 @@ Planszę wykorzystaną w projekcie przedstawiono na rys. 2.
 Każdy marker posiada unikalny identyfikator, dzięki czemu możliwe jest jednoznaczne przypisanie wykrytych punktów do ich pozycji na planszy. W praktyce oznacza to, że nawet przy częściowym widoku planszy możliwe jest uzyskanie poprawnych korespondencji.
 Po wykryciu markera, program zapisuje odpowiadające sobie współrzędne:
 
-$((u,v))$ – położenie narożnika w obrazie, wyrażone w pikselach,
+- $((u,v))$ – położenie narożnika w obrazie, wyrażone w pikselach,
 
-$((X_B,Y_B))$ – położenie tego narożnika na planszy, wyrażone w milimetrach.
+- $((X_B,Y_B))$ – położenie tego narożnika na planszy, wyrażone w milimetrach.
 
 Dzięki temu otrzymuję zbiór korespondencji pomiędzy obrazem a rzeczywistą geometrią stanowiska. 
 Efektem działania algorytmu detekcji jest zbiór danych, w którym każdemu punktowi obrazu odpowiada punkt na planszy. Etapy procesu detekcji markerów przedstawiam na rys. 3: wykonanie zdjęcia, obraz z kamery, wynik detekcji markerów i szczegóły oznaczenia identyfikatorów narożników. 
@@ -176,9 +176,9 @@ Przyjmuję regularną siatkę o rozdzielczości 2 mm na piksel. Każdy punkt tej
 Aby wypełnić obraz, stosuję odwzorowanie odwrotne. Dla każdego piksela obrazu BEV obliczam, z którego miejsca obrazu źródłowego należy pobrać wartość.
 Wynikiem są dwie macierze:
 
-Xmap – współrzędne poziome punktów obrazu źródłowego,
+- Xmap – współrzędne poziome punktów obrazu źródłowego,
 
-Ymap – współrzędne pionowe punktów obrazu źródłowego.
+- Ymap – współrzędne pionowe punktów obrazu źródłowego.
 
 Następnie funkcja cv2.remap tworzy obraz wynikowy na podstawie tych map.
 W metodzie interpolacyjnej mapy powstają bezpośrednio z interpolacji punktów pomiarowych.
