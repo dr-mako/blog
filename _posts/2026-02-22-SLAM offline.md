@@ -125,7 +125,33 @@ $$
 Różnicę orientacji sprowadzam do przedziału od $\(-\pi\)$ do $\(\pi\)$, aby poprawnie uwzględnić okresowość kąta.
 Algorytm szuka takich poz pojazdu i pozycji landmarków, które zmniejszają obie grupy residuali. Nie są one jednak traktowane jednakowo. Residuale normalizuję przez przyjęte niepewności pomiarów: 30 mm dla translacji odometrycznej, 2° dla zmiany orientacji oraz 50 mm dla lokalnych obserwacji landmarków.
 Zamiast zwykłej sumy kwadratów wykorzystuję funkcję straty Huber, która ogranicza wpływ dużych residuali. Do funkcji celu dodaję również ograniczenie pierwszej pozy pojazdu, czyli anchor, aby ustalić układ odniesienia.
+
+Algorytm minimalizuje łączny koszt wynikający z residuali odometrii,
+obserwacji landmarków oraz ograniczenia pierwszej pozy pojazdu (anchor):
+
+$$
+\min_{\{\mathbf{x}_k\},\{\mathbf{p}_j^G\}}
+\frac{1}{2}
+\sum_{i=1}^{N_r}
+\rho\left(\widetilde{r}_i^2\right)
+$$
+
+gdzie:
+
+- $\widetilde{r}_i$ – pojedyncza składowa znormalizowanego wektora residuali,
+- $N_r$ – całkowita liczba składowych residuali,
+- $\rho$ – funkcja straty Huber.
+
+Wektor residuali zawiera błędy względnego ruchu pojazdu, błędy
+lokalnych obserwacji landmarków oraz ograniczenie pierwszej pozy.
+Poszczególne składowe są dzielone przez przyjęte niepewności pomiarów.
+
+Dzięki funkcji Huber duże residuale mają mniejszy wpływ na wynik
+niż przy zwykłej metodzie najmniejszych kwadratów.
+
 W ten sposób SLAM szuka kompromisu między ruchem wynikającym z odometrii a położeniami nieruchomych markerów. W przeciwieństwie do map fittingu może przy tym zmieniać całą trajektorię.
+
+<img src="{{ 'assets/images/SLAMoffline/graf SLAM.png' | relative_url }}" alt="graf SLAM" style="width:100%; max-width:100%; height:auto;" />
 
 ### 4) Jak to działa intuicyjnie, czyli dwie sprzeczne „prawdy”
 Najprościej myśleć o tym jak o kompromisie między dwiema informacjami:
