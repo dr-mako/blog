@@ -182,7 +182,7 @@ Dla każdego markera wyznaczam centroid globalnych obserwacji oraz błąd RMS op
 
 **Tabela 1. Estymowane pozycje globalne landmarków oraz RMS ich obserwacji przy zamrożonej trajektorii odometrycznej.**
 
-| ID markera | $N_j$ | $\bar{x}_G$ [m] | $\bar{y}_G$ [m] | RMS [mm] |
+| ID markera | $N_j$ | $\bar{x}_G [m]$ | $\bar{y}_G [m]$ | RMS [mm] |
 |:---:|---:|---:|---:|---:|
 | 0  | 43 | 0.293 | 0.060 | 24.4 |
 | 1  | 85 | 0.327 | 0.002 | 6.3 |
@@ -201,39 +201,20 @@ Dla każdego markera wyznaczam centroid globalnych obserwacji oraz błąd RMS op
 Rozrzut nie jest jednakowy. Największą spójność wykazują obserwacje markera ID 1, dla którego RMS wynosi 6,3 mm. Z kolei dla markera ID 9 otrzymano 52,5 mm. Średni RMS, obliczony dla dziesięciu uwzględnionych landmarków, wynosi 27,25 mm.
 Wyznaczone centroidy są reprezentatywnymi pozycjami landmarków przy przyjętej trajektorii odometrycznej. Nie oznacza to jednak, że odpowiadają ich rzeczywistemu położeniu. Nawet niewielki RMS może występować wtedy, gdy wszystkie obserwacje danego markera są przesunięte w podobny sposób. Dlatego spójność wewnętrzną mapy trzeba odróżnić od jej zgodności z rzeczywistą geometrią stanowiska.
 
+### 8) Jak druga pętla ujawnia dryf odometrii?
+Dotychczas analizowałem obserwacje landmarków z pierwszego przejazdu. Każdy marker był widoczny w wielu kolejnych klatkach, dzięki czemu mogłem wyznaczyć jego średnią pozycję oraz rozrzut obserwacji. Co jednak stanie się, gdy samochód przejedzie trasę ponownie?
+Na rys. 7 zestawiono trajektorie odometryczne z dwóch przejazdów oraz globalne pozycje obserwowanych landmarków. Kolory punktów odpowiadają identyfikatorom markerów, natomiast linie ciągła i przerywana przedstawiają trajektorie pojazdu.
 
-<img src="{{ 'assets/images/CameraSensor/map_fitting.png' | relative_url }}" alt="map_fitting" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/CameraSensor/Przejazd 1.png' | relative_url }}" alt="Przejazd 1" style="width:100%; max-width:50%; height:auto;" />
 
-Zielone i różowe punkty na wykresach nie są trajektorią. One pokazują, gdzie w globalnym układzie lądują lokalne obserwacje landmarków, gdy przeniesiemy je przez zamrożoną trajektorię.
-Jeżeli trajektoria byłaby idealna, wszystkie obserwacje tego samego obiektu nałożyłyby się na siebie. Jeżeli nie jest — chmury zaczynają się wyginać, przesuwać i rozjeżdżać. Szczególnie wyraźnie widać to na ostrych zakrętach. W tych miejscach rzeczywisty promień skrętu jest większy niż wynikałoby to z modelu. Pojazd nie obraca się wokół jednego, idealnego środka chwilowego obrotu. Może to być efektem poślizgów. Model Ackermanna przestaje być dobrym przybliżeniem — a kamera bezlitośnie to ujawnia.
+<img src="{{ 'assets/images/CameraSensor/Przejazd 2.png' | relative_url }}" alt="Przejazd 2" style="width:100%; max-width:50%; height:auto;" />
 
-### 8) A jak to się ma do rzeczywistości?
-Na rysunku 8 zestawiono trzy informacje: trajektorię odometryczną, globalne skupiska landmarków po map fittingu oraz rzeczywiste położenia markerów. Dla części landmarków (1–5) zgodność jest bardzo dobra, natomiast dla kolejnych (6–8) pojawiają się systematyczne przesunięcia. Od tego momentu cały układ zaczyna „odjeżdżać”. Różnice te korelują z ostrymi zakrętami, gdzie rzeczywisty ruch pojazdu odbiega od uproszczonego modelu kinematycznego.
+Oba przejazdy odbywają się po tym samym torze, a markery pozostają nieruchome. Gdyby odometria była idealna, obserwacje tego samego markera, niezależnie od momentu ich wykonania, trafiałyby w to samo miejsce na mapie.
+Na wykresie widać jednak coś innego. Druga trajektoria jest wyraźnie przesunięta względem pierwszej, a obserwacje tych samych landmarków pojawiają się w różnych obszarach mapy. Szczególnie dobrze widać to po prawej stronie toru oraz w jego dolnej części.
+To efekt narastającej niespójności położenia wyznaczanego przez odometrię. Nawet jeśli lokalne obserwacje kamery są powtarzalne, przeniesienie ich do układu globalnego z użyciem błędnej pozy pojazdu prowadzi do różnych wyników.
+Powrót do wcześniej obserwowanego markera ujawnia więc informację, której nie daje sama odometria: ten sam nieruchomy punkt powinien mieć jedną pozycję globalną, niezależnie od tego, kiedy został zaobserwowany.
+Na tym etapie nie wykorzystuję jeszcze tej informacji do poprawiania trajektorii. Map fitting pozwala jedynie ocenić spójność obserwacji przy przyjętym przebiegu ruchu. Korekcja trajektorii wymagałaby uwzględnienia powtarzających się obserwacji landmarków w procesie estymacji położenia pojazdu. To już zadanie dla kolejnego etapu, czyli SLAM-u.
 
-<img src="{{ 'assets/images/CameraSensor/map_fitting2.png' | relative_url }}" alt="map_fitting2" style="width:100%; max-width:100%; height:auto;" />
-
-Można się w tym miejscu zastanowić dlaczego map fitting „nie działa” i co z tego wynika?
-
-Offline map fitting robi dokładnie to, co do niego należy:
-
--	nie poprawia trajektorii,
--	przesuwa landmarki tak, aby pasowały do przyjętego ruchu.
-
-Jeżeli trajektoria jest błędna, mapa zostanie zdeformowana. Algorytm nie ma innego wyjścia.
-I właśnie dlatego ten etap jest tak ważny dydaktycznie. On nie służy do „naprawiania mapy”. On służy do zdiagnozowania, gdzie i dlaczego model ruchu przestaje być zgodny z rzeczywistością. 
-
-Na tym etapie pipeline jest spójny, ale ograniczony:
-
-Algorytm znajduje rozwiązanie matematycznie poprawne, lecz fizycznie błędne.
-Koszt maleje nie dlatego, że świat został dobrze opisany, ale dlatego, że mapa została zdeformowana tak, aby zgadzała się z błędną trajektorią.
-
--	kamera daje lokalne obserwacje w BEV,
--	odometria zapewnia ciągłość ruchu,
--	transformacja między układami jest skalibrowana,
--	landmarki pozwalają mierzyć rozjazd pętli.
-
-Ale jedna rzecz jest już jasna: nie da się zbudować poprawnej mapy świata, jeżeli nie pozwolimy trajektorii się zmieniać. I to jest dokładnie moment, w którym Etap I musi się skończyć. Można go podsymować następującym sformułowaniem: "Best-fit map of landmarks assuming the trajectory is ground truth" czyli "najlepiej dopasowana mapa punktów orientacyjnych, przy założeniu, że trajektoria jest zgodna z rzeczywistością.
 
 ### 9) co dalej
 Dopiero kolejne kroki — korekta trajektorii, pełny SLAM i modelowanie poślizgu — mają sens. Ale to już osobna historia. Spróbuje to zrobić później. Na razie kamera zrobiła coś znacznie ważniejszego niż „zobaczenie pasa”. Stała się czujnikiem niespójności modelu ruchu. A to jest fundament każdego sensownego systemu lokalizacji.
-
