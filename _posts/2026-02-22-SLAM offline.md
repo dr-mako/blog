@@ -242,13 +242,13 @@ Oznacza to, że wewnętrzna spójność obserwacji nie jest wystarczającą miar
 <div style="display:flex; gap:10px; width:100%; align-items:center;">
 
   <img
-    src="{{ 'assets/images/CameraSensor/slam vs GT 1.png' | relative_url }}"
+    src="{{ 'assets/images/SLAMoffline/slam vs GT 1.png' | relative_url }}"
     alt="slam vs GT 1"
     style="flex:1 1 0; width:100%; min-width:0; height:auto;"
   />
 
   <img
-    src="{{ 'assets/images/CameraSensor/slam vs GT 2.png' | relative_url }}"
+    src="{{ 'assets/images/SLAMoffline/slam vs GT 2.png' | relative_url }}"
     alt="slam vs GT 2"
     style="flex:1 1 0; width:100%; min-width:0; height:auto;"
   />
@@ -276,14 +276,11 @@ Przeprowadziłem również analizę leave-one-out, w której kolejno wykluczałe
 Wyniki pokazują ograniczenie obecnego rozwiązania. SLAM poprawia zgodność obserwacji i część relacji geometrycznych pomiędzy landmarkami, ale nie gwarantuje odtworzenia ich rzeczywistych pozycji.
 Nie potrafię jeszcze rozstrzygnąć, jaka część pozostałych błędów wynika z odometrii, a jaka z lokalnych pomiarów kamerą. Do tego potrzebna będzie niezależna weryfikacja dokładności BEV, bez wykorzystywania trajektorii odometrycznej.
 
-### 8) Co to zmienia w interpretacji „czy SLAM działa”?
-Na tym etapie najważniejsza zmiana myślenia jest taka:
-•	SLAM nie polega na tym, że „koszt spada i wykres wygląda ładnie”.
-•	SLAM polega na tym, że potrafi ujawnić, gdzie świat przestaje pasować do modelu.
-U mnie wyszło jasno: SLAM domknął spójność landmarków i skorygował trajektorię, ale porównanie z GT pokazało, że resztka błędu ma charakter geometrycznej deformacji zgodnej z affine. To nie jest „błąd optymalizacji”. To jest informacja o modelu obserwacji (BEV) i/lub o uproszczeniach ruchu.
+## 9) Co dalej?
 
-### 9) Co dalej: dwa kierunki, które mają sens
-Na tym etapie SLAM wymusił spójność między trajektorią a landmarkami i pokazał, gdzie kończą się możliwości „wiary w odometrię”. Jednocześnie porównanie z Ground Truth ujawniło, że resztkowy błąd nie wygląda jak przypadkowy szum, tylko jak błąd systematyczny. I tu pojawia się najważniejsze pytanie na dalszą część projektu: czy dominującym źródłem tej resztki jest geometria obserwacji (metryczność BEV), czy dynamika ruchu (poślizg i odejście od idealnego Ackermanna w ostrych zakrętach), a najpewniej — jaka jest proporcja jednego i drugiego.
-Dalsza praca naturalnie dzieli się więc na dwa kierunki. Pierwszy to dopracowanie modelu pomiaru: zamiast zakładać, że BEV jest idealnie metryczny, trzeba sprawić, żeby faktycznie taki był (albo jawnie dopuścić w modelu prostą korektę, która kompensuje zniekształcenie). Drugi to dopracowanie modelu ruchu: skoro największy błąd pojawia się w miejscach o dużej krzywiźnie toru, to warto opisać poślizg jako zjawisko zależne od manewru, a nie jako stałą poprawkę. W praktyce można to zrobić bardzo „inżyniersko”: potraktować trajektorię ze SLAM (wyrównaną do GT) jako odniesienie i na jej podstawie wyznaczyć, jak odometria systematycznie myli się w funkcji skrętu i prędkości, a potem tę korektę włączyć z powrotem do odometrii. To jest moment, w którym SLAM przestaje być tylko algorytmem mapowania — staje się narzędziem do tego, żeby z danych wyciągnąć poprawki do modelu, który dotąd był tylko założeniem.
-
-
+SLAM pozwolił mi zmniejszyć niespójność obserwacji landmarków i skorygować trajektorię odometryczną. Porównanie z Ground Truth pokazało jednak, że mapa może być wewnętrznie spójna, a mimo to wyraźnie różnić się od rzeczywistej geometrii stanowiska.
+Szczególnie interesująca okazała się różnica pomiędzy dwoma eksperymentami. Na trasie z ostrymi zakrętami uzyskałem bardzo mały RMS obserwacji po SLAM, ale większy błąd mapy względem GT. Na dłuższej trasie z łagodniejszymi zakrętami było odwrotnie. To pokazuje, że sam residual optymalizacji nie wystarcza do oceny dokładności lokalizacji.
+Nie wiadomo jeszcze, w jakim stopniu za pozostałe rozbieżności odpowiada odometria, a w jakim lokalne pomiary z kamery. Oba źródła informacji są wykorzystywane jednocześnie, dlatego trudno ocenić ich dokładność wyłącznie na podstawie końcowego wyniku SLAM.
+W kolejnym etapie chcę więc wrócić do geometrii BEV. Zamierzam porównać pozycje i odległości markerów wyznaczone bezpośrednio z obrazu z ich zmierzonymi wartościami. Pozwoli to sprawdzić dokładność przekształcenia obrazu do układu pojazdu bez udziału odometrii.
+Dopiero mając taką informację, będzie można rozsądniej ocenić wpływ odometrii i przyjętego modelu ruchu na wyniki SLAM. Chciałbym również sprawdzić, jak zmiana wag pomiarów wpływa na kompromis pomiędzy zgodnością obserwacji a geometrią otrzymanej mapy.
+Na razie najważniejszy wniosek z tych eksperymentów jest prosty: SLAM może uzgodnić obserwacje i trajektorię, ale nie gwarantuje, że uzyskana mapa odpowiada rzeczywistości. Do oceny jej dokładności potrzebny jest niezależny punkt odniesienia.
