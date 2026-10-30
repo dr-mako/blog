@@ -180,12 +180,18 @@ Na tym etapie nie zmieniam geometrii BEV ani nie estymuję parametrów modelu ru
 
 *Rys. 3. Przebieg algorytmu SLAM offline: przygotowanie danych, inicjalizacja na podstawie odometrii i map fittingu oraz wspólna optymalizacja trajektorii i mapy landmarków.*
 
-### 6) Etap „runtime” offline: biasy zamrożone, pracuje tylko mapa i trajektoria
-W drugim kroku uruchamiam SLAM jeszcze raz, ale już bez „uczenia się” powyższych korekt. One są zamrożone, a optymalizacja poprawia tylko:
-trajektorię w czasie $\leftrightarrow$ mapę markerów.
-W praktyce wynik nadal wymagał korekty trajektorii względem surowej odometrii (średnio około 0.38 m, maksymalnie około 0.82 m). To jest spójne z intuicją z poprzedniego wpisu: problem najbardziej wychodzi w manewrach wymagających (zakręty), gdzie uproszczony model ruchu zaczyna rozmijać się z fizyką. Moje wyniki ukazują rys. poniżej. Porównanie wyznaczonych pozycji landmarków z ich prawdziwymi (nie znanymi przez algorytm) pozycjami Ground Truth nie wygląda imponująco. W stosunku do GT landmarki mapy wykazują następujące błędy położenia  RMSE [m]: 0.355, Mean [m]: 0.317, Max  [m]: 0.568. 
+### 6) Test 1 – trasa z ostrymi zakrętami
+Pierwszy eksperyment przeprowadziłem na krótkiej trasie z ostrymi zakrętami, znanej już z poprzedniego wpisu o map fittingu. Samochód wykonał dwa przejazdy po tym samym torze, dzięki czemu algorytm mógł wykorzystać ponowne obserwacje nieruchomych markerów.
+Graf SLAM zawierał 366 węzłów trajektorii, 12 landmarków oraz 366 obserwacji markerów. Punktem początkowym była trajektoria odometryczna i mapa landmarków wyznaczona metodą map fittingu.
+Przed optymalizacją RMS obserwacji landmarków wynosił 264,7 mm. Po SLAM zmniejszył się do 6,2 mm, czyli o około 97,7%. Oznacza to, że algorytm uzgodnił obserwacje markerów z wyznaczoną trajektorią i mapą znacznie lepiej niż w rozwiązaniu początkowym.
 
-<img src="{{ 'assets/images/SLAMoffline/SlamRuntime.png' | relative_url }}" alt="SlamRuntime" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/SLAMoffline/SlamCalib.png' | relative_url }}" alt="SlamCalib" style="width:100%; max-width:100%; height:auto;" />
+
+*Rys. 4 Trajektoria odometryczna i wyznaczona trajektoria po SLAM wraz z położeniem landmarków*
+
+Zmiana nie była jednak niewielka. Średnia odległość pomiędzy pozycjami odometrycznymi a odpowiadającymi im pozycjami SLAM wyniosła 452,2 mm, a maksymalna 877,2 mm. Nie oznacza to, że odometria miała dokładnie takie błędy. Są to wartości korekt wprowadzonych przez optymalizację, a nie odległości od rzeczywistej trajektorii.
+Jednocześnie RMS residualu odometrycznego pomiędzy kolejnymi węzłami wyniósł 5,6 mm dla translacji oraz 0,19° dla orientacji. SLAM zmienił więc globalny przebieg trajektorii, zachowując stosunkowo niewielkie różnice w ruchu względnym pomiędzy sąsiednimi pozami.
+Wynik pokazuje, że dopuszczenie korekty trajektorii pozwala znacznie zmniejszyć niespójność obserwacji landmarków. Na tym etapie nie wiadomo jednak, czy otrzymana mapa odpowiada rzeczywistemu rozmieszczeniu markerów. Do takiej oceny potrzebne jest porównanie z Ground Truth.
 
 ### 7) Porównanie z Ground Truth: sztywne wyrównanie nie wystarcza, przekształcenie afiniczne ujawnia prawdę
 Ponieważ układ markerów na makiecie mam zmierzony, mogłem porównać mapę uzyskaną ze SLAM z Ground Truth. I tu pojawia się rzecz, która na pierwszy rzut oka wygląda jak porażka, a w praktyce jest świetnym testem diagnostycznym: jakiego typu błędy dominu¬ją w całym pipeline’ie.
