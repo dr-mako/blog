@@ -228,13 +228,13 @@ Na rys. 8 zestawiono trajektorie odometryczne oraz globalne obserwacje landmark√
   <img
     src="{{ 'assets/images/CameraSensor/Przejazd 1 po.png' | relative_url }}"
     alt="Przejazd 1"
-    style="width:calc(50% - 5px); height:auto;"
+    style="flex:1 1 0; width:100%; min-width:0; height:auto;"
   />
 
   <img
     src="{{ 'assets/images/CameraSensor/Przejazd 2 po.png' | relative_url }}"
     alt="Przejazd 2"
-    style="width:calc(50% - 5px); height:auto;"
+    style="flex:1 1 0; width:100%; min-width:0; height:auto;"
   />
 
 </div>
