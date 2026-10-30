@@ -208,12 +208,73 @@ Różnica jest zastanawiająca, ponieważ w obu eksperymentach wykorzystałem te
 Warto również pamiętać, że RMS obserwacji jest miarą spójności rozwiązania z lokalnymi pomiarami kamery. Niewielka wartość nie gwarantuje poprawnej geometrii mapy, podobnie jak większy RMS nie musi oznaczać większego błędu położenia landmarków względem rzeczywistości.
 Dlatego na podstawie samych wyników optymalizacji nie rozstrzygam, który eksperyment dał dokładniejszą mapę. W następnej sekcji porównam pozycje landmarków z ich rzeczywistym rozmieszczeniem na stanowisku, czyli Ground Truth.
 
+### 8) SLAM a Ground Truth – czy spójna mapa jest poprawna?
+Wyniki poprzednich eksperymentów pokazują, że SLAM potrafi wyraźnie zmniejszyć rozrzut obserwacji landmarków. Nie oznacza to jednak, że wyznaczone pozycje markerów odpowiadają ich rzeczywistemu rozmieszczeniu.
+Aby to sprawdzić, porównałem mapy otrzymane ze SLAM z Ground Truth (GT), czyli zmierzonymi pozycjami markerów na stanowisku. Pozycje GT nie były wykorzystywane podczas optymalizacji SLAM. Służą wyłącznie do oceny otrzymanych wyników.
+Problem polega na tym, że mapa SLAM i GT mogą być zapisane w różnych układach współrzędnych. Dlatego przed obliczeniem błędów należy je wyrównać. Zastosowałem trzy sposoby dopasowania:
+
+- Rigid (SE(2)) – dopuszcza obrót i przesunięcie, ale nie zmienia skali ani kształtu mapy.
+
+- Similarity – oprócz obrotu i przesunięcia dopuszcza jednolitą zmianę skali.
+
+- Affine – pozwala również na różne skalowanie w poszczególnych kierunkach i odkształcenie układu.
+
+Pierwsze dopasowanie służy ocenie zgodności geometrii mapy bez jej deformowania. Pozostałe dwa traktuję diagnostycznie: pozwalają sprawdzić, jaką część rozbieżności można wyjaśnić zmianą skali lub bardziej ogólnym przekształceniem geometrycznym.
+
+Wyniki porównania przedstawia tabela.
+
+**Tabela 1. Porównanie wyników SLAM z Ground Truth dla obu eksperymentów.**
+
+| Miara | Test 1 – ostre zakręty | Test 2 – łagodne zakręty |
+|---|---:|---:|
+| RMS obserwacji po SLAM [mm] | 6,2 | 111,2 |
+| Rigid RMSE względem GT [mm] | 165,3 | 106,0 |
+| Similarity RMSE względem GT [mm] | 105,9 | 71,6 |
+| Affine RMSE względem GT [mm] | 89,0 | 34,8 |
+| Skala similarity [-] | 1,1991 | 1,0468 |
+| Odchylenie standardowe skali par landmarków [-] | 0,1311 | 0,0332 |
 
 
+Wynik jest interesujący. W pierwszym eksperymencie RMS obserwacji po SLAM wyniósł zaledwie 6.2 mm, ale błąd mapy względem GT po sztywnym wyrównaniu pozostał na poziomie 165.3 mm. W drugim eksperymencie RMS obserwacji był znacznie większy, natomiast pozycje landmarków okazały się bliższe GT: rigid RMSE wyniósł 106.0 mm.
+Oznacza to, że wewnętrzna spójność obserwacji nie jest wystarczającą miarą dokładności mapy.
 
 
+<div style="display:flex; gap:10px; width:100%; align-items:center;">
+
+  <img
+    src="{{ 'assets/images/CameraSensor/slam vs GT 1.png' | relative_url }}"
+    alt="slam vs GT 1"
+    style="flex:1 1 0; width:100%; min-width:0; height:auto;"
+  />
+
+  <img
+    src="{{ 'assets/images/CameraSensor/slam vs GT 2.png' | relative_url }}"
+    alt="slam vs GT 2"
+    style="flex:1 1 0; width:100%; min-width:0; height:auto;"
+  />
+
+</div>
+
+*Rys. 6: mapy landmarków po sztywnym wyrównaniu do GT dla obu eksperymentów*
+
+Warto również sprawdzić, co zmieniła sama optymalizacja SLAM. W tabeli poniżej porównuję błędy map początkowych, wyznaczonych z odometrii, z błędami map po SLAM.
+
+**Tabela 2. Porównanie zgodności map landmarków z Ground Truth przed i po optymalizacji SLAM.**
+
+| Miara | Test 1 – ostre zakręty (przed → po SLAM) | Test 2 – łagodne zakręty (przed → po SLAM) |
+|---|---:|---:|
+| Rigid RMSE [mm] | 176,3 → 165,3 | 109,3 → 106,0 |
+| Similarity RMSE [mm] | 162,9 → 105,9 | 100,1 → 71,6 |
+| Affine RMSE [mm] | 140,8 → 89,0 | 96,3 → 34,8 |
+| Odchylenie standardowe skali par landmarków [-] | 0,2627 → 0,1311 | 0,0683 → 0,0332 |
 
 
+W obu eksperymentach poprawa po sztywnym wyrównaniu jest stosunkowo niewielka. Znacznie większą różnicę widać po dopuszczeniu zmiany skali i przekształcenia afinicznego.
+Dodatkowa diagnostyka odległości pomiędzy parami markerów pokazała, że po SLAM zmniejszył się rozrzut współczynników skali. Mapa stała się więc bardziej jednorodna pod względem relacji odległości, mimo że nadal różni się od GT.
+W teście pierwszym dopasowanie similarity wymagało współczynnika skali około 1,20, natomiast w drugim około 1,05. Nie oznacza to bezpośrednio takiego samego błędu skali BEV. Współczynnik ten opisuje łączną różnicę pomiędzy geometrią uzyskanej mapy a GT.
+Przeprowadziłem również analizę leave-one-out, w której kolejno wykluczałem jeden landmark i ponownie dopasowywałem pozostałe punkty do GT. W żadnym z eksperymentów usunięcie pojedynczego markera nie spowodowało radykalnego zmniejszenia błędu. Rozbieżność dotyczy więc geometrii całej mapy, a nie jednego błędnie umieszczonego punktu.
+Wyniki pokazują ograniczenie obecnego rozwiązania. SLAM poprawia zgodność obserwacji i część relacji geometrycznych pomiędzy landmarkami, ale nie gwarantuje odtworzenia ich rzeczywistych pozycji.
+Nie potrafię jeszcze rozstrzygnąć, jaka część pozostałych błędów wynika z odometrii, a jaka z lokalnych pomiarów kamerą. Do tego potrzebna będzie niezależna weryfikacja dokładności BEV, bez wykorzystywania trajektorii odometrycznej.
 
 ### 8) Co to zmienia w interpretacji „czy SLAM działa”?
 Na tym etapie najważniejsza zmiana myślenia jest taka:
