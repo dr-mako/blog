@@ -193,17 +193,27 @@ Zmiana nie była jednak niewielka. Średnia odległość pomiędzy pozycjami odo
 Jednocześnie RMS residualu odometrycznego pomiędzy kolejnymi węzłami wyniósł 5,6 mm dla translacji oraz 0,19° dla orientacji. SLAM zmienił więc globalny przebieg trajektorii, zachowując stosunkowo niewielkie różnice w ruchu względnym pomiędzy sąsiednimi pozami.
 Wynik pokazuje, że dopuszczenie korekty trajektorii pozwala znacznie zmniejszyć niespójność obserwacji landmarków. Na tym etapie nie wiadomo jednak, czy otrzymana mapa odpowiada rzeczywistemu rozmieszczeniu markerów. Do takiej oceny potrzebne jest porównanie z Ground Truth.
 
-### 7) Porównanie z Ground Truth: sztywne wyrównanie nie wystarcza, przekształcenie afiniczne ujawnia prawdę
-Ponieważ układ markerów na makiecie mam zmierzony, mogłem porównać mapę uzyskaną ze SLAM z Ground Truth. I tu pojawia się rzecz, która na pierwszy rzut oka wygląda jak porażka, a w praktyce jest świetnym testem diagnostycznym: jakiego typu błędy dominu¬ją w całym pipeline’ie.
-Najpierw zrobiłem najprostsze możliwe wyrównanie: potraktowałem wynik SLAM jak „sztywny obiekt” i dopasowałem go do GT tylko przez przesunięcie i obrót. Gdyby problem polegał wyłącznie na tym, że SLAM ma inny punkt zerowy albo jest obrócony w inną stronę, to takie wyrównanie powinno niemal zlikwidować różnice. Tymczasem po tym kroku błąd nadal był rzędu dziesiątek centymetrów (RMSE około 0.36 m). To sugeruje, że nie chodzi tylko o wybór układu współrzędnych — w wyniku jest coś, czego nie da się skorygować samym „przesuń i obróć”.
-Potem dopuściłem wyrównanie afiniczne (rys.). To nadal jest proste dopasowanie globalne, ale daje dodatkową swobodę: poza przesunięciem i obrotem pozwala na inną skalę w osiach oraz lekki „skos” (czyli sytuację, w której osie w praktyce mieszają się ze sobą). Ważne jest jednak, co tak naprawdę robi tu „affine”: to nie jest kolejny etap SLAM-u, tylko czysta procedura dopasowania geometrii. Mamy dwie chmury punktów — landmarki ze SLAM oraz ich pozycje z Ground Truth — i zakładamy, że GT jest znane. Następnie szukamy takiej transformacji afinicznej, która możliwie najlepiej nałoży jedną chmurę na drugą (w sensie minimalizacji średniego błędu). Dopiero po takim dopasowaniu błąd spada do około 6.7 cm RMSE. Jeden marker nadal odstaje wyraźniej (około 15 cm), ale cała struktura układu robi się zaskakująco zgodna.
+## 7) Test 2 – trasa z łagodniejszymi zakrętami
 
-<img src="{{ 'assets/images/SLAMoffline/SlamAffine.png' | relative_url }}" alt="SlamAffine" style="width:100%; max-width:100%; height:auto;" />
+Drugi eksperyment przeprowadziłem na dłuższej trasie z łagodniejszymi zakrętami. Podobnie jak wcześniej samochód wykonał dwa przejazdy po tym samym torze. Sposób przetwarzania danych i parametry optymalizacji pozostały niezmienione.
+Graf SLAM zawierał 599 węzłów trajektorii, 20 landmarków i 599 obserwacji markerów. Przed optymalizacją RMS obserwacji landmarków wynosił 243,7 mm, a po SLAM zmniejszył się do 111,2 mm, czyli o około 54,4%.
 
-To prowadzi do mocnego, ale jednocześnie ostrożnego wniosku:
-„After affine alignment the landmark RMSE equals 6.7 cm, indicating high structural consistency of the SLAM reconstruction. The residual deformation suggests systematic bias in BEV metric scaling and/or vehicle kinematic model.”
-Po polsku: SLAM zrekonstruował układ markerów spójnie, tylko że ta spójność jest opisana w geometrii, która nie jest idealnie zgodna z „metryką z miarki”. To może oznaczać systematyczne odkształcenie po stronie obserwacji (np. BEV nie jest idealnie metryczny), ale nie byłbym tu kategoryczny. Największa pozostała niezgodność dotyczy markera 8, a ten leży dokładnie tam, gdzie przejazd zawierał ostry zakręt. W takich miejscach uproszczony model Ackermanna najczęściej zaczyna przegrywać z rzeczywistością: promień skrętu nie zgadza się z modelem, pojawia się poślizg boczny, a tor jazdy „płynie”. Tego nie da się w pełni zamknąć jedną stałą korektą.
-Dlatego na tym etapie najuczciwszy opis brzmi tak: rekonstrukcja SLAM jest strukturalnie spójna, ale resztkowa deformacja wskazuje na obecność błędów systematycznych — prawdopodobnie jednocześnie po stronie geometrii obserwacji (BEV) i po stronie modelu ruchu (szczególnie w ostrych zakrętach).
+<img src="{{ 'assets/images/SLAMoffline/SLAM przejazd 2.png' | relative_url }}" alt="SLAM przejazd 2" style="width:100%; max-width:100%; height:auto;" />
+
+*Rys.5: Trajektoria odometryczna i wyznaczona trajektoria po SLAM wraz z położeniem landmarków dla drugiego eksperymentu.*
+
+Średnia korekta położenia pojazdu względem odometrii wyniosła 285,5 mm, a maksymalna 736,8 mm. Residuale odometryczne pozostały niewielkie: RMS wyniósł 2,9 mm dla translacji oraz 0,15° dla orientacji.
+W porównaniu z pierwszym eksperymentem SLAM wprowadził mniejsze korekty trajektorii. Jednocześnie znacznie mniejsza była poprawa zgodności obserwacji landmarków. Na trasie z ostrymi zakrętami RMS zmniejszył się z 264,7 mm do 6,2 mm, natomiast tutaj z 243,7 mm do 111,2 mm.
+Różnica jest zastanawiająca, ponieważ w obu eksperymentach wykorzystałem ten sam algorytm i te same parametry optymalizacji. Nie oznacza to jednak, że SLAM działa gorzej na łagodniejszych zakrętach. Trasy różnią się długością, liczbą landmarków i strukturą obserwacji, co może wpływać na wynik.
+Warto również pamiętać, że RMS obserwacji jest miarą spójności rozwiązania z lokalnymi pomiarami kamery. Niewielka wartość nie gwarantuje poprawnej geometrii mapy, podobnie jak większy RMS nie musi oznaczać większego błędu położenia landmarków względem rzeczywistości.
+Dlatego na podstawie samych wyników optymalizacji nie rozstrzygam, który eksperyment dał dokładniejszą mapę. W następnej sekcji porównam pozycje landmarków z ich rzeczywistym rozmieszczeniem na stanowisku, czyli Ground Truth.
+
+
+
+
+
+
+
 
 ### 8) Co to zmienia w interpretacji „czy SLAM działa”?
 Na tym etapie najważniejsza zmiana myślenia jest taka:
