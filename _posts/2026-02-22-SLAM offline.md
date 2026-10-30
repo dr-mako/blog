@@ -53,7 +53,7 @@ Nie oznacza to jeszcze, że SLAM odtworzy rzeczywistą trajektorię. Wynik zale�
 
 ## 3) Minimalna teoria
 
-W chwili $\(k\)$ pojazd ma pozę w układzie globalnym:
+W chwili $k$ pojazd ma pozę w układzie globalnym:
 
 $$
 \mathbf{x}_k=
@@ -62,7 +62,7 @@ x_k & y_k & \varphi_k
 \end{bmatrix}^{T}
 $$
 
-Z poprzedniego etapu przetwarzania obrazu otrzymuję lokalną obserwację markera $\(j\)%, wyrażoną w metrach względem pojazdu:
+Z poprzedniego etapu przetwarzania obrazu otrzymuję lokalną obserwację markera $j$, wyrażoną w metrach względem pojazdu:
 
 $$
 \mathbf{z}_{k,j}^{\mathrm{local}}=
@@ -87,7 +87,7 @@ $$
 
 gdzie $\(R(\varphi_k)\)$ jest macierzą obrotu wynikającą z orientacji pojazdu.
 
-W mapie marker o identyfikatorze $\(j\)$ ma jedną estymowaną pozycję $\(\mathbf{p}_j^G\)$. Różnicę pomiędzy pozycją wynikającą z obserwacji a pozycją w mapie opisuję residualem:
+W mapie marker o identyfikatorze $j$ ma jedną estymowaną pozycję $\mathbf{p}_j^G$. Różnicę pomiędzy pozycją wynikającą z obserwacji a pozycją w mapie opisuję residualem:
 
 $$
 \mathbf{r}_{\mathrm{obs},k,j}
@@ -110,7 +110,7 @@ R(\varphi_k)^T
 $$
 
 Obie postacie mają tę samą długość residualu, ponieważ różnią się jedynie obrotem.
-Drugim rodzajem ograniczenia jest odometria. Dla kolejnych węzłów trajektorii znam względny ruch wynikający z odometrii, oznaczony jako $\(\Delta\mathbf{x}_k^{\mathrm{odom}}\)$. Z aktualnie estymowanych poz mogę obliczyć analogiczny ruch $\(\Delta\mathbf{x}_k^{\mathrm{SLAM}}\)$.
+Drugim rodzajem ograniczenia jest odometria. Dla kolejnych węzłów trajektorii znam względny ruch wynikający z odometrii, oznaczony jako $\Delta\mathbf{x}_k^{\mathrm{odom}}$. Z aktualnie estymowanych poz mogę obliczyć analogiczny ruch $\Delta\mathbf{x}_k^{\mathrm{SLAM}}$.
 
 Residual odometryczny ma zatem postać:
 
@@ -122,7 +122,7 @@ $$
 \Delta\mathbf{x}_k^{\mathrm{odom}}
 $$
 
-Różnicę orientacji sprowadzam do przedziału od $\(-\pi\)$ do $\(\pi\)$, aby poprawnie uwzględnić okresowość kąta.
+Różnicę orientacji sprowadzam do przedziału od $-\pi\)$ do $\(\pi$, aby poprawnie uwzględnić okresowość kąta.
 Algorytm szuka takich poz pojazdu i pozycji landmarków, które zmniejszają obie grupy residuali. Nie są one jednak traktowane jednakowo. Residuale normalizuję przez przyjęte niepewności pomiarów: 30 mm dla translacji odometrycznej, 2° dla zmiany orientacji oraz 50 mm dla lokalnych obserwacji landmarków.
 Zamiast zwykłej sumy kwadratów wykorzystuję funkcję straty Huber, która ogranicza wpływ dużych residuali. Do funkcji celu dodaję również ograniczenie pierwszej pozy pojazdu, czyli anchor, aby ustalić układ odniesienia.
 
