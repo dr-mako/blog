@@ -41,8 +41,7 @@ Problem polega na tym, że to nie powinno działać. A jeśli działa — to tyl
 ### 2) Od obrazu do świata
 Kamera w każdej chwili obserwuje fragment rzeczywistości w swoim lokalnym układzie odniesienia. Po przekształceniu do BEV geometria staje się w przybliżeniu metryczna: odległości mają sens, kąty są zachowane, a perspektywa przestaje dominować. To bardzo kuszące — skoro mamy lokalny “plan podłogi”, to wystarczy go umieścić w układzie świata. I dokładnie w tym miejscu zaczynają się kłopoty.
 Jeżeli składamy kolejne klatki wyłącznie na podstawie surowej odometrii, każda drobna niedokładność modelu ruchu — minimalny błąd kąta, niewielka asymetria skrętu, makro poślizg koła — powoduje, że kolejny fragment pasa odkładany jest w nieco złym miejscu. Te błędy nie znikają. One się sumują.
-Po przejechaniu pętli mapa nie domyka się, a pas zaczyna “płynąć”. To nie jest błąd obrazu.
-To jest konsekwencja niespójności transformacji między lokalnym układem kamery a układem świata — wymuszonej przez błędy trajektorii. Rys. 2 przedstawia kilka wybranych klatek obrazów z całego przejazdu złożonych w opisany powyżej sposób. Pasy ruchu rozjeżdzają się - szczególnie w okolicy ostrych zakrętów. Wynik ten pokazuje, że przy użyciu samej odometrii nie da się z obrazów BEV prawidłowo złożyć mapy. 
+Po przejechaniu pętli mapa nie domyka się, a pas zaczyna “płynąć”. Obserwowana niespójność może wynikać z błędów odometrii, ale również z niedokładności pomiarów kamerą i przekształcenia BEV. Sam obraz złożonej mapy nie pozwala jeszcze rozdzielić tych przyczyn. Rys. 2 przedstawia kilka wybranych klatek obrazów z całego przejazdu złożonych w opisany powyżej sposób. Pasy ruchu rozjeżdzają się - szczególnie w okolicy ostrych zakrętów. Wynik pokazuje, że samo przeliczanie kolejnych obrazów BEV za pomocą odometrii nie gwarantuje uzyskania spójnej mapy. 
 
 <img src="{{ 'assets/images/CameraSensor/bledna_mapa.png' | relative_url }}" alt="bledna_mapa" style="width:100%; max-width:100%; height:auto;" />
 
@@ -78,9 +77,7 @@ W dalszym opisie użyję dwóch pojęć:
 W chwili $k$ znamy z odometrii pozę pojazdu:
 
 $$
-[
 \mathbf{x}_k=(x_k,y_k,\varphi_k)
-]
 $$
 
 Z detekcji markera otrzymujemy jego położenie na obrazie, a następnie, po przekształceniu do metrycznego BEV, współrzędne $(X_{\mathrm{BEV}},Y_{\mathrm{BEV}})$.
@@ -93,26 +90,22 @@ Tą sytuację przedstawia rys:
 W tym przypadku współrzędnych ma zatem postać:
 
 $$
-[
 \mathbf{z}{k,j}^{\mathrm{local}}=
 \begin{bmatrix}
 Y{\mathrm{BEV}}\
 -X_{\mathrm{BEV}}
 \end{bmatrix}
-]
 $$
 
 Tak otrzymany pomiar landmarku jest już wyrażony względem pojazdu. Aby przenieść go do układu globalnego, wystarczy obrócić go o kąt orientacji pojazdu i dodać jego aktualną pozycję:
 
 $$
-[
 \begin{bmatrix}
 x_k\
 y_k
 \end{bmatrix}
 +
 R(\varphi_k)\mathbf{z}_{k,j}^{\mathrm{local}}
-]
 $$
 
 gdzie:
@@ -128,11 +121,9 @@ Ponieważ ten sam nieruchomy marker może być obserwowany w wielu klatkach, otr
 W praktyce tworzą skupisko. Jego środek wyznaczam jako średnią obserwacji:
 
 $$
-[
 \bar{\mathbf{p}}j^G =
 \frac{1}{N_j}
 \sum{k=1}^{N_j}\hat{\mathbf{p}}_{k,j}^{G}
-]
 $$
 
 a rozrzut opisuję błędem RMS:
@@ -168,8 +159,7 @@ marker_global = (
 )
 ```
 
-Następnie dla każdego ID markera obliczam centroid jego globalnych obserwacji i RMS.
-Nie szukam zatem ekstrynsyki, która sztucznie zmniejszy rozrzut punktów. Ten rozrzut jest teraz wynikiem eksperymentu i informacją o niespójności całego łańcucha pomiarowego.
+Następnie dla każdego identyfikatora markera obliczam centroid jego globalnych obserwacji oraz RMS. Trajektoria odometryczna i transformacja związana z geometrią kamery pozostają niezmienione. Otrzymany rozrzut jest więc miarą spójności obserwacji przy przyjętych parametrach całego układu pomiarowego.
 
 
 ### 7) Ten sam landmark, różne pozycje na mapie
@@ -199,7 +189,7 @@ Dla każdego markera wyznaczam centroid globalnych obserwacji oraz błąd RMS op
 | 10 | 41 | -0.085 | -0.272 | 24.9 |
 | 11 | 38 | -0.113 | -0.829 | 32.5 |
 
-*W tabeli uwzględniono markery z co najmniej pięcioma obserwacjami. Średni RMS wynosi 27,25 mm.*
+*W tabeli uwzględniono markery z co najmniej pięcioma obserwacjami.*
 
 
 Rozrzut nie jest jednakowy. Największą spójność wykazują obserwacje markera ID 1, dla którego RMS wynosi 6,3 mm. Z kolei dla markera ID 9 otrzymano 52,5 mm. Średni RMS, obliczony dla dziesięciu uwzględnionych landmarków, wynosi 27,25 mm.
@@ -213,15 +203,14 @@ Postanowiłem sprawdzić, jak zmienią się wyniki, gdy samochód będzie porusz
 <img src="{{ 'assets/images/CameraSensor/Przejazd 2 przed.png' | relative_url }}" alt="Przejazd 2 przed" style="width:100%; max-width:100%; height:auto;" />
 
 Różnica jest wyraźna. Obserwacje tych samych markerów tworzą znacznie bardziej zwarte skupiska. W drugim eksperymencie wartości RMS dla większości landmarków mieszczą się w granicach kilkunastu milimetrów, a największa z przedstawionych w zestawieniu wynosi 15,3 mm.
-To interesujący wynik. Pomimo zwiększenia długości trasy spójność obserwacji uległa poprawie. Sugeruje to, że geometria wykonywanych manewrów może mieć większe znaczenie niż sama długość przejazdu.
-Można to powiązać z ograniczeniami przyjętego modelu ruchu. Podczas ostrych zakrętów rzeczywista kinematyka samochodu może silniej odbiegać od modelu wykorzystywanego w odometrii. Pojawiają się poślizgi kół, a niewielkie błędy orientacji przekładają się na przesunięcia obserwowanych landmarków w układzie globalnym.
-Nie oznacza to jednak, że sam kształt toru odpowiada za całą zaobserwowaną różnicę. Na wyniki mogą wpływać także prędkość jazdy, jakość detekcji markerów i dokładność przekształcenia BEV. Do jednoznacznego określenia wpływu geometrii trasy potrzebne byłyby dodatkowe eksperymenty.
-Porównanie pokazuje natomiast istotną własność całego układu: spójność mapy zależy od warunków ruchu pojazdu. Ten sam algorytm, wykorzystujący ten sam model kamery i niezmienioną metodę map fittingu, może dawać wyraźnie różne wyniki na dwóch trasach.
-To ważna obserwacja przed przejściem do SLAM-u. Jeśli błędy odometrii zależą od wykonywanych manewrów, korekcja trajektorii powinna wykorzystywać informacje z ponownych obserwacji nieruchomych landmarków, szczególnie tam, gdzie model ruchu jest najmniej dokładny.
+To interesujący wynik. Pomimo zwiększenia długości trasy uzyskałem mniejszy rozrzut obserwacji. Sugeruje to, że sama długość przejazdu nie decyduje o spójności mapy. Znaczenie mogą mieć również geometria toru i warunki, w jakich porusza się samochód.
+Nie można jednak na podstawie tych dwóch eksperymentów jednoznacznie wskazać przyczyny zaobserwowanej różnicy. Na wyniki mogły wpływać warunki ruchu, dokładność odometrii oraz jakość lokalnych pomiarów z kamery. Aby rozdzielić wpływ poszczególnych czynników, potrzebne byłyby kolejne eksperymenty.
+Na tym etapie istotne jest samo porównanie: przy zastosowaniu tej samej metody tworzenia BEV i map fittingu otrzymałem wyraźnie różne wartości rozrzutu obserwacji. Wyniki obu eksperymentów mogą więc posłużyć jako punkt odniesienia w dalszych pracach nad korekcją trajektorii.
+Pozostaje pytanie, czy wykorzystanie powtarzających się obserwacji nieruchomych landmarków pozwoli zmniejszyć te rozbieżności. Do tego wrócę przy implementacji SLAM-u.
 
 ### 9) Jak druga pętla ujawnia dryf odometrii?
-W obu eksperymentach samochód wykonywał dwa przejazdy po tej samej trasie. W pierwszym przypadku tor miał ostre zakręty, w drugim był dłuższy, a zakręty były łagodniejsze. Pozwala to porównać zachowanie całego układu pomiarowego w dwóch różnych warunkach ruchu.
-Na rys. 8 zestawiono trajektorie odometryczne oraz globalne obserwacje landmarków dla obu eksperymentów. Linie ciągłe i przerywane przedstawiają kolejne przejazdy, natomiast kolory punktów odpowiadają identyfikatorom markerów.
+Dotychczas porównywałem rozrzut obserwacji landmarków dla dwóch różnych tras. Warto jednak przyjrzeć się jeszcze jednej sytuacji: co dzieje się, gdy samochód ponownie przejeżdża tę samą trasę i obserwuje te same nieruchome markery? 
+W obu eksperymentach samochód wykonywał dwa przejazdy po swoim torze. Na rys. 8 zestawiono trajektorie odometryczne oraz globalne obserwacje landmarków dla obu eksperymentów. Linie ciągłe i przerywane odpowiadają kolejnym przejazdom, natomiast kolory punktów oznaczają identyfikatory markerów.
 
 <div style="display:flex; gap:10px; width:100%; align-items:center;">
 
@@ -239,11 +228,15 @@ Na rys. 8 zestawiono trajektorie odometryczne oraz globalne obserwacje landmark�
 
 </div>
 
-Markery są nieruchome, dlatego ich rzeczywiste położenia nie zmieniają się pomiędzy przejazdami. Gdyby trajektoria odometryczna i pomiar z kamery były idealne, obserwacje tego samego markera trafiałyby w jedno miejsce na mapie, niezależnie od tego, w której pętli zostały zarejestrowane.
-Wyniki pokazują jednak różnice. Na trasie z ostrymi zakrętami obserwacje tych samych markerów są wyraźnie rozdzielone pomiędzy przejazdami. Na dłuższej trasie z łagodniejszymi zakrętami skupiska są bardziej zwarte, a obie trajektorie wykazują większą zgodność.
-Nie oznacza to jeszcze, że znamy źródło obserwowanych błędów. Rozbieżności mogą wynikać z odometrii, niedokładności lokalnych pomiarów kamerą lub ich przekształcenia do wspólnego układu współrzędnych. Na tym etapie możemy jedynie stwierdzić, że stopień niespójności zależy od warunków przejazdu.
-Powtórna obserwacja nieruchomego landmarku dostarcza jednak informacji, której nie daje sama odometria. Ten sam punkt powinien mieć jedną pozycję globalną, niezależnie od przebytej drogi. Jeśli jego kolejne obserwacje nie pokrywają się, otrzymujemy informację o błędzie całego łańcucha pomiarowego.
-W obecnym map fittingu nie wykorzystuję jeszcze tej informacji do poprawiania trajektorii. Pozostaje ona zamrożona, a wyznaczone centroidy i wartości RMS służą do oceny spójności obserwacji. Dopiero w kolejnym etapie będzie można sprawdzić, czy wspólna estymacja trajektorii pojazdu i położeń landmarków pozwoli zmniejszyć zaobserwowane rozbieżności.
+Markery są nieruchome, więc ich rzeczywiste położenia nie zmieniają się pomiędzy przejazdami. Gdyby odometria i pomiary z kamery były idealne, obserwacje tego samego markera trafiałyby w jedno miejsce na mapie, niezależnie od tego, w której pętli zostały zarejestrowane.
+Na wykresach widać jednak różnice. W pierwszym eksperymencie, na trasie z ostrymi zakrętami, obserwacje tych samych landmarków są wyraźnie rozdzielone pomiędzy przejazdami. W drugim eksperymencie, na dłuższej trasie z łagodniejszymi zakrętami, różnice są znacznie mniejsze.
+Obserwujemy zatem dwa zjawiska. W kolejnych klatkach tego samego przejazdu pozycje markera tworzą skupisko o określonym rozrzucie. Po ponownym przejechaniu trasy skupisko może pojawić się w innym miejscu mapy, mimo że marker nie zmienił swojego rzeczywistego położenia.
+To rozróżnienie jest istotne. Niewielki RMS obserwacji z jednego przejazdu nie gwarantuje, że po ponownym przejechaniu trasy otrzymamy tę samą globalną pozycję landmarku.
+Na tym etapie nie potrafię jeszcze jednoznacznie rozdzielić błędów odometrii od niedokładności pomiarów kamerą. Mogę natomiast sprawdzić, czy ponowne obserwacje nieruchomych punktów są zgodne z mapą utworzoną podczas pierwszego przejazdu.
+Obecny map fitting nie wykorzystuje tych rozbieżności do korekcji trajektorii. Przyjmuje ją za ustaloną, a pozycje landmarków wyznacza na podstawie globalnych obserwacji.
+W kolejnym etapie zamierzam wykorzystać powtarzające się obserwacje do wspólnej estymacji trajektorii pojazdu i położeń landmarków. Pozwoli to sprawdzić, czy można zmniejszyć niespójność mapy bez zakładania, że odometria jest idealna.
 
 ### 10) co dalej
-Dopiero kolejne kroki — korekta trajektorii, pełny SLAM i modelowanie poślizgu — mają sens. Ale to już osobna historia. Spróbuje to zrobić później. Na razie kamera zrobiła coś znacznie ważniejszego niż „zobaczenie pasa”. Stała się czujnikiem niespójności modelu ruchu. A to jest fundament każdego sensownego systemu lokalizacji.
+Map fitting pozwolił mi sprawdzić, jak spójne są obserwacje nieruchomych landmarków przy przyjętej trajektorii odometrycznej. Porównanie dwóch tras pokazało wyraźne różnice w rozrzucie obserwacji, natomiast ponowne przejazdy ujawniły rozbieżności pomiędzy globalnymi pozycjami tych samych markerów. 
+Na razie nie rozstrzygam, jaka część tych błędów wynika z odometrii, a jaka z pomiarów kamerą. To będzie przedmiotem dalszych badań.
+Kolejnym krokiem jest SLAM, w którym trajektoria pojazdu przestanie być traktowana jako niezmienna. Będzie można wtedy sprawdzić, czy uwzględnienie obserwacji landmarków pozwoli poprawić lokalizację i uzyskać bardziej spójną mapę.
