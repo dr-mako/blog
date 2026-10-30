@@ -41,7 +41,7 @@ Chcę sprawdzić, na ile dopuszczenie korekty trajektorii zmniejszy niespójnoś
 
 <img src="{{ 'assets/images/SLAMoffline/schemat SLAM.png' | relative_url }}" alt="schemat SLAM" style="width:100%; max-width:100%; height:auto;" />
 
-*Rys. 1. Różnica między map fittingiem a SLAM-em. W pierwszym przypadku trajektoria odometryczna pozostaje ustalona, natomiast w drugim optymalizowane są zarówno pozy pojazdu, jak i położenia landmarków.*
+*Rys. 1. Miejsce map fittingu i SLAM-u w procesie tworzenia mapy landmarków. Map fitting wykorzystuje trajektorię odometryczną jako ustaloną, natomiast SLAM pozwala później wspólnie optymalizować trajektorię i mapę.*
 
 
 ## 2) Ten sam marker w kilku miejscach mapy
@@ -153,7 +153,7 @@ W ten sposób SLAM szuka kompromisu między ruchem wynikającym z odometrii a po
 
 <img src="{{ 'assets/images/SLAMoffline/graf SLAM.png' | relative_url }}" alt="graf SLAM" style="width:100%; max-width:100%; height:auto;" />
 
-*Rys. 2. Graf SLAM: kolejne pozy pojazdu są połączone ograniczeniami odometrycznymi, a obserwacje tych samych landmarków wiążą ze sobą różne fragmenty trajektorii.*
+*Rys. 2. Schemat optymalizacji SLAM. Odometria i lokalne obserwacje landmarków dostarczają ograniczeń, na podstawie których wyznaczane są trajektoria pojazdu i mapa. Ground Truth służy wyłącznie do późniejszej walidacji.*
 
 ### 4) Dwie informacje, które trzeba pogodzić
 Najprościej myśleć o SLAM-ie jako o próbie pogodzenia dwóch informacji.
