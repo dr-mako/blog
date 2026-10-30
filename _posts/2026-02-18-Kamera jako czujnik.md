@@ -48,20 +48,14 @@ To jest konsekwencja niespójności transformacji między lokalnym układem kame
 
 
 ### 3) Landmarki jako punkty stałe
-Żeby zrozumieć, gdzie leży problem, potrzebny jest punkt odniesienia. A najlepiej kilka — i to takich, które na pewno się nie poruszają. Dlatego pojawiają się landmarki. Na podłodze leży mata z markerami ArUco. Mata zastosowana w eksperymencie z rozłożonymi na niej pasami ruchu i markerami jest przedstawiona na rys. 3.
+Żeby zrozumieć, gdzie leży problem, potrzebny jest punkt odniesienia. A najlepiej kilka, i to takich, które na pewno się nie poruszają. Dlatego pojawiają się landmarki. Na podłodze leży mata z markerami ArUco. Matę zastosowaną w eksperymencie, z rozłożonymi na niej pasami ruchu i markerami, przedstawiono na rys. 3.
 
 <img src="{{ 'assets/images/CameraSensor/makieta.png' | relative_url }}" alt="makieta" style="width:100%; max-width:100%; height:auto;" />
 
-Każdy marker ma unikalne ID, jest jednoznacznie rozpoznawalny i daje precyzyjnie wyznaczoną pozycję w obrazie. W kolejnych klatkach, po transformacji do BEV, zapisujemy położenie markerów w lokalnym układzie kamery (albo w “lokalnym BEV” związanym z pojazdem). Każda klatka daje nam więc dwie rzeczy:
-
--	fragment pasa ruchu,
--	współrzędne punktu środkowego markera, który w rzeczywistości jest nieruchomy.
+Każdy marker ma unikalny identyfikator (ID), dzięki czemu można go jednoznacznie rozpoznać w kolejnych obrazach. Kamera pozwala wyznaczyć jego położenie w pikselach, a przekształcenie do metrycznego BEV umożliwia określenie współrzędnych środka markera względem pojazdu.
+W ten sposób każda klatka dostarcza informacji o lokalnym położeniu obserwowanego landmarku. Sam marker pozostaje nieruchomy, natomiast samochód zmienia swoje położenie i orientację. Ta własność pozwala później wykorzystać powtarzające się obserwacje tych samych punktów do oceny spójności mapy.
 
 <img src="{{ 'assets/images/CameraSensor/markery.png' | relative_url }}" alt="markery" style="width:100%; max-width:100%; height:auto;" />
-
-Pozycje markerów zapisuje w odpowiedniej tablicy csv. Jeżeli po przekształceniu do układu świata ten sam marker pojawia się w różnych miejscach, wiemy jedno: to nie podłoga się rusza. To model ruchu przestaje być zgodny z rzeczywistością. Na rysunku 5 pokazano globalne pozycje tych samych landmarków obserwowanych w różnych momentach przejazdu. Landmarki o tym samym ID tworzą wyraźne, rozdzielone skupiska. Każde skupisko odpowiada innemu fragmentowi trajektorii. Różnice między nimi nie są losowe — odzwierciedlają systematyczny dryf odometrii oraz błędne założenia co do położenia i orientacji kamery względem pojazdu.
-
-<img src="{{ 'assets/images/CameraSensor/surowe.png' | relative_url }}" alt="surowe" style="width:100%; max-width:100%; height:auto;" />
 
 ### 4) Etap I – Offline Map Fitting
 W tym miejscu warto jasno powiedzieć, co robimy. To nie jest jeszcze SLAM. W Etapie I – Offline Map Fitting przyjmuję następujące założenia:
@@ -174,8 +168,39 @@ Następnie dla każdego ID markera obliczam centroid jego globalnych obserwacji 
 Nie szukam zatem ekstrynsyki, która sztucznie zmniejszy rozrzut punktów. Ten rozrzut jest teraz wynikiem eksperymentu i informacją o niespójności całego łańcucha pomiarowego.
 
 
-### 7) Algorytm "map fitting" działa świetnie. Mapa? – niekoniecznie
-Po optymalizacji "map fitting" dzieje się coś pozornie idealnego. Koszt funkcji dopasowania grup landmarków do trajektorii gwałtownie spada. Landmarki układają się w zwarte skupiska. Algorytm nie widzi już sprzeczności — wszystko „pasuje”. Tylko, że gdy na tę mapę spojrzymy w odniesieniu do rzeczywistości, coś się nie zgadza. Landmarki są spójne względem trajektorii, ale nie względem świata. Fragmenty pasa ruchu są przesunięte. A różnice nie są losowe — pojawiają się dokładnie tam, gdzie ruch pojazdu był najbardziej wymagający. I to nie jest błąd optymalizacji. To jej logiczna konsekwencja. Dzieje się tak dlatego, że algorytm znajduje rozwiązanie matematycznie spójne — ale tylko względem przyjętej trajektorii (ponieważ ona z zalożenia jest "zamrożona" - prawdziwa i nie może być korygowana). Wynik działania "map fittigu" ukazuje rys. 7. 
+### 7) Ten sam landmark, różne pozycje na mapie
+
+Pozycje markerów zapisuję w odpowiedniej tabeli CSV. Jeżeli po przekształceniu do układu globalnego ten sam nieruchomy marker pojawia się w różnych miejscach, oznacza to niespójność pomiarów. To nie podłoga się porusza. Problem leży w sposobie wyznaczania położenia pojazdu lub przeliczania obserwacji z kamery.
+Na rys. 6 pokazano globalne pozycje tych samych landmarków obserwowanych w różnych momentach przejazdu. Landmarki o tym samym ID tworzą skupiska punktów, które nie zawsze pokrywają się ze sobą. Ich rozrzut nie musi być przypadkowy. Może wynikać z narastającego dryfu odometrii, szczególnie podczas ostrych zakrętów, ale również z niedokładności pomiarów w obrazie i przekształcenia BEV.
+
+To właśnie ta niespójność jest przedmiotem dalszej analizy. Przy zamrożonej trajektorii map fitting pozwala wyznaczyć reprezentatywne pozycje landmarków i ocenić rozrzut ich obserwacji, ale nie usuwa przyczyn powstałych błędów.
+
+<img src="{{ 'assets/images/CameraSensor/surowe.png' | relative_url }}" alt="Globalne pozycje obserwacji landmarków przy zamrożonej trajektorii odometrycznej" style="width:100%; max-width:100%; height:auto;" />
+
+Dla każdego markera wyznaczam centroid globalnych obserwacji oraz błąd RMS opisujący ich rozrzut. Wyniki dla pierwszego przejazdu zestawiono w tabeli 1. Uwzględniono markery, dla których zarejestrowano co najmniej pięć obserwacji.
+
+
+**Tabela 1. Estymowane pozycje globalne landmarków oraz RMS ich obserwacji przy zamrożonej trajektorii odometrycznej.**
+
+| ID markera | $N_j$ | $\bar{x}_G$ [m] | $\bar{y}_G$ [m] | RMS [mm] |
+|:---:|---:|---:|---:|---:|
+| 0  | 43 | 0.293 | 0.060 | 24.4 |
+| 1  | 85 | 0.327 | 0.002 | 6.3 |
+| 2  | 75 | 0.848 | 0.014 | 16.9 |
+| 3  | 82 | 1.193 | -0.242 | 34.7 |
+| 5  | 51 | 1.008 | -1.160 | 30.0 |
+| 7  | 12 | 0.651 | -0.483 | 16.7 |
+| 8  | 33 | 0.546 | -1.051 | 33.5 |
+| 9  | 53 | 0.143 | -1.181 | 52.5 |
+| 10 | 41 | -0.085 | -0.272 | 24.9 |
+| 11 | 38 | -0.113 | -0.829 | 32.5 |
+
+*W tabeli uwzględniono markery z co najmniej pięcioma obserwacjami. Średni RMS wynosi 27,25 mm.*
+
+
+Rozrzut nie jest jednakowy. Największą spójność wykazują obserwacje markera ID 1, dla którego RMS wynosi 6,3 mm. Z kolei dla markera ID 9 otrzymano 52,5 mm. Średni RMS, obliczony dla dziesięciu uwzględnionych landmarków, wynosi 27,25 mm.
+Wyznaczone centroidy są reprezentatywnymi pozycjami landmarków przy przyjętej trajektorii odometrycznej. Nie oznacza to jednak, że odpowiadają ich rzeczywistemu położeniu. Nawet niewielki RMS może występować wtedy, gdy wszystkie obserwacje danego markera są przesunięte w podobny sposób. Dlatego spójność wewnętrzną mapy trzeba odróżnić od jej zgodności z rzeczywistą geometrią stanowiska.
+
 
 <img src="{{ 'assets/images/CameraSensor/map_fitting.png' | relative_url }}" alt="map_fitting" style="width:100%; max-width:100%; height:auto;" />
 
