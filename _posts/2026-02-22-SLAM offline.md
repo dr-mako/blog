@@ -31,45 +31,113 @@ excerpt_separator: <!--more-->
 ></script>
 
 
-### 1) SLAM (Simultaneous Localization And Mapping) 
-W poprzednim wpisie („map fitting”) celowo „zamroziłem” trajektorię i potraktowałem ją jako prawdę. W efekcie pozwala to zobaczyć, że jeśli odometria dryfuje, to mapa musi się zdeformować, ponieważ algorytm jej nie poprawia. Teraz robię krok dalej. Wchodzimy w SLAM — etap, w którym trajektoria nie jest traktowana jako parametr stały.
-SLAM (Simultaneous Localization And Mapping) to metoda równoczesnego budowania mapy otoczenia i lokalizowania się na niej na podstawie obserwacji. Klasycznie robi się to „bez mapy wejściowej”: mapa dopiero powstaje. Z drugiej strony możemy ją też stosować do "lokalizacji" na gotowej mapie lub do kalibracji modelu ruchu. Obecny wpis dotyczy wersji pośredniej, ale bardzo praktycznej: SLAM offline, czyli postprocessing na podstawie zapisanych logów przejazdu. Nie ma presji czasu rzeczywistego, jest za to geometria, optymalizacja i możliwość zadania sobie trudnych pytań: co tak naprawdę jest niezgodne — odometria, kamera, a może oba naraz?
+### 1) SLAM (Simultaneous Localization And Mapping)
+
+W poprzednim wpisie, dotyczącym map fittingu, celowo zamroziłem trajektorię odometryczną. Nie zakładałem, że jest poprawna. Chciałem sprawdzić, jak spójna będzie mapa nieruchomych landmarków, jeśli nie pozwolę algorytmowi korygować położenia pojazdu.
+Wyniki pokazały, że kolejne obserwacje tego samego markera nie zawsze trafiają w jedno miejsce na mapie. Źródłem rozbieżności mogą być błędy odometrii, lokalnych pomiarów kamerą lub obu tych elementów.
+Teraz przechodzę do SLAM-u (Simultaneous Localization And Mapping), czyli jednoczesnej estymacji trajektorii pojazdu i mapy otoczenia. Różnica względem map fittingu jest zasadnicza: trajektoria nie jest już zamrożona (rys. 1). Algorytm może zmieniać pozycje i orientacje pojazdu, tak aby uzgodnić pomiary odometryczne z obserwacjami nieruchomych landmarków.
+W tym eksperymencie wykorzystuję SLAM offline. Pracuję na zapisanych wcześniej danych z przejazdu, więc optymalizacja nie musi działać w czasie rzeczywistym.
+Chcę sprawdzić, na ile dopuszczenie korekty trajektorii zmniejszy niespójność obserwacji landmarków i czy otrzymana mapa będzie bliższa rzeczywistej geometrii stanowiska. To dwa różne pytania, dlatego oprócz wyników optymalizacji potrzebne będzie również porównanie z Ground Truth.
+
+<img src="{{ 'assets/images/SLAMoffline/schemat SLAM.png' | relative_url }}" alt="schemat SLAM" style="width:100%; max-width:100%; height:auto;" />
+
+*Rys. 1. Różnica między map fittingiem a SLAM-em. W pierwszym przypadku trajektoria odometryczna pozostaje ustalona, natomiast w drugim optymalizowane są zarówno pozy pojazdu, jak i położenia landmarków.*
 
 
-### 2) Problem: ten sam marker w kilku miejscach mapy
-Eksperyment jest prosty: na podłodze leżą markery ArUco. Każdy ma unikalne ID, więc asocjacjia danych jest ułatwiona: „marker 7” to zawsze ten sam obiekt w świecie.
-W każdej klatce obrazu kamera widzi markery, a po przekształceniu do BEV (bird’s-eye view) potrafię odczytać ich położenia w pikselach. To kuszące, żeby traktować BEV jak „metryczną mapkę”, tylko że w praktyce łańcuch przekształceń zawsze ma błędy: trochę w skali, trochę w orientacji, trochę w modelu ruchu. 
-Ta sytuację ilustruje poniższy rys., gdzie pokazano obrazy z kamery nałożone na mapę trajektorii odometrycznej (co odpowiada założeniom „map fitting”) w pobliżu ostrego zakrętu z widocznym markerem nr. 8. Te dwa obrazy były zarejestrowane w odstępie 30 klatek. Widoczne jest istotne przesunięcie pozy markera, chociaż oczekiwałbym, że będą w tym samym miejscu mapy. Co jest tu jeszcze bardzo istotne z punktu widzenia SLAM – pokazany przejazd zawiera dwie pętle. To warunek konieczny aby SLAM mógł prawidłowo uzgodnić położenie trajektorii i markerów na jednej mapie. 
- 
+## 2) Ten sam marker w kilku miejscach mapy
+W poprzednim eksperymencie pokazałem, że kolejne obserwacje tego samego nieruchomego markera ArUco, po przeliczeniu do globalnego układu współrzędnych, nie zawsze trafiają w jedno miejsce. Przy zamrożonej trajektorii odometrycznej mogłem jedynie wyznaczyć średnią pozycję landmarku i zmierzyć rozrzut jego obserwacji.
+W SLAM-ie tę samą informację wykorzystuję inaczej. Położenie markera w świecie jest wspólne dla wszystkich jego obserwacji, natomiast pozycje i orientacje pojazdu mogą się zmieniać podczas optymalizacji.
+Jeżeli samochód obserwuje marker z różnych miejsc, każda obserwacja nakłada ograniczenie na wzajemne położenie pojazdu i landmarku. Algorytm musi więc znaleźć takie pozycje pojazdu i markerów, które możliwie dobrze uzgodnią te pomiary, nie odchodząc przy tym nadmiernie od ruchu zarejestrowanego przez odometrię.
+Szczególnie przydatne są ponowne obserwacje tych samych markerów po przejechaniu pętli. Łączą one fragmenty trajektorii, które są odległe w czasie, ale odnoszą się do tych samych nieruchomych punktów. Dzięki temu mogą ograniczać narastającą niespójność położenia.
+Nie oznacza to jeszcze, że SLAM odtworzy rzeczywistą trajektorię. Wynik zależy od jakości pomiarów oraz przyjętych ograniczeń. Możemy jednak sprawdzić, czy wspólna optymalizacja pozwala uzyskać bardziej spójną trajektorię i mapę niż przy zamrożonej odometrii.
 
-<img src="{{ 'assets/images/SLAMoffline/marker.png' | relative_url }}" alt="marker" style="width:100%; max-width:100%; height:auto;" />
+## 3) Minimalna teoria
 
-W map fittingu mogłem „ratować sytuację” deformując mapę. W SLAM-ie celem jest coś innego: zbudować mapę i trajektorię, które są ze sobą spójne
+W chwili $\(k\)$ pojazd ma pozę w układzie globalnym:
 
-### 3) Minimalna teoria 
-W chwili $k$ pojazd ma pozę 
-$$x_k=(x_k,y_k,\phi_k)$$
-w globalnym układzie świata (WORLD). Detektor zwraca marker (landmark) o ID $j$ w obrazie BEV jako punkt w pikselach 
-$$(x_{\text{pix}},y_{\text{pix}})$$ 
-Dalej zachodzi prosty łańcuch przekształceń: piksele $\to$ metry w BEV $\to$ stała korekta o ekstrynsykę kamery/BEV względem pojazdu (przesunięcie i stały offset yaw) $\to$ punkt względny w układzie pojazdu $\to$ projekcja do WORLD z użyciem aktualnej pozy pojazdu.
-Jeżeli chcę to zapisać jednym zdaniem matematycznym (tylko po to, żeby nie zgubić sensu), to „pozycja w świecie wynikająca z pomiaru” ma postać:
+$$
+\[
+\mathbf{x}_k=
+\begin{bmatrix}
+x_k & y_k & \varphi_k
+\end{bmatrix}^{T}
+\]
+$$
 
-$$\hat{p}_{j,k}= \begin{bmatrix}x_k\\y_k\end{bmatrix} +R(\phi_k)\,z_{\text{veh},j,k}.$$
+Z poprzedniego etapu przetwarzania obrazu otrzymuję lokalną obserwację markera $\(j\)%, wyrażoną w metrach względem pojazdu:
 
+$$
+\[
+\mathbf{z}_{k,j}^{\mathrm{local}}=
+\begin{bmatrix}
+Y_{\mathrm{BEV}}\\
+-X_{\mathrm{BEV}}
+\end{bmatrix}
+\]
+$$
 
-W tym zapisie 
-$$z_{\text{veh},j,k}\in\mathbb{R}^2$$
-oznacza obserwację markera w układzie pojazdu (po przeliczeniu BEV na metry i po uwzględnieniu ekstrynsyki), a $R(\phi_k)$ jest macierzą obrotu 2D wynikającą z orientacji pojazdu $\phi_k$.
-Tymczasem $p_j\in\mathbb{R}^2$ to bieżąca estymata mapowej pozycji tego samego markera w WORLD. Sedno SLAM-u jest proste: chcę, żeby to, co wynika z pomiarów, zgadzało się z tym, co jest w mapie. Dlatego błąd dopasowania (residual) definiuję jako:
+Geometria kamery względem pojazdu została już uwzględniona podczas przygotowania BEV. W SLAM-ie nie optymalizuję dodatkowych parametrów tej transformacji.
+Znając pozę pojazdu, mogę przeliczyć obserwację markera do układu globalnego:
 
-$$r_{\text{obs},k,j}=\hat{p}_{j,k}-p_j.$$
+$$
+\[
+\hat{\mathbf{p}}_{k,j}^{G}=
+\begin{bmatrix}
+x_k\\
+y_k
+\end{bmatrix}
++
+R(\varphi_k)\mathbf{z}_{k,j}^{\mathrm{local}}
+\]
+$$
 
-To jednak wciąż nie wszystko, bo trajektoria też nie jest stała. Odometria narzuca dodatkowe ograniczenie: kolejne pozy pojazdu powinny być zgodne z tym, co zmierzył model ruchu. Tę niezgodność opisuję residualem $r_{\text{odom},k}$ między klatkami $k$ i $k+1$. W efekcie algorytm szuka kompromisu minimalizującego łączny błąd:
+gdzie $\(R(\varphi_k)\)$ jest macierzą obrotu wynikającą z orientacji pojazdu.
 
-$$\min_{\{x_k\},\{p_j\}} \sum_k \left\| r_{\text{odom},k} \right\|^2 + \sum_{(k,j)\in\mathcal{O}} \left\| r_{\text{obs},k,j} \right\|^2,$$
+W mapie marker o identyfikatorze $\(j\)$ ma jedną estymowaną pozycję $\(\mathbf{p}_j^G\)$. Różnicę pomiędzy pozycją wynikającą z obserwacji a pozycją w mapie opisuję residualem:
 
-gdzie $\mathcal{O}$ jest zbiorem wszystkich zaobserwowanych par „klatka–marker”. W map fittingu mogłem zmieniać tylko $p_j$ (mapę) przy zamrożonej trajektorii. W SLAM-ie zmieniają się jednocześnie $p_j$ oraz $x_k$ (trajektoria) — i to jest ta jedna różnica, która robi całą robotę.
+$$
+\[
+\mathbf{r}_{\mathrm{obs},k,j}
+=
+\hat{\mathbf{p}}_{k,j}^{G}-\mathbf{p}_j^G
+\]
+$$
 
+W aktualnym programie residual obserwacji obliczam równoważnie w lokalnym układzie pojazdu. Porównuję zmierzone położenie markera z położeniem przewidywanym na podstawie aktualnej pozy pojazdu i mapy:
+
+$$
+\[
+\mathbf{r}_{\mathrm{obs},k,j}^{\mathrm{local}}
+=
+R(\varphi_k)^T
+\left(
+\mathbf{p}_j^G-
+\begin{bmatrix}x_k\\y_k\end{bmatrix}
+\right)
+-
+\mathbf{z}_{k,j}^{\mathrm{local}}
+\]
+$$
+
+Obie postacie mają tę samą długość residualu, ponieważ różnią się jedynie obrotem.
+Drugim rodzajem ograniczenia jest odometria. Dla kolejnych węzłów trajektorii znam względny ruch wynikający z odometrii, oznaczony jako $\(\Delta\mathbf{x}_k^{\mathrm{odom}}\)$. Z aktualnie estymowanych poz mogę obliczyć analogiczny ruch $\(\Delta\mathbf{x}_k^{\mathrm{SLAM}}\)$.
+
+Residual odometryczny ma zatem postać:
+
+$$
+\[
+\mathbf{r}_{\mathrm{odom},k}
+=
+\Delta\mathbf{x}_k^{\mathrm{SLAM}}
+-
+\Delta\mathbf{x}_k^{\mathrm{odom}}
+\]
+$$
+
+Różnicę orientacji sprowadzam do przedziału od $\(-\pi\)$ do $\(\pi\)$, aby poprawnie uwzględnić okresowość kąta.
+Algorytm szuka takich poz pojazdu i pozycji landmarków, które zmniejszają obie grupy residuali. Nie są one jednak traktowane jednakowo. Residuale normalizuję przez przyjęte niepewności pomiarów: 30 mm dla translacji odometrycznej, 2° dla zmiany orientacji oraz 50 mm dla lokalnych obserwacji landmarków.
+Zamiast zwykłej sumy kwadratów wykorzystuję funkcję straty Huber, która ogranicza wpływ dużych residuali. Do funkcji celu dodaję również ograniczenie pierwszej pozy pojazdu, czyli anchor, aby ustalić układ odniesienia.
+W ten sposób SLAM szuka kompromisu między ruchem wynikającym z odometrii a położeniami nieruchomych markerów. W przeciwieństwie do map fittingu może przy tym zmieniać całą trajektorię.
 
 ### 4) Jak to działa intuicyjnie, czyli dwie sprzeczne „prawdy”
 Najprościej myśleć o tym jak o kompromisie między dwiema informacjami:
