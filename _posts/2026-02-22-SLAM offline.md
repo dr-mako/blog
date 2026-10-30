@@ -56,31 +56,26 @@ Nie oznacza to jeszcze, że SLAM odtworzy rzeczywistą trajektorię. Wynik zale�
 W chwili $\(k\)$ pojazd ma pozę w układzie globalnym:
 
 $$
-\[
 \mathbf{x}_k=
 \begin{bmatrix}
 x_k & y_k & \varphi_k
 \end{bmatrix}^{T}
-\]
 $$
 
 Z poprzedniego etapu przetwarzania obrazu otrzymuję lokalną obserwację markera $\(j\)%, wyrażoną w metrach względem pojazdu:
 
 $$
-\[
 \mathbf{z}_{k,j}^{\mathrm{local}}=
 \begin{bmatrix}
 Y_{\mathrm{BEV}}\\
 -X_{\mathrm{BEV}}
 \end{bmatrix}
-\]
 $$
 
 Geometria kamery względem pojazdu została już uwzględniona podczas przygotowania BEV. W SLAM-ie nie optymalizuję dodatkowych parametrów tej transformacji.
 Znając pozę pojazdu, mogę przeliczyć obserwację markera do układu globalnego:
 
 $$
-\[
 \hat{\mathbf{p}}_{k,j}^{G}=
 \begin{bmatrix}
 x_k\\
@@ -88,7 +83,6 @@ y_k
 \end{bmatrix}
 +
 R(\varphi_k)\mathbf{z}_{k,j}^{\mathrm{local}}
-\]
 $$
 
 gdzie $\(R(\varphi_k)\)$ jest macierzą obrotu wynikającą z orientacji pojazdu.
@@ -96,17 +90,14 @@ gdzie $\(R(\varphi_k)\)$ jest macierzą obrotu wynikającą z orientacji pojazdu
 W mapie marker o identyfikatorze $\(j\)$ ma jedną estymowaną pozycję $\(\mathbf{p}_j^G\)$. Różnicę pomiędzy pozycją wynikającą z obserwacji a pozycją w mapie opisuję residualem:
 
 $$
-\[
 \mathbf{r}_{\mathrm{obs},k,j}
 =
 \hat{\mathbf{p}}_{k,j}^{G}-\mathbf{p}_j^G
-\]
 $$
 
 W aktualnym programie residual obserwacji obliczam równoważnie w lokalnym układzie pojazdu. Porównuję zmierzone położenie markera z położeniem przewidywanym na podstawie aktualnej pozy pojazdu i mapy:
 
 $$
-\[
 \mathbf{r}_{\mathrm{obs},k,j}^{\mathrm{local}}
 =
 R(\varphi_k)^T
@@ -116,7 +107,6 @@ R(\varphi_k)^T
 \right)
 -
 \mathbf{z}_{k,j}^{\mathrm{local}}
-\]
 $$
 
 Obie postacie mają tę samą długość residualu, ponieważ różnią się jedynie obrotem.
@@ -125,13 +115,11 @@ Drugim rodzajem ograniczenia jest odometria. Dla kolejnych węzłów trajektorii
 Residual odometryczny ma zatem postać:
 
 $$
-\[
 \mathbf{r}_{\mathrm{odom},k}
 =
 \Delta\mathbf{x}_k^{\mathrm{SLAM}}
 -
 \Delta\mathbf{x}_k^{\mathrm{odom}}
-\]
 $$
 
 Różnicę orientacji sprowadzam do przedziału od $\(-\pi\)$ do $\(\pi\)$, aby poprawnie uwzględnić okresowość kąta.
