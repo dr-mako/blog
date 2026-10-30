@@ -64,76 +64,115 @@ Pozycje markerów zapisuje w odpowiedniej tablicy csv. Jeżeli po przekształcen
 <img src="{{ 'assets/images/CameraSensor/surowe.png' | relative_url }}" alt="surowe" style="width:100%; max-width:100%; height:auto;" />
 
 ### 4) Etap I – Offline Map Fitting
-W tym miejscu warto jasno powiedzieć, co robimę.
-To nie jest jeszcze SLAM.
-Jestem w Etapie I – Offline Map Fitting, który ma bardzo konkretne założenia:
+W tym miejscu warto jasno powiedzieć, co robimy. To nie jest jeszcze SLAM. W Etapie I – Offline Map Fitting przyjmuję następujące założenia:
 
-- trajektoria pojazdu jest zamrożona i traktowana jako prawda,
--	nie wolno jej zmieniać,
--	estymujemy tylko:
--  -  parametry systemowe (ekstrynsykę kamery),
--  - 	położenia landmarków w jednej, wspólnej mapie.
+- trajektoria pojazdu jest zamrożona i nie podlega korekcji,
+- współrzędne lokalne landmarków otrzymuję z wcześniej wyznaczonego przekształcenia BEV,
+- transformacja związana z geometrią kamery i pojazdu jest ustalona i nie jest optymalizowana,
+- dla każdego ID wyznaczam jedną pozycję landmarku w układzie globalnym oraz oceniam rozrzut jego obserwacji.
 
-Innymi słowy: szukamy najlepiej dopasowanej mapy świata, zakładając, że trajektoria jest idealna.
-To kluczowe założenie. I — jak się za chwilę okaże — bardzo silne.
+Innymi słowy: sprawdzam, jak spójna jest mapa zbudowana z obserwacji kamery przy założonej trajektorii odometrycznej. Jeżeli trajektoria zawiera błędy, będą one widoczne w rozrzucie globalnych obserwacji nieruchomych landmarków.
 
 ### 5) Minimalna formalizacja (żeby nie zgubić sensu)
+
 W dalszym opisie użyję dwóch pojęć:
--	$C$ — “trajektoria” (kolejne pozycje pojazdu w czasie),
--	$G$ — “mapa” (globalny układ odniesienia i pozycje landmarków w tym układzie).
 
-W chwili $k$ znamy (z odometrii) pozę pojazdu: 
-$$
-\mathbf{x}_k = (x_k, y_k, \psi_k).
-$$
-Z detekcji dostajemy pomiar landmarku: $\mathbf{z}_{k,j}$
-w układzie lokalnym (BEV/kamery). Chcemy go przenieść do świata i porównać z globalną pozycją landmarku $\mathbf{p}_j$.
-W praktyce (w 2D) sprowadza się to do składania transformacji:
+- $C$ – „trajektoria”, czyli kolejne pozycje i orientacje pojazdu w czasie,
 
--	najpierw “lokalny punkt z BEV”,
--	potem ekstrynsyka (stała transformacja między kamerą/BEV a bazą pojazdu),
--	potem poza pojazdu w świecie.
+- $G$ – „mapa”, czyli globalny układ odniesienia i pozycje landmarków w tym układzie.
 
-Można to zapisać zwięźle jako:
+W chwili $k$ znamy z odometrii pozę pojazdu:
 
 $$
-\begin{aligned}
-\hat{\mathbf{p}}_{k,j}^{G} = T_{G\leftarrow C}(\mathbf{x}_k)\ \circ\ T_{C}(\theta)\ \circ\ \mathbf{z}_{k,j}
-\end{aligned}
+[
+\mathbf{x}_k=(x_k,y_k,\varphi_k)
+]
 $$
 
-gdzie:
--	$T_{G\leftarrow C}(\mathbf{x}_k)$ wynika z zamrożonej trajektorii,
--	$T_{C}(\theta)$ to estymowana ekstrynsyka (np. przesunięcie i skręt kamery/BEV względem pojazdu),
--	$\mathbf{z}_{k,j}$ to pomiar landmarku w układzie lokalnym.
-
-A cel Etapu I to minimalizacja rozrzutu obserwacji tego samego landmarku w świecie, przy stałej trajektorii:
-
-$$
-\min_{\theta,\{\mathbf{p}_j\}} \sum_{(k,j)\in\mathcal{O}} \left\| \hat{\mathbf{p}}_{k,j}^{G} - \mathbf{p}_j \right\|^2
-$$
-
-To są dwa wzory, które “spinają” cały tekst: pokazują, co liczymy i dlaczego.
-W wersji “programistycznej” (czytelniejszą dla osób z robotyki), to ten sam łańcuch można zapisać tak:
-
-```
-landmark_in_G = pose_G_from_traj[k] ∘ T_extrinsic ∘ z_kj
-```
-
-gdzie:
--	```pose_G_from_traj[k]``` – zamrożona trajektoria (odometria),
--	```T_extrinsic``` – estymowana ekstrynsyka,
--	```z_kj``` – pomiar landmarku w układzie lokalnym (kamera/BEV; analogicznie może to być lidar).
-
-### 6) Kalibracja ekstrynsyki, czyli kiedy geometria przestaje wystarczać
-W projekcie CAD samochodu przyjąłem, że punkt G ("kotwica" kamery tzn. początek lokalnego układu współrzędnych związanego z BEV) znajduje się w określonej odległości od środka modelu kinematycznego pojazdu. Znamy rozstaw osi, znamy promień kół, znamy przybliżone położenie kamery względem konstrukcji. To naturalny punkt startowy. Tyle że model nigdy nie jest rzeczywistością.
-Kamera może być minimalnie skręcona. Oś optyczna może nie być idealnie równoległa do osi pojazdu. A co ważniejsze — sam model ruchu jest kompromisem. Choć korzystamy z uproszczonego modelu Ackermanna, pojazd ma cztery koła skrętne sterowane parami. Koła wewnętrzne i zewnętrzne skręcają się pod tym samym kątem. Nie ma dyferencjału kątowego — jest tylko dyferencjał prędkościowy. W praktyce oznacza to jedno: rzeczywisty tor ruchu nie może idealnie odpowiadać modelowi. Pojawiają się poślizgi, sprężystość opon, asymetrie napędu. Tego nie da się „dokalibrować” jedną stałą.
-Dlatego zamiast wierzyć geometrii, stosujemy kryterium obiektywne: minimalizujemy rozrzut globalnych pozycji tych samych landmarków. Szukamy takich parametrów transformacji, dla których landmarki w układzie świata są możliwie najbardziej zwarte.
-Punkt G został wyznaczony projektowo jako L/2+R. Jednak analiza wariancji landmarków ujawniła,
-że rzeczywiste położenie układu BEV różni się o od tej wartości. Projekt przestał być założeniem — stał się hipotezą, którą można weryfikować danymi. To moment, w którym projekt mechaniczny staje się elementem systemu pomiarowego, który można oceniać statystycznie. Efekty minimalizacji rozrzutu grup landmarków poprzez zmiany współrzędnych punku G przedstawia rys. 6. 
-
+Z detekcji markera otrzymujemy jego położenie na obrazie, a następnie, po przekształceniu do metrycznego BEV, współrzędne $(X_{\mathrm{BEV}},Y_{\mathrm{BEV}})$.
+W rozpatrywanym przypadku zależność pomiędzy układem BEV a lokalnym układem pojazdu jest znana. Wynika ona z pomiaru geometrii stanowiska, w szczególności położenia planszy kalibracyjnej względem środka geometrycznego samochodu. Zależność tę uwzględniam już podczas wyznaczania przekształcenia obrazu do BEV. Otrzymane współrzędne metryczne są więc odniesione bezpośrednio do pojazdu, bez konieczności dodatkowego wyznaczania parametrów zewnętrznych kamery na etapie map fittingu.
+Trzeba natomiast uwzględnić różnicę w orientacji osi obu układów. W układzie BEV oś $Y_{\mathrm{BEV}}$ wskazuje kierunek jazdy, a oś $X_{\mathrm{BEV}}$ kierunek poprzeczny. W lokalnym układzie odometrii oś $x$ jest skierowana do przodu, natomiast oś $y$ w lewo. 
+Tą sytuację przedstawia rys:
 
 <img src="{{ 'assets/images/CameraSensor/ekstrynsyka.png' | relative_url }}" alt="ekstrynsyka" style="width:100%; max-width:100%; height:auto;" />
+
+W tym przypadku współrzędnych ma zatem postać:
+
+$$
+[
+\mathbf{z}{k,j}^{\mathrm{local}}=
+\begin{bmatrix}
+Y{\mathrm{BEV}}\
+-X_{\mathrm{BEV}}
+\end{bmatrix}
+]
+$$
+
+Tak otrzymany pomiar landmarku jest już wyrażony względem pojazdu. Aby przenieść go do układu globalnego, wystarczy obrócić go o kąt orientacji pojazdu i dodać jego aktualną pozycję:
+
+$$
+[
+\begin{bmatrix}
+x_k\
+y_k
+\end{bmatrix}
++
+R(\varphi_k)\mathbf{z}_{k,j}^{\mathrm{local}}
+]
+$$
+
+gdzie:
+
+- $R(\varphi_k)$ – macierz obrotu wynikająca z orientacji pojazdu,
+
+- $\mathbf{z}_{k,j}^{\mathrm{local}}$ – lokalny pomiar landmarku $j$ w chwili $k$,
+
+- $\hat{\mathbf{p}}_{k,j}^{G}$ – globalna pozycja tego landmarku obliczona z pojedynczej obserwacji.
+
+Ponieważ ten sam nieruchomy marker może być obserwowany w wielu klatkach, otrzymujemy zbiór jego globalnych pozycji. Gdyby odometria i pomiary kamery były idealne, wszystkie te punkty pokrywałyby się.
+
+W praktyce tworzą skupisko. Jego środek wyznaczam jako średnią obserwacji:
+
+$$
+[
+\bar{\mathbf{p}}j^G =
+\frac{1}{N_j}
+\sum{k=1}^{N_j}\hat{\mathbf{p}}_{k,j}^{G}
+]
+$$
+
+a rozrzut opisuję błędem RMS:
+
+$$
+[
+{
+\bar{\mathbf{p}}_j^G
+\right|^2
+}
+]
+$$
+
+Otrzymujemy w ten sposób jedną reprezentatywną pozycję każdego landmarku oraz informację o spójności jego obserwacji.
+
+Warto zwrócić uwagę na ograniczenie tego podejścia. Trajektoria pozostaje zamrożona, a algorytm nie koryguje ani pozy pojazdu, ani parametrów transformacji kamery. Jeżeli odometria dryfuje, wyznaczone pozycje landmarków również będą obciążone tym błędem.
+
+To właśnie chcę sprawdzić na tym etapie: czy obserwacje tego samego nieruchomego punktu są ze sobą zgodne, gdy przyjmujemy trajektorię odometryczną za ustaloną.
+
+W wersji programistycznej cały proces można zapisać znacznie prościej:
+
+```
+marker_local_x = Y_BEV
+marker_local_y = -X_BEV
+
+marker_global = (
+    vehicle_position
+    + R(phi) @ marker_local
+)
+```
+
+Następnie dla każdego ID markera obliczam centroid jego globalnych obserwacji i RMS.
+Nie szukam zatem ekstrynsyki, która sztucznie zmniejszy rozrzut punktów. Ten rozrzut jest teraz wynikiem eksperymentu i informacją o niespójności całego łańcucha pomiarowego.
+
 
 ### 7) Algorytm "map fitting" działa świetnie. Mapa? – niekoniecznie
 Po optymalizacji "map fitting" dzieje się coś pozornie idealnego. Koszt funkcji dopasowania grup landmarków do trajektorii gwałtownie spada. Landmarki układają się w zwarte skupiska. Algorytm nie widzi już sprzeczności — wszystko „pasuje”. Tylko, że gdy na tę mapę spojrzymy w odniesieniu do rzeczywistości, coś się nie zgadza. Landmarki są spójne względem trajektorii, ale nie względem świata. Fragmenty pasa ruchu są przesunięte. A różnice nie są losowe — pojawiają się dokładnie tam, gdzie ruch pojazdu był najbardziej wymagający. I to nie jest błąd optymalizacji. To jej logiczna konsekwencja. Dzieje się tak dlatego, że algorytm znajduje rozwiązanie matematycznie spójne — ale tylko względem przyjętej trajektorii (ponieważ ona z zalożenia jest "zamrożona" - prawdziwa i nie może być korygowana). Wynik działania "map fittigu" ukazuje rys. 7. 
