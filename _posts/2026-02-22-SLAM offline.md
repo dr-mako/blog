@@ -155,27 +155,30 @@ W ten sposób SLAM szuka kompromisu między ruchem wynikającym z odometrii a po
 
 *Rys. 2. Graf SLAM: kolejne pozy pojazdu są połączone ograniczeniami odometrycznymi, a obserwacje tych samych landmarków wiążą ze sobą różne fragmenty trajektorii.*
 
-### 4) Jak to działa intuicyjnie, czyli dwie sprzeczne „prawdy”
-Najprościej myśleć o tym jak o kompromisie między dwiema informacjami:
+### 4) Dwie informacje, które trzeba pogodzić
+Najprościej myśleć o SLAM-ie jako o próbie pogodzenia dwóch informacji.
+Odometria mówi, o ile samochód przemieścił się i obrócił pomiędzy kolejnymi chwilami. Nie daje jednak pewności, że wszystkie te przemieszczenia, zsumowane na całej trasie, prowadzą do prawidłowej pozycji pojazdu.
+Landmarki dostarczają innego rodzaju informacji. Marker o danym ID pozostaje nieruchomy, więc niezależnie od tego, ile razy go zaobserwuję, powinien mieć jedną pozycję w układzie globalnym. Jeśli obserwacje nie są zgodne, oznacza to, że trajektoria i mapa nie pasują do siebie.
+SLAM próbuje uzgodnić oba źródła pomiarów. Korekta jednej pozy pojazdu może poprawić zgodność z obserwowanym markerem, ale jednocześnie pogorszyć zgodność ruchu z odometrią. Dlatego algorytm nie może dowolnie przesuwać pojazdu, aby idealnie dopasować każdy landmark.
+Znaczenie mają tutaj przyjęte niepewności pomiarów. W aktualnym programie wynoszą one 30 mm dla translacji odometrycznej, 2° dla zmiany orientacji oraz 50 mm dla lokalnej obserwacji landmarku. Są to parametry modelu optymalizacji, a nie dokładności potwierdzone niezależnym eksperymentem. Ich wartości wpływają na kompromis pomiędzy odometrią i kamerą.
+Pozostaje jeszcze kwestia układu odniesienia. Gdyby przesunąć i obrócić jednocześnie całą trajektorię oraz wszystkie landmarki, wzajemne relacje między nimi pozostałyby takie same. Optymalizacja nie potrafiłaby więc samodzielnie ustalić jednego, bezwzględnego położenia całego rozwiązania.
+Aby usunąć tę swobodę, przyjmuję pierwszą pozę odometryczną jako punkt odniesienia, czyli anchor. Jej pozycja i orientacja są silnie związane z wartościami początkowymi. Nie oznacza to, że pierwsza poza jest znana idealnie. Ustala jedynie układ współrzędnych, w którym wyznaczam trajektorię i mapę.
+Ostatecznie SLAM może poprawiać zarówno trajektorię, jak i pozycje landmarków, ale musi przy tym respektować ograniczenia wynikające z odometrii, obserwacji kamery i przyjętego punktu odniesienia.
 
--	Odometria mówi: „między klatką $k$ i $k+1$ przesunąłem się mniej więcej tak”.
--	Landmarki mówią: „marker o ID=7 jest jeden i stoi w świecie w jednym miejscu, więc jeśli widzę go ponownie, moja trajektoria musi się z tym zgodzić”.
 
-SLAM offline bierze cały log przejazdu i próbuje znaleźć takie pozycje pojazdu w czasie oraz takie położenia markerów, żeby te dwie „prawdy” dało się pogodzić możliwie najlepiej. U mnie dodatkowo używam funkcji odpornej na outliery, żeby pojedyncze złe detekcje nie obciążały wyniku.
-Aby zapewnić możliwość porównywania wyników różnych metod obliczeniowych między sobą narzucam punkt odniesienia w miejscu pierwszego zarejestrowanego markera. W moim przypadku przejazd zaczynam od markera id=1 więc przyjmuję, że stanowi on początek globalnego „światowego” układu współrzędnych. 
+### 5) Budowa grafu i optymalizacja
+W praktyce SLAM offline rozpoczyna się od przygotowania danych. Korzystam z dwóch plików CSV: `synced_with_traj.csv`, zawierającego zapisane pozy odometryczne pojazdu, oraz `landmarks_local.csv`, w którym znajdują się lokalne współrzędne wykrytych markerów ArUco. Oba zbiory łączy identyfikator klatki `frame_id`.
+Nie wykorzystuję wszystkich klatek nagrania. Z klatek zawierających obserwacje markerów wybieram co trzecią. Następnie odrzucam landmarki, które mają mniej niż trzy obserwacje. Dzięki temu ograniczam wielkość problemu optymalizacji, zachowując powtarzające się pomiary tych samych punktów.
+Każda wybrana poza pojazdu tworzy węzeł grafu. Sąsiednie węzły łączą ograniczenia odometryczne, opisujące zmierzony ruch względny. Obserwacje ArUco tworzą natomiast połączenia pomiędzy pozami pojazdu a landmarkami. Ten sam marker może być związany z wieloma pozami, również z różnych fragmentów przejazdu.
+Punktem początkowym optymalizacji jest trajektoria odometryczna. Początkowe położenia landmarków wyznaczam metodą map fittingu: każdą lokalną obserwację przeliczam do układu globalnego z wykorzystaniem odometrii, a następnie obliczam średnią pozycję dla danego ID.
+Z tak przygotowanego grafu tworzę wektor zmiennych obejmujący pozycje i orientacje pojazdu oraz współrzędne landmarków. Względne pomiary odometryczne i lokalne obserwacje kamery pozostają niezmienione. Podczas optymalizacji zmieniają się estymowane pozy i mapa.
+Do rozwiązania wykorzystuję funkcję `least_squares` z biblioteki SciPy, metodę TRF oraz funkcję straty Huber. Algorytm minimalizuje residuale opisane w poprzedniej sekcji, uwzględniając ich przyjęte niepewności i ograniczenie pierwszej pozy pojazdu.
+Po zakończeniu optymalizacji otrzymuję skorygowaną trajektorię oraz mapę landmarków, zapisywane odpowiednio w plikach `slam_poses.csv` i `slam_landmarks.csv`.
+Na tym etapie nie zmieniam geometrii BEV ani nie estymuję parametrów modelu ruchu. Sprawdzam, jaki wynik można uzyskać, korygując samą trajektorię i pozycje landmarków przy ustalonych pomiarach wejściowych.
 
+<img src="{{ 'assets/images/SLAMoffline/algorytm SLAM.png' | relative_url }}" alt="algorytm SLAM" style="width:100%; max-width:100%; height:auto;" />
 
-### 5) MEtap kalibracyjny: gdy SLAM uczy się błędów systematycznych
-Zanim zacznę traktować wynik jak „lokalizację”, pozwalam SLAM-owi znaleźć również kilka prostych korekt systematycznych. To ważne, bo w praktyce większość problemów nie jest czystym szumem Gaussa, tylko konsekwencją drobnych, ale stałych błędów:
-
--	skala px $\to$ m w BEV może być minimalnie zła,
--	odometria może zaniżać/zawyżać narastanie kąta,
--	w zakrętach może pojawić się systematyczny dryf boczny (poślizg, nieliniowość modelu skrętu, sprężystość opon itd.).
-
-Na danych z przejazdu optymalizacja znalazła m.in. efektywną skalę około $0.000950$ m/px (około 5% różnicy względem nominalnego $0.001$ m/px) oraz niewielkie korekty parametrów związanych z yaw/krzywizną, plus prosty parametr bocznego „uciekania”. Najważniejszy fakt nie jest jednak w samych liczbach, tylko w konsekwencji: żeby złożyć spójny świat, trajektoria musiała się realnie przesunąć względem odometrii nawet o dziesiątki centymetrów. Tego map fitting nie mógł zrobić z definicji.
-Po tym etapie moja sytuacja wygląda jak na poniższym rys. Otrzymane parametry korekt zapisuję i traktuję jako stałe.
-
-<img src="{{ 'assets/images/SLAMoffline/SlamCalib.png' | relative_url }}" alt="SlamCalib" style="width:100%; max-width:100%; height:auto;" />
+*Rys. 3. Przebieg algorytmu SLAM offline: przygotowanie danych, inicjalizacja na podstawie odometrii i map fittingu oraz wspólna optymalizacja trajektorii i mapy landmarków.*
 
 ### 6) Etap „runtime” offline: biasy zamrożone, pracuje tylko mapa i trajektoria
 W drugim kroku uruchamiam SLAM jeszcze raz, ale już bez „uczenia się” powyższych korekt. One są zamrożone, a optymalizacja poprawia tylko:
