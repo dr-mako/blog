@@ -92,9 +92,9 @@ Po zakończeniu kalibracji kamera pozostaje zamocowana względem samochodu. Jest
 
 W wyniku kalibracji otrzymywany jest model kamery, który można interpretować jako zestaw parametrów opisujących transformację pomiędzy przestrzenią trójwymiarową a obrazem. Zapisuje się go następująco:
 
-macierz parametrów wewnętrznych (K), zawierająca ogniskowe i współrzędne punktu głównego,
+- macierz parametrów wewnętrznych $(K)$, zawierająca ogniskowe i współrzędne punktu głównego,
 
-współczynniki dystorsji (D), opisujące zniekształcenia obiektywu.
+- współczynniki dystorsji $(D)$, opisujące zniekształcenia obiektywu.
 
 Podczas kalibracji wyznaczane są również wektory obrotu i translacji dla poszczególnych obserwacji planszy. Parametry te opisują jej położenie względem kamery i są potrzebne w procesie kalibracji oraz do analizy błędu reprojekcji. 
 Nie wykorzystuję ich jednak do ustalania położenia układu współrzędnych pojazdu w końcowej transformacji BEV. 
@@ -146,6 +146,7 @@ $$
 X_{\mathrm{local}}=405-X_B
 ]
 $$
+
 $$
 [
 Y_{\mathrm{local}}=167{,}25+Y_B
@@ -155,14 +156,12 @@ $$
 lub w postaci macierzowej:
 
 $$
-[
-T_{\mathrm{board}\to\mathrm{vehicle}}=
+T_{\mathrm{board}\to\mathrm{vehicle}} =
 \begin{bmatrix}
--1&0&405\
-0&1&167{,}25\
-0&0&1
+-1 & 0 & 405 \\
+0 & 1 & 167{,}25 \\
+0 & 0 & 1
 \end{bmatrix}
-]
 $$
 
 Współczynnik (-1) odpowiada za przeciwny zwrot osi poprzecznej planszy względem przyjętej osi lokalnej pojazdu. 
