@@ -153,6 +153,8 @@ W ten sposób SLAM szuka kompromisu między ruchem wynikającym z odometrii a po
 
 <img src="{{ 'assets/images/SLAMoffline/graf SLAM.png' | relative_url }}" alt="graf SLAM" style="width:100%; max-width:100%; height:auto;" />
 
+*Rys. 2. Graf SLAM: kolejne pozy pojazdu są połączone ograniczeniami odometrycznymi, a obserwacje tych samych landmarków wiążą ze sobą różne fragmenty trajektorii.*
+
 ### 4) Jak to działa intuicyjnie, czyli dwie sprzeczne „prawdy”
 Najprościej myśleć o tym jak o kompromisie między dwiema informacjami:
 
