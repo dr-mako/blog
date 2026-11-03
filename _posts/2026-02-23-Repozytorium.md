@@ -123,7 +123,11 @@ Eksperymenty przeprowadziliśmy na zewnątrz, wykorzystując mikrofon, lokalny m
 
 Najważniejsze stało się już nie samo wygenerowanie poprawnego polecenia, lecz zachowanie całego systemu: czy wypowiedź operatora została właściwie rozpoznana, czy model wybrał odpowiednią funkcję i czy samochód wykonał zamierzony manewr.
 
-<img src="{{ 'assets/images/LLM_1/jazda_1.png' | relative_url }}" alt="jazda_1" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/LLM_1/scena.png' | relative_url }}" alt="scena" style="width:100%; max-width:100%; height:auto;" />
 
 *Rys. 2. Scena uliczna z robotem i otoczeniem.*
+
+<img src="{{ 'assets/images/LLM_1/jazda 1.png' | relative_url }}" alt="jazda 1" style="width:100%; max-width:100%; height:auto;" />
+
+*Rys. 3. Przebieg konwersacji i sterowania.*
 
