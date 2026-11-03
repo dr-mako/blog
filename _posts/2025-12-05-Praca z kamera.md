@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Przejazd z kamerą"
+title: "VII Przejazd z kamerą"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
