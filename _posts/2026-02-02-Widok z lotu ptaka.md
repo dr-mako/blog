@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Korekta obrazu (bird’s eye view)"
+title: "VIII Korekta obrazu (bird’s eye view)"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
