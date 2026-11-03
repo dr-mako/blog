@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Model pojazdu do badań nad autonomią"
+title: "I Model pojazdu do badań nad autonomią"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
