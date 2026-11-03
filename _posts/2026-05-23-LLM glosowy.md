@@ -117,7 +117,7 @@ Tak powstał prosty agent z narzędziami. Ten sam model może prowadzić rozmow�
 
 Pierwsze próby wywoływania funkcji przeprowadziliśmy na pojedynczym serwomechanizmie. Model językowy otrzymywał polecenia wypowiadane po polsku i zamieniał je na wywołania funkcji `set_angle`. Pozwoliło to sprawdzić interpretację wartości liczbowych, wybór funkcji i współpracę z programem wykonawczym bez uruchamiania napędu samochodu.
 
-Kolejnym krokiem było podłączenie agenta do sterowania pojazdem. Tym razem odpowiedź modelu mogła prowadzić do rzeczywistego ruchu samochodu, a nie tylko zmiany położenia pojedynczego serwomechanizmu. Architekturę wielowarstwową przedsyawiam na rys. 2.
+Kolejnym krokiem było podłączenie agenta do sterowania pojazdem. Tym razem odpowiedź modelu mogła prowadzić do rzeczywistego ruchu samochodu, a nie tylko zmiany położenia pojedynczego serwomechanizmu. Architekturę wielowarstwową przedstawiam na rys. 2.
 
 Eksperymenty przeprowadziliśmy na zewnątrz, wykorzystując mikrofon, lokalny moduł rozpoznawania mowy, model Gemma 3 4B oraz program wykonawczy komunikujący się ze sterownikami pojazdu.
 
