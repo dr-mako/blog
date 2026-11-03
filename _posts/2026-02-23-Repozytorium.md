@@ -109,6 +109,21 @@ Ważne jest rozdzielenie odpowiedzialności. Model proponuje działanie, ale nie
 
 Tak powstał prosty agent z narzędziami. Ten sam model może prowadzić rozmowę i wybierać dostępne funkcje, ale dostęp do fizycznych elementów samochodu jest ograniczony przez niezależną warstwę programu.
 
-<img src="{{ 'assets/images/LLM_1/schemat_1.png' | relative_url }}" alt="schemat_1" style="width:100%; max-width:100%; height:auto;" />
+<img src="{{ 'assets/images/LLM_1/schemat_1.png' | relative_url }}" alt="schemat_1" style="width:100%; max-width:75%; height:auto;" />
 
 *Rys. 1. Interpretacja polecenia przez lokalny model językowy i jego wykonanie przez oddzielną, deterministyczną warstwę programu.*
+
+## 5) Od polecenia głosowego do ruchu samochodu
+
+Pierwsze próby wywoływania funkcji przeprowadziliśmy na pojedynczym serwomechanizmie. Model językowy otrzymywał polecenia wypowiadane po polsku i zamieniał je na wywołania funkcji `set_angle`. Pozwoliło to sprawdzić interpretację wartości liczbowych, wybór funkcji i współpracę z programem wykonawczym bez uruchamiania napędu samochodu.
+
+Kolejnym krokiem było podłączenie agenta do sterowania pojazdem. Tym razem odpowiedź modelu mogła prowadzić do rzeczywistego ruchu samochodu, a nie tylko zmiany położenia pojedynczego serwomechanizmu.
+
+Eksperymenty przeprowadziliśmy na zewnątrz, wykorzystując mikrofon, lokalny moduł rozpoznawania mowy, model Gemma 3 4B oraz program wykonawczy komunikujący się ze sterownikami pojazdu.
+
+Najważniejsze stało się już nie samo wygenerowanie poprawnego polecenia, lecz zachowanie całego systemu: czy wypowiedź operatora została właściwie rozpoznana, czy model wybrał odpowiednią funkcję i czy samochód wykonał zamierzony manewr.
+
+<img src="{{ 'assets/images/LLM_1/jazda_1.png' | relative_url }}" alt="jazda_1" style="width:100%; max-width:100%; height:auto;" />
+
+*Rys. 2. Scena uliczna z robotem i otoczeniem.*
+
