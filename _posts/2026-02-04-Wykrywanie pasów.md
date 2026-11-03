@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Wykrywanie pasów ruchu w BEV (bird’s eye view)"
+title: "IX Wykrywanie pasów ruchu w BEV (bird’s eye view)"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
