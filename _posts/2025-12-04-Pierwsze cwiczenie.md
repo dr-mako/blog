@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Skalibrowana mata i pasy 3D — testy dokładności"
+title: "VI Skalibrowana mata i pasy 3D — testy dokładności"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
