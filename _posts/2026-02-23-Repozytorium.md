@@ -117,17 +117,21 @@ Tak powstał prosty agent z narzędziami. Ten sam model może prowadzić rozmow�
 
 Pierwsze próby wywoływania funkcji przeprowadziliśmy na pojedynczym serwomechanizmie. Model językowy otrzymywał polecenia wypowiadane po polsku i zamieniał je na wywołania funkcji `set_angle`. Pozwoliło to sprawdzić interpretację wartości liczbowych, wybór funkcji i współpracę z programem wykonawczym bez uruchamiania napędu samochodu.
 
-Kolejnym krokiem było podłączenie agenta do sterowania pojazdem. Tym razem odpowiedź modelu mogła prowadzić do rzeczywistego ruchu samochodu, a nie tylko zmiany położenia pojedynczego serwomechanizmu.
+Kolejnym krokiem było podłączenie agenta do sterowania pojazdem. Tym razem odpowiedź modelu mogła prowadzić do rzeczywistego ruchu samochodu, a nie tylko zmiany położenia pojedynczego serwomechanizmu. Architekturę wielowarstwową przedsyawiam na rys. 2.
 
 Eksperymenty przeprowadziliśmy na zewnątrz, wykorzystując mikrofon, lokalny moduł rozpoznawania mowy, model Gemma 3 4B oraz program wykonawczy komunikujący się ze sterownikami pojazdu.
 
-Najważniejsze stało się już nie samo wygenerowanie poprawnego polecenia, lecz zachowanie całego systemu: czy wypowiedź operatora została właściwie rozpoznana, czy model wybrał odpowiednią funkcję i czy samochód wykonał zamierzony manewr.
+Najważniejsze stało się już nie samo wygenerowanie poprawnego polecenia, lecz zachowanie całego systemu: czy wypowiedź operatora została właściwie rozpoznana, czy model wybrał odpowiednią funkcję i czy samochód wykonał zamierzony manewr. Przebieg eksperymentu przedstawiają rys 3 i 4 (maj 2026)
+
+<img src="{{ 'assets/images/LLM_1/architektura.png' | relative_url }}" alt="architektura" style="width:100%; max-width:100%; height:auto;" />
+
+*Rys. 2. Warstwowa architektura systemu sterowania głosowego samochodem. Model Gemma 3 4B interpretuje polecenia operatora, natomiast ich walidację i wykonanie realizuje oddzielne oprogramowanie komunikujące się ze sterownikami ESP32.*
 
 <img src="{{ 'assets/images/LLM_1/scena.png' | relative_url }}" alt="scena" style="width:100%; max-width:100%; height:auto;" />
 
-*Rys. 2. Scena uliczna z robotem i otoczeniem.*
+*Rys. 3. Scena uliczna z robotem i otoczeniem.*
 
 <img src="{{ 'assets/images/LLM_1/jazda 1.png' | relative_url }}" alt="jazda 1" style="width:100%; max-width:100%; height:auto;" />
 
-*Rys. 3. Przebieg konwersacji i sterowania.*
+*Rys. 4. Przebieg konwersacji i sterowania.*
 
