@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "SLAM offline"
+title: "XI SLAM offline"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
