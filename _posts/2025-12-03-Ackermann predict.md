@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Jak rośnie błąd trajektorii? Ackermann‑predict w praktyce"
-author: "V Maciej Kozłowski"
+title: "V Jak rośnie błąd trajektorii? Ackermann‑predict w praktyce"
+author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
 
