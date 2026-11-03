@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Etapy budowy platformy modelu"
+title: "II Etapy budowy platformy modelu"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---

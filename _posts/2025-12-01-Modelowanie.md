@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Aktualizacja położenia w oparciu o model i metoda wyznaczania trajektorii ruchu"
+title: "III Aktualizacja położenia w oparciu o model i metoda wyznaczania trajektorii ruchu"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
