@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Kamera jako czujnik położenia"
+title: "X Kamera jako czujnik położenia"
 author: "Maciej Kozłowski"
 excerpt_separator: <!--more-->
 ---
